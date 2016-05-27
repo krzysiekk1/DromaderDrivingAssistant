@@ -902,7 +902,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             case R.id.bottom_button:
                 if (currentMapOption == MapOption.ROUTING_AND_NAVIGATION || currentMapOption == MapOption.TRACKS) {
                     if (bottomButton.getText().equals(getResources().getString(R.string.calculate_route))) {
-                        launchRouteCalculation(new SKCoordinate(-122.397674, 37.761278), new SKCoordinate(-122.448270, 37.738761));
+                        launchRouteCalculation(new SKCoordinate(19.948295, 50.007004), new SKCoordinate(21.016957, 52.218425));
                     } else if (bottomButton.getText().equals(getResources().getString(R.string.start_navigation))) {
                         new AlertDialog.Builder(this)
                                 .setMessage("Choose the advice type")
@@ -1257,7 +1257,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         }
 
         if (showStartingAndDestinationAnnotations) {
-            startPoint = new SKCoordinate(13.34615707397461, 52.513086884218325);
+            startPoint = new SKCoordinate(19.948295, 50.007004);
             SKAnnotation annotation = new SKAnnotation(GREEN_PIN_ICON_ID);
             annotation
                     .setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_GREEN);
@@ -1265,7 +1265,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             mapView.addAnnotation(annotation,
                     SKAnimationSettings.ANIMATION_NONE);
 
-            destinationPoint = new SKCoordinate(13.398685455322266, 52.50995268098114);
+            destinationPoint = new SKCoordinate(21.016957, 52.218425);
             annotation = new SKAnnotation(RED_PIN_ICON_ID);
             annotation
                     .setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_RED);

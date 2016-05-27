@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/routing_title_row"
+        layout="@layout/element_debug_kit_item_section" />
+
+    <include
+        android:id="@+id/rounting_start_latitude"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/rounting_start_longitude"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/rounting_longpress_start"
+        layout="@layout/element_debug_kit_item_button" />
+
+    <include
+        android:id="@+id/rounting_dest_latitude"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/rounting_dest_longitude"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/rounting_longpress_destination"
+        layout="@layout/element_debug_kit_item_button" />
+
+    <include
+        android:id="@+id/rounting_nrroutes"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/rounting_via_points"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/rounting_route_mode"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/rounting_route_connection_mode"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/rounting_route_restriction"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/rounting_should_be_rendered"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/rounting_request_advices"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/rounting_request_extend_route"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/rounting_request_country_code"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/routing_advance_settings_row"
+        layout="@layout/element_debug_kit_item_section" />
+
+    <include
+        android:id="@+id/rounting_use_slopes"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/rounting_download_route_corridor"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/rounting_corridor_width"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/rounting_wait_corridor_download"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/rounting_destination_is_point"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/routing_route_information_row"
+        layout="@layout/element_debug_kit_item_section" />
+
+    <include
+        android:id="@+id/rounting_route_id"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/rounting_distance"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/rounting_estimated_time"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/rounting_corridor_download"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/rounting_after_rerouting"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/rounting_toll_roads"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/rounting_highways"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/rounting_ferrylines"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/rounting_via_points_on_route"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/rounting_advice_list"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/rounting_coordinates"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/rounting_country_codes"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/routing_actions"
+        layout="@layout/element_debug_kit_item_section" />
+
+    <include
+        android:id="@+id/rounting_calculate_route"
+        layout="@layout/element_debug_kit_item_button" />
+
+    <include
+        android:id="@+id/rounting_top_inset"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/rounting_left_inset"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/rounting_bottom_inset"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/rounting_right_inset"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/rounting_zoom_to_route"
+        layout="@layout/element_debug_kit_item_button" />
+
+    <include
+        android:id="@+id/rounting_block_road_distance"
+        layout="@layout/element_debug_kit_item_edittext" />
+    <include
+        android:id="@+id/rounting_block_road"
+        layout="@layout/element_debug_kit_item_button" />
+
+    <include
+        android:id="@+id/rounting_unlock_road"
+        layout="@layout/element_debug_kit_item_button" />
+
+    <include
+        android:id="@+id/save_route_to_cache"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/rounting_load_route_from_cache"
+        layout="@layout/element_debug_kit_item_button" />
+
+    <include
+        android:id="@+id/rounting_clear_all_routes_from_cache"
+        layout="@layout/element_debug_kit_item_button" />
+
+    <include
+        android:id="@+id/rounting_get_advise_list"
+        layout="@layout/element_debug_kit_item_button" />
+
+    <include
+        android:id="@+id/rounting_route_coordinates_from_route"
+        layout="@layout/element_debug_kit_item_button" />
+
+    <include
+        android:id="@+id/rounting_request_country_code_action"
+        layout="@layout/element_debug_kit_item_button" />
+
+    <include
+        android:id="@+id/rounting_clear_routes"
+        layout="@layout/element_debug_kit_item_button" />
+
+
+</LinearLayout>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/cache_info_title"
+        layout="@layout/element_debug_kit_item_section" />
+    <include
+        android:id="@+id/local_tile_cache_size"
+        layout="@layout/element_debug_kit_item_button" />
+    <include
+        android:id="@+id/cache_limit"
+        layout="@layout/element_debug_kit_item_edittext" />
+    <include
+        android:id="@+id/delete_cache_title"
+        layout="@layout/element_debug_kit_item_section"/>
+    <include
+        android:id="@+id/delete_all_cache"
+        layout="@layout/element_debug_kit_item_button"/>
+    <include
+        android:id="@+id/map_cache_seconds"
+        layout="@layout/element_debug_kit_item_seekbar"/>
+    <include
+        android:id="@+id/delete_cache_older"
+        layout="@layout/element_debug_kit_item_button"/>
+</LinearLayout>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/scale_view_title_row"
+        layout="@layout/element_debug_kit_item_section" />
+    <include
+        android:id="@+id/scale_view_distance_format"
+        layout="@layout/element_debug_kit_item_enter_child" />
+    <include
+        android:id="@+id/scale_view_night_style"
+        layout="@layout/element_debug_kit_item_checkbox" />
+</LinearLayout>

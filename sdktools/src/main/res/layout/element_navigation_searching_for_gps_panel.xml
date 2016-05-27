@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/navigation_searching_for_gps_panel"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/navigation_searching_for_gps_text"
+        style="@style/pre_navigation_text"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@color/searching_for_gps_bg"
+        android:drawableLeft="@drawable/icon_no_gps"
+        android:drawablePadding="10dp"
+        android:gravity="center"
+        android:maxLines="2"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/searching_for_gps_label"
+        android:textColor="@color/white"
+        android:textSize="25dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@drawable/dropshadow" />
+
+</LinearLayout>

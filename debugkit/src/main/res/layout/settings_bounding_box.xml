@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/bounding_box_settings_title"
+        layout="@layout/element_debug_kit_item_section" />
+    <include
+        android:id="@+id/top_left_latitude"
+        layout="@layout/element_debug_kit_item_edittext" />
+    <include
+        android:id="@+id/top_left_longitude"
+        layout="@layout/element_debug_kit_item_edittext" />
+    <include
+        android:id="@+id/bottom_right_latitude"
+        layout="@layout/element_debug_kit_item_edittext" />
+    <include
+        android:id="@+id/bottom_right_longitude"
+        layout="@layout/element_debug_kit_item_edittext"/>
+    <include
+        android:id="@+id/image_size_width"
+        layout="@layout/element_debug_kit_item_seekbar"/>
+    <include
+        android:id="@+id/image_size_height"
+        layout="@layout/element_debug_kit_item_seekbar"/>
+    <include
+        android:id="@+id/bounding_box_render_button"
+        layout="@layout/element_debug_kit_item_button"/>
+    <include
+        android:id="@+id/fit_bounding_box_title"
+        layout="@layout/element_debug_kit_item_section"/>
+    <include
+        android:id="@+id/padding_width"
+        layout="@layout/element_debug_kit_item_seekbar"/>
+    <include
+        android:id="@+id/padding_height"
+        layout="@layout/element_debug_kit_item_seekbar"/>
+    <include
+        android:id="@+id/fit_bounding_box_button"
+        layout="@layout/element_debug_kit_item_button"/>
+
+
+
+
+</LinearLayout>

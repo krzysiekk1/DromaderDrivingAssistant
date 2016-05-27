@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/tracker_settings_title"
+        layout="@layout/element_debug_kit_item_section" />
+    <include
+        android:id="@+id/tracker_radius"
+        layout="@layout/element_debug_kit_item_seekbar" />
+    <include
+        android:id="@+id/refresh_margin"
+        layout="@layout/element_debug_kit_item_seekbar" />
+    <include
+        android:id="@+id/rule_settings_title"
+        layout="@layout/element_debug_kit_item_section"/>
+    <include
+        android:id="@+id/route_distance"
+        layout="@layout/element_debug_kit_item_seekbar"/>
+    <include
+        android:id="@+id/aerial_distance"
+        layout="@layout/element_debug_kit_item_seekbar"/>
+    <include
+        android:id="@+id/number_of_turns"
+        layout="@layout/element_debug_kit_item_edittext"/>
+    <include
+        android:id="@+id/start_location"
+        layout="@layout/element_debug_kit_item_button"/>
+    <include
+        android:id="@+id/destination_location"
+        layout="@layout/element_debug_kit_item_button"/>
+    <include
+        android:id="@+id/poi_location"
+        layout="@layout/element_debug_kit_item_button"/>
+    <include
+        android:id="@+id/rule_advanced_settings_title"
+        layout="@layout/element_debug_kit_item_section"/>
+    <include
+        android:id="@+id/max_gps_accuracy"
+        layout="@layout/element_debug_kit_item_seekbar"/>
+    <include
+        android:id="@+id/min_speed_ignore_dist"
+        layout="@layout/element_debug_kit_item_seekbar"/>
+    <include
+        android:id="@+id/max_distance_after_turn"
+        layout="@layout/element_debug_kit_item_seekbar"/>
+    <include
+        android:id="@+id/eliminate_uturn"
+        layout="@layout/element_debug_kit_item_checkbox"/>
+    <include
+        android:id="@+id/play_audio_warning"
+        layout="@layout/element_debug_kit_item_checkbox"/>
+    <include
+        android:id="@+id/actions_title"
+        layout="@layout/element_debug_kit_item_section"/>
+    <include
+        android:id="@+id/start_poi_tracker"
+        layout="@layout/element_debug_kit_item_button"/>
+    <include
+        android:id="@+id/stop_poi_tracker"
+        layout="@layout/element_debug_kit_item_button"/>
+    <include
+        android:id="@+id/detected_pois_title"
+        layout="@layout/element_debug_kit_item_section"/>
+    <include
+        android:id="@+id/detected_pois_list"
+        layout="@layout/element_debug_kit_item_enter_child"/>
+</LinearLayout>

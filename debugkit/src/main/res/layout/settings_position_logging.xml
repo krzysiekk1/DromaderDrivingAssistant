@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/log_file_type"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/position_logs_path"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/start_logging"
+        layout="@layout/element_debug_kit_item_button" />
+
+    <include
+        android:id="@+id/resume_logging"
+        layout="@layout/element_debug_kit_item_button" />
+
+    <include
+        android:id="@+id/pause_logging"
+        layout="@layout/element_debug_kit_item_button" />
+
+    <include
+        android:id="@+id/stop_logging"
+        layout="@layout/element_debug_kit_item_button" />
+
+</LinearLayout>

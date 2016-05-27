@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/circle"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/polygon_id"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/polyline"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/clear_all_overlays"
+        layout="@layout/element_debug_kit_item_button" />
+
+    <include
+        android:id="@+id/overlay_id"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/search_for_overlay"
+        layout="@layout/element_debug_kit_item_button" />
+
+    <include
+        android:id="@+id/remove_overlay"
+        layout="@layout/element_debug_kit_item_button" />
+
+</LinearLayout>

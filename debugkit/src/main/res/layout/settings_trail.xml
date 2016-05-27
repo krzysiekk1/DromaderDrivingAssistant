@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/trail_enabled"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/trail_dotted"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/trail_red"
+        layout="@layout/element_debug_kit_item_seekbar" />
+
+    <include
+        android:id="@+id/trail_green"
+        layout="@layout/element_debug_kit_item_seekbar" />
+
+    <include
+        android:id="@+id/trail_blue"
+        layout="@layout/element_debug_kit_item_seekbar" />
+
+    <include
+        android:id="@+id/trail_alpha"
+        layout="@layout/element_debug_kit_item_seekbar" />
+
+    <include
+        android:id="@+id/trail_width"
+        layout="@layout/element_debug_kit_item_seekbar" />
+
+    <include
+        android:id="@+id/trail_pedestrian"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/trail_smooth_level"
+        layout="@layout/element_debug_kit_item_seekbar" />
+
+</LinearLayout>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/show_compass"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/offset_x"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/offset_y"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+</LinearLayout>

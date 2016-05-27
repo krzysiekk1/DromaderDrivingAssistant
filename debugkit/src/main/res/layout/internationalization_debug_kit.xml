@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/Internationalization_title"
+        layout="@layout/element_debug_kit_item_section" />
+    <include
+        android:id="@+id/primary_option_one"
+        layout="@layout/element_debug_kit_item_enter_child" />
+    <include
+        android:id="@+id/fallback_option_one"
+        layout="@layout/element_debug_kit_item_enter_child" />
+    <include
+        android:id="@+id/primary_option_two"
+        layout="@layout/element_debug_kit_item_enter_child" />
+    <include
+        android:id="@+id/fallback_option_two"
+        layout="@layout/element_debug_kit_item_enter_child" />
+    <include
+        android:id="@+id/show_both_options"
+        layout="@layout/element_debug_kit_item_checkbox" />
+    <include
+        android:id="@+id/backup_to_transliterated"
+        layout="@layout/element_debug_kit_item_checkbox" />
+</LinearLayout>

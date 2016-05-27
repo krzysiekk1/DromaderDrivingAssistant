@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/annotation_view_title_row"
+        layout="@layout/element_debug_kit_item_section" />
+    <include
+        android:id="@+id/annotation_none"
+        layout="@layout/element_debug_kit_radio_button"/>
+    <include
+        android:id="@+id/annotation_logo"
+        layout="@layout/element_debug_kit_radio_button"/>
+    <include
+        android:id="@+id/annotation_navigate"
+        layout="@layout/element_debug_kit_radio_button"/>
+    <include
+        android:id="@+id/annotation_bug"
+        layout="@layout/element_debug_kit_radio_button"/>
+
+</LinearLayout>

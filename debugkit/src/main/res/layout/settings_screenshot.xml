@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/show_frame"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/continuous_screenshot"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/take_screenshot"
+        layout="@layout/element_debug_kit_item_button" />
+
+    <include
+        android:id="@+id/clear_screenshot"
+        layout="@layout/element_debug_kit_item_button" />
+
+</LinearLayout>

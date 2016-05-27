@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/animate_zoom_level_title"
+        layout="@layout/element_debug_kit_item_section" />
+    <include
+        android:id="@+id/animate_zoom_level"
+        layout="@layout/element_debug_kit_item_edittext" />
+    <include
+        android:id="@+id/animate_zoom_level_button"
+        layout="@layout/element_debug_kit_item_button" />
+    <include
+        android:id="@+id/animate_bearing_title"
+        layout="@layout/element_debug_kit_item_section"/>
+    <include
+        android:id="@+id/animate_bearing"
+        layout="@layout/element_debug_kit_item_edittext"/>
+    <include
+        android:id="@+id/animate_bearing_button"
+        layout="@layout/element_debug_kit_item_button"/>
+    <include
+        android:id="@+id/animate_location_title"
+        layout="@layout/element_debug_kit_item_section"/>
+    <include
+        android:id="@+id/animate_latitude"
+        layout="@layout/element_debug_kit_item_edittext"/>
+    <include
+        android:id="@+id/animate_longitude"
+        layout="@layout/element_debug_kit_item_edittext"/>
+    <include
+        android:id="@+id/animate_duration"
+        layout="@layout/element_debug_kit_item_edittext"/>
+    <include
+        android:id="@+id/animate_location_button"
+        layout="@layout/element_debug_kit_item_button"/>
+
+
+
+</LinearLayout>

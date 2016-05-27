@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/polygon_id"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/line_width"
+        layout="@layout/element_debug_kit_item_seekbar" />
+
+    <include
+        android:id="@+id/outline_width"
+        layout="@layout/element_debug_kit_item_seekbar" />
+
+    <include
+        android:id="@+id/outline_pixels_solid"
+        layout="@layout/element_debug_kit_item_seekbar" />
+
+    <include
+        android:id="@+id/outline_pixels_skip"
+        layout="@layout/element_debug_kit_item_seekbar" />
+
+    <include
+        android:id="@+id/fill_color"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/outline_color"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/polygon_points"
+        layout="@layout/element_debug_kit_item_button" />
+
+    <include
+        android:id="@+id/tap_to_draw"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/generate_new_id"
+        layout="@layout/element_debug_kit_item_button" />
+
+</LinearLayout>

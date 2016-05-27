@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/custom_poi_title_row"
+        layout="@layout/element_debug_kit_item_section" />
+    <include
+        android:id="@+id/custom_poi_identifier"
+        layout="@layout/element_debug_kit_item_edittext" />
+    <include
+        android:id="@+id/custom_poi_latitude"
+        layout="@layout/element_debug_kit_item_edittext" />
+    <include
+        android:id="@+id/custom_poi_longitude"
+        layout="@layout/element_debug_kit_item_edittext" />
+    <include
+        android:id="@+id/custom_poi_type"
+        layout="@layout/element_debug_kit_item_enter_child" />
+    <include
+        android:id="@+id/custom_poi_category"
+        layout="@layout/element_debug_kit_item_enter_child" />
+    <include
+        android:id="@+id/custom_poi_action_title_row"
+        layout="@layout/element_debug_kit_item_section" />
+    <include
+        android:id="@+id/custom_poi_add"
+        layout="@layout/element_debug_kit_item_button"/>
+    <include
+        android:id="@+id/custom_poi_remove_identifier"
+        layout="@layout/element_debug_kit_item_edittext" />
+    <include
+        android:id="@+id/custom_poi_remove"
+        layout="@layout/element_debug_kit_item_button"/>
+
+</LinearLayout>

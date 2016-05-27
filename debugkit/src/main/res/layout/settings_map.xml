@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/heading_mode"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/show_current_position"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/show_heading_indicator"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/show_accuracy_circle"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/center_on_current_position"
+        layout="@layout/element_debug_kit_item_button" />
+
+    <include
+        android:id="@+id/rotation"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/panning"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/zooming"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/annotation_zoom_limit"
+        layout="@layout/element_debug_kit_item_seekbar" />
+
+    <include
+        android:id="@+id/compass_options"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/trail_settings"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/enable_inertia"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/zoom_levels"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/map_state"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/enable_3d"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/camera_settings"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/poi_options"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/one_ways"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/street_badges"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/drawing_order"
+        layout="@layout/element_debug_kit_item_enter_child" />
+
+    <include
+        android:id="@+id/show_bicyle_lanes"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/zoom_with_center_anchor"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/show_house_numbers"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/new_instance"
+        layout="@layout/element_debug_kit_item_button" />
+
+</LinearLayout>

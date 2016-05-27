@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">DebugKit</string>
+    <!--Testing menu-->
+    <string name="testing_section">Testing</string>
+    <string name="option_annotation_POI">Annotations </string>
+    <string name="option_map_view_settings">Map settings</string>
+    <string name="option_map_cache">Map cache</string>
+    <string name="option_last_rendered_frame">Last rendered frame</string>
+    <string name="option_ccp_animation_custom_view"> CCP Animation &amp; custom view</string>
+    <string name="option_bounding_box">Bounding box</string>
+    <string name="option_internalization">Internalization</string>
+    <string name="option_animate">Animate</string>
+    <string name="option_map_style">Map style</string>
+    <string name="option_scale_view">Scale view</string>
+    <string name="option_callout_view">Callout view</string>
+    <string name="option_routing">Routing</string>
+    <string name="option_map_version_information">Version information</string>
+    <string name="option_overlays">Overlays</string>
+    <string name="option_poi_tracker">POI Tracker</string>
+    <string name="option_position_logging">Position logging</string>
+
+    <!--Routing option in testing menu-->
+    <string name="routing_start_long">Start longitude</string>
+    <string name="routing_start_lat">Start latitude</string>
+    <string name="routing_dest_long">Destination longitude</string>
+    <string name="routing_dest_lat">Destination latitude</string>
+    <string name="routing_longtap_start">Long tap for start point</string>
+    <string name="routing_longtap_dest">Long tap for destination point</string>
+    <string name="routing_routesnr">Number of routes</string>
+    <string name="routing_routemode">Route Mode</string>
+    <string name="routing_connection_mode">Rout Connection Mode</string>
+    <string name="routing_restriction">Route Restrictions</string>
+    <string name="routing_should_be_rendered">Should Be Rendered</string>
+    <string name="routing_request_advices">Request Advices</string>
+    <string name="routing_request_extended">Request Extended Route Points</string>
+    <string name="routing_request_country">Request Country Codes</string>
+    <string name="routing_advanced_settings">Advanced Settings</string>
+    <string name="routing_use_slopes">Use Slopes</string>
+    <string name="routing_download_corridor">Download Route Corridor</string>
+    <string name="routing_download_corridor_widht">Route Corridor Width</string>
+    <string name="routing_download_corridor_wait">Wait Corridor Download</string>
+    <string name="routing_destination_is_point">Destination Is Point</string>
+    <string name="routing_route_info">Route Information</string>
+    <string name="routing_route_id">Route ID</string>
+    <string name="routing_distance">Distance</string>
+    <string name="routing_estimated_time">Estimated Time</string>
+    <string name="routing_calculated_after_rerouting">Calculated After Rerouting</string>
+    <string name="routing_toll_roades">Contains Toll Roads</string>
+    <string name="routing_highways">Contains Highways</string>
+    <string name="routing_ferry_lines">Contains Ferry Lines</string>
+    <string name="routing_viapoints_on_route">Via Points On Route</string>
+    <string name="routing_advice_list">Advice List</string>
+    <string name="routing_coordinates">Coordinates</string>
+    <string name="routing_country_codes">Country Codes</string>
+    <string name="routing_actions">Actions</string>
+    <string name="routing_calculate_route">Calculate Route</string>
+    <string name="routing_top_inset">Top Inset</string>
+    <string name="routing_left_inset">Left Inset</string>
+    <string name="routing_bottom_inset">Bottom Inset</string>
+    <string name="routing_right_inset">Right Inset</string>
+    <string name="routing_zoom_to_route">Zoom To Route</string>
+    <string name="routing_block_distance">Block Road Distance</string>
+    <string name="routing_block_road">Block Road</string>
+    <string name="routing_block_type">Block Road Type</string>
+    <string name="routing_unlock_road">Unlock Road</string>
+    <string name="routing_save_id">Save Road Id</string>
+    <string name="routing_save_route">Save Route To Cache</string>
+    <string name="routing_load_id">Load Route Id</string>
+    <string name="routing_load_route">Load Route From Cache</string>
+    <string name="routing_clear_routes_from_chace">Clear All Routes From Cache</string>
+    <string name="routing_get_advice_list">Get Advice List</string>
+    <string name="routing_get_coordinates_list">Route Coordinates From Route</string>
+    <string name="routing_get_country_codes">Request Country Code</string>
+    <string name="routing_clear_all">Clear Routes</string>
+    <string name="routing_corridor_download">Corridor Download</string>
+    <string name="routing_viapoint_longtap">Long Tap For Coordinates</string>
+    <string name="routing_viapoint_add">Add Via Point</string>
+    <string name="routing_viapoint_remove">Remove Via Point</string>
+    <string name="routing_viapoint_settings">Via Points Settings</string>
+    <string name="routing_viapoint_list">Via Point List</string>
+    <string name="routing_id">ID: </string>
+    <string name="routing_position">Position: </string>
+    <string name="routing_country_codes_list">Country Codes List</string>
+    <string name="routing_country_code">Country Codes: </string>
+    <string name="routing_instruction">Instruction: </string>
+    <string name="routing_coordinates_list">Coordinates List</string>
+    <string name="routing_longitude">Longitude: </string>
+    <string name="routing_latitude">Latitude: </string>
+    <string name="block_road_toast">Please select one route for calculation!</string>
+    <string name="block_road_check">Block road distance longer then route distance</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="avoid_toll_roads">Avoid Toll Roads</string>
+    <string name="avoid_highways">Avoid Highways</string>
+    <string name="avoid_ferries">Avoid Ferries</string>
+    <string name="avoid_bicyclewalk">Avoid Bicycle Walk</string>
+    <string name="avoid_bicyclecarry">Avoid Bicycle Carry</string>
+
+    <string name="map_style_day">Day</string>
+    <string name="map_style_night">Night</string>
+    <string name="map_style_outdoor">Outdoor</string>
+    <string name="map_style_grayscale">Grayscale</string>
+    <string name="navigate">Navigate</string>
+    <string name="label_parsing_xml">Parsing Maps.xml file ...</string>
+    <string name="label_download">Download</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="latitude">Latitude:</string>
+    <string name="longitude">Longitude:</string>
+    <string name="reverse_geocode">Reverse geocode</string>
+    <string name="country_code">Country code:</string>
+    <string name="city">City:</string>
+    <string name="street">Street:</string>
+    <string name="house_number">House number:</string>
+    <string name="search">Search</string>
+    <string name="searching">Searching ...</string>
+    <string name="search_topic">Search topic</string>
+    <string name="radius">Radius (m)</string>
+    <string name="calculate_route">Calculate route</string>
+    <string name="stop_navigation">Stop navigation</string>
+    <string name="start_navigation">Start navigation</string>
+    <string name="label_draw">Draw &amp; Route</string>
+    <string name="label_route">Route</string>
+    <string name="label_position_me">Position me</string>
+    <string name="label_heading">Heading</string>
+    <string name="no_position_available">Current position is not available</string>
+    <string name="route_calculation_failed">Route calculation failed</string>
+    <string name="show_heat_map">SHOW HEAT MAP FOR\nTHE SELECTED CATEGORIES</string>
+    <string name="gpx_license_notification_text">GPX track navigation is available for commercial use with a enterprise license. Usage without such a license will lead to your API KEY being suspended.</string>
+    <string name="ok_text">OK</string>
+    <string name="update_label">Update</string>
+    <string name="cancel_label">Cancel</string>
+    <string name="gpx_route_1">Berlin Unter den Linden - Berlin Hohenzollerndamm</string>
+    <string name="gpx_route_2">Berlin Unter den Linden - Berlin Grunewaldstrasse</string>
+    <string name="gpx_route_3">Munchen Oskar-von-Miller-Ring – Herterichstrasse</string>
+    <string name="gpx_route_4">Berlin – Hamburg</string>
+    <string name="gpx_route_5">Chicago city route</string>
+    <string name="start_point_nav">Select start point</string>
+    <string name="end_point_nav">Select end point</string>
+    <string name="calculate_routes">Calculate route(s)</string>
+    <string name="start_free_walk">Start free walk</string>
+    <string name="start_free_drive">Start free drive</string>
+    <string name="settings_nav_ui">Settings</string>
+    <string name="on_button"> On </string>
+    <string name="off_button">Off</string>
+    <string name="long_tap_for_position">Long tap on the map to position point</string>
+    <string name="long_tap_start_location">Long tap on the map to position start point</string>
+    <string name="long_tap_destination_location">Long tap on the map to position destination point</string>
+    <string name="long_tap_poi_location">Long tap on the map to position trackable POI</string>
+    <string name="select_via_point">Select via point</string>
+    <string name="clear_via_point">Clear via point</string>
+    <string name="no_position_message">No current position</string>
+    <string name="cancel_all_downloads">CANCEL ALL DOWNLOADS</string>
+    <string name="text_to_speech_engine_not_initialized">Text-to-speech could not be initialized</string>
+    <string name="no_offline_packages">No offline map packages are available</string>
+    <string name="test">Test</string>
+    <string name="testing">Testing</string>
+
+
+    <string name="real_reach_choose_type">Choose the real reach profile</string>
+    <string name="real_reach_profile_time">Time</string>
+    <string name="real_reach_profile_energy">Energy</string>
+    <string name="real_reach_profile_distance">Distance</string>
+
+    <string name="real_reach_online">Online</string>
+    <string name="real_reach_offline">Offline</string>
+    <string name="real_reach_hybrid">Hybrid</string>
+    <string name="round_trip">Round trip on</string>
+    <string name="round_trip_off">Round trip off</string>
+
+    <!--Settings-->
+    <string name="general_label">General</string>
+    <!--Route type settings-->
+    <string name="route_type_car_fastest">Car fastest</string>
+    <string name="route_type_car_shortest">Car shortest</string>
+    <string name="route_type_car_efficient">Efficient route</string>
+    <string name="route_type_pedestrian">Pedestrian</string>
+    <string name="route_type_bicycle_fast">Bicycle fastest</string>
+    <string name="route_type_bicycle_short">Bicycle shortest</string>
+    <string name="route_type_bicycle_quiet">Bicycle quietest</string>
+    <!-- Distance format -->
+    <string name="km_m">Kilometers/Meters</string>
+    <string name="mi_feet">Miles/Feet</string>
+    <string name="mi_yards">Miles/Yards</string>
+    <!-- Number of routes-->
+    <string name="one_route">1</string>
+    <string name="two_routes">2</string>
+    <string name="three_routes">3</string>
+    <!--Navigation type-->
+    <string name="real_navigation">Real</string>
+    <string name="simulation_navigation">Simulation</string>
+    <string name="sim_from_log_navigation">File</string>
+    <!-- Speed warnings km/h-->
+    <string name="five">5km/h</string>
+    <string name="ten">10km/h</string>
+    <string name="fifteen">15km/h</string>
+    <string name="twelve">20km/h</string>
+    <string name="less"><![CDATA[<]]></string>
+    <string name="more"><![CDATA[>]]></string>
+    <!-- Speed warnings mi/h-->
+    <string name="five_mi_h">5mi/h</string>
+    <string name="ten_mi_h">10mi/h</string>
+    <string name="fifteen_mi_h">15mi/h</string>
+    <string name="twelve_mi_h">20mi/h</string>
+
+    <string name="open_drawer">OPEN</string>
+    <string name="close_drawer">CLOSE</string>
+    <string-array name="sports_array">
+        <item>Shuttle Badminton</item>
+        <item>Tennis</item>
+        <item>FootBall</item>
+        <item>Basket Ball</item>
+        <item>Table Tennis</item>
+        <item>Chess</item>
+        <item>Hockey</item>
+    </string-array>
+
+    <!--Annotation & Custom Poi strings -->
+    <string name="annotation_title">Annotation</string>
+    <string name="annotation_option">Annotation</string>
+    <string name="custompoi_title">Custom POI</string>
+    <string name="custompoi_option">Custom POI</string>
+    <string name="annotation_settings">Settings</string>
+    <string name="annotation_identifier">Identifier</string>
+    <string name="annotation_type">Annotation Type</string>
+    <string name="offset_X">Offset X</string>
+    <string name="offset_Y">Offset Y</string>
+    <string name="minimum_tap_zoom">Minimum Tap ZoomLevel</string>
+    <string name="annotation_view">Annotation View</string>
+    <string name="annot_animation_settings">Animation Settings</string>
+    <string name="animation_type">Animation Type</string>
+    <string name="animation_easing_type">Animation Easing Type</string>
+    <string name="animation_duration">Animation Duration</string>
+    <string name="annotation_actions">Actions</string>
+    <string name="annotation_add">Add</string>
+    <string name="annotation_bring_to_front">Bring to front</string>
+    <string name="annotation_update">Update</string>
+    <string name="annotation_remove_identifier">Remove Identifier</string>
+    <string name="annotation_remove">Remove</string>
+    <string name="annotation_clear_all">Clear All</string>
+    <string name="annotation_color_red">Red</string>
+    <string name="annotation_color_blue">Blue</string>
+    <string name="annotation_color_green">Green</string>
+    <string name="annotation_color_purple">Purple</string>
+    <string name="annotation_color_marker">Marker</string>
+    <string name="annotation_color_destinationflag">Destination Flag</string>
+    <string name="annotation_none">None</string>
+    <string name="custom_poi_title">CustomPoi Settings</string>
+    <string name="custom_poi_type">CustomPoi Type</string>
+    <string name="custom_poi_category">CustomPoi Category</string>
+    <string name="block_road_mfeet">Meters to Feet</string>
+    <string name="block_road_myards">Meters to Yards</string>
+    <string name="block_road_mmile">Meters in Mile</string>
+    <string name="block_road_mkm">Meters in Km</string>
+
+    <!--CalloutView strings -->
+    <string name="callout_view_title">Callout View Settings</string>
+    <string name="callout_view_vertical_offset">Vertical Offset</string>
+    <string name="callout_view_title_text">Title Text</string>
+    <string name="callout_view_subtitle_text">Subtitle Text</string>
+    <string name="callout_view_show_callout">Show Callout</string>
+    <string name="callout_view_hide_callout">Hide Callout</string>
+    <string name="callout_view_show_custom_callout">Show Custom Callout</string>
+
+    <!--Internationalization strings -->
+    <string name="internationalizatio_title">Internationalization Settings</string>
+    <string name="internationalization_primary_option">Primary Option</string>
+    <string name="internationalization_fallback_option">Fallback Option</string>
+    <string name="internationalization_show_both_options">Show Both Options</string>
+    <string name="internationalization_transliterated">Backup to transliterated</string>
+
+    <!--Internationalization strings -->
+    <string name="scale_view_title">Scale View Settings</string>
+    <string name="scale_view_distance_format">Distance Format</string>
+    <string name="scale_view_night_style">Night Style</string>
+    <string name="scale_view_metrics">Metrics</string>
+    <string name="scale_view_milesfeet">MilesFeet</string>
+    <string name="scale_view_milesyards">MilesYards</string>
+
+    <string name="animation_settings">CCP Animation settings</string>
+    <string name="red">Red</string>
+    <string name="green">Green</string>
+    <string name="blue">Blue</string>
+    <string name="alpha">Alpha</string>
+    <string name="continuous">Continuous</string>
+    <string name="span">Span</string>
+    <string name="duration">Duration (ms)</string>
+    <string name="duration_out">Duration out (ms)</string>
+    <string name="use_custom_view">Use custom view</string>
+    <string name="start_animation">Start animation</string>
+    <string name="operations">Operations</string>
+    <string name="stop_animation">Stop animation</string>
+    <string name="go_to_current_position">Go to current position</string>
+
+    <string name="follower_mode">Follower mode</string>
+    <string name="show_current_position">Show current position</string>
+    <string name="show_heading_indicator">Show heading indicator</string>
+    <string name="show_accuracy_circle">Show accuracy circle</string>
+    <string name="center_on_current_pos">Center on current position</string>
+    <string name="rotation">Rotation</string>
+    <string name="panning">Panning</string>
+    <string name="zooming">Zooming</string>
+    <string name="annotation_zoom_limit">Min zoom for annotation tap</string>
+    <string name="compass_options">Compass options</string>
+    <string name="trail_settings">Trail settings</string>
+    <string name="enable_inertia">Enable inertia</string>
+    <string name="zoom_levels">Zoom levels</string>
+    <string name="map_state">Map state</string>
+    <string name="enable_3d">Enable 3D</string>
+    <string name="camera_settings">Camera settings</string>
+    <string name="poi_options">POI display options</string>
+    <string name="one_ways">One ways</string>
+    <string name="street_badges">Street names as popups</string>
+    <string name="drawing_order">Drawing order</string>
+    <string name="show_bicycle_lanes">Show bicycle lanes</string>
+    <string name="zoom_with_anchor">Zoom with center anchor</string>
+    <string name="show_house_numbers">Show house numbers</string>
+    <string name="new_instance">New instance</string>
+    <string name="show_compass">Show compass</string>
+    <string name="offset_x">X offset</string>
+    <string name="offset_y">Y offset</string>
+    <string name="min_zoom">Minimum zoom level</string>
+    <string name="max_zoom">Maximum zoom level</string>
+    <string name="objects_over_annotations">Objects over annotations</string>
+    <string name="annotations_over_objects">Annotations over objects</string>
+    <string name="zoom">Zoom</string>
+    <string name="bearing">Bearing</string>
+    <string name="enabled">Enabled</string>
+    <string name="dotted">Dotted</string>
+    <string name="width">Width</string>
+    <string name="pedestrian_trail">Pedestrian trail</string>
+    <string name="smoothness">Smoothness</string>
+    <string name="center">Center</string>
+    <string name="tilt">Tilt</string>
+    <string name="distance">Distance</string>
+    <string name="cities">City POIs</string>
+    <string name="general">General POIs</string>
+    <string name="important">Important POIs</string>
+    <string name="autoincrement_ids">Autoincrement ids</string>
+    <string name="circle">Circle</string>
+    <string name="polyline">Polyline</string>
+    <string name="polygon">Polygon</string>
+    <string name="clear_all_overlays">Clear all overlays</string>
+    <string name="overlay_id">Overlay id</string>
+    <string name="id">Id</string>
+    <string name="search_overlay">Search for overlay with id</string>
+    <string name="remove_overlay">Remove overlay with id</string>
+    <string name="line_width">Line width</string>
+    <string name="outline_width">Outline width</string>
+    <string name="outline_pixels_solid">Outline pixels solid</string>
+    <string name="outline_pixels_skip">Outline pixels skip</string>
+    <string name="number_of_points">Points (0, 36..18000) </string>
+    <string name="fill_color">Fill color</string>
+    <string name="line_color">Line color</string>
+    <string name="outline_color">Outline color</string>
+    <string name="is_mask">Is mask</string>
+    <string name="masked_object_scale">Masked object scale</string>
+    <string name="draw_on_tap">Draw on tap</string>
+    <string name="add_object">Add object</string>
+    <string name="generate_id">Generate id</string>
+    <string name="polyline_points">Polyline points:</string>
+    <string name="polygon_points">Polygon points:</string>
+    <string name="map_version">Map version:</string>
+    <string name="routing_version">Routing version:</string>
+    <string name="namebrowser_version">Namebrowser version:</string>
+    <string name="show_frame">Show frame</string>
+    <string name="continuous_screenshot">Continuous screenshot</string>
+    <string name="take_screenshot">Take screenshot</string>
+    <string name="clear_screenshot">Clear screenshot</string>
+
+
+    <!-- Animate strings -->
+    <string name="animate_zoom_level_title">Animate to zoom level</string>
+    <string name="animate_zoom_level">Zoom level</string>
+    <string name="animate_bearing_title">Animate to bearing</string>
+    <string name="animate_bearing">Bearing</string>
+    <string name="animate_button">Animate</string>
+    <string name="animate_location">Animate to location</string>
+    <string name="animate_duration">Duration</string>
+
+    <!-- Bounding box strings-->
+    <string name="settings_title">Settings</string>
+    <string name="top_left_latitude">Top left latitude</string>
+    <string name="top_left_longitude">Top left longitude</string>
+    <string name="bottom_right_latitude">Bottom right latitude</string>
+    <string name="bottom_right_longitude">Bottom right longitude</string>
+    <string name="image_width">Image size width</string>
+    <string name="image_height">Image size height</string>
+    <string name="renderer">Render</string>
+    <string name="fit_bounding_box_title">Fit bounding box</string>
+    <string name="padding_width">Padding width</string>
+    <string name="padding_height">Padding height</string>
+    <string name="fit_bounding_box_button">Fit bounding box with padding</string>
+
+    <!-- Map cache strings -->
+    <string name="cache_info">Cache Info</string>
+    <string name="cache_size">Cache size</string>
+    <string name="set_cache_size">Set cache size</string>
+    <string name="delete_cache">Delete Cache</string>
+    <string name="delete_all_cache">Delete all cache</string>
+    <string name="seconds">Seconds</string>
+    <string name="delete_older">Delete cache older</string>
+
+    <!-- Position logging -->
+    <string name="log_file_type">Position log file type</string>
+    <string name="log_file_path">Path</string>
+    <string name="start_logging_positions">Start logging positions</string>
+    <string name="resume_logging_positions">Resume logging positions</string>
+    <string name="pause_logging_positions">Pause logging positions</string>
+    <string name="stop_logging_positions">Stop logging positions</string>
+
+    <!-- POI tracker strings-->
+    <string name="tracker_settings">Tracker Settings</string>
+    <string name="tracker_radius">Tracker radius</string>
+    <string name="refresh_margin">Refresh margin</string>
+    <string name="rule_settings">Rule Settings</string>
+    <string name="route_distance">Route distance</string>
+    <string name="aerial_distance">Aerial distance</string>
+    <string name="number_turns">Number of turns</string>
+    <string name="start_location">Add start location</string>
+    <string name="dest_location">Add dest location</string>
+    <string name="poi_location">Add POI location</string>
+    <string name="advanced_settings">Rule Advanced Settings</string>
+    <string name="gps_accuracy">Max gps accuracy</string>
+    <string name="min_speed_ignore">Min speed ignore dist</string>
+    <string name="max_distance_after_turn">Max distance after turn</string>
+    <string name="eliminate_uturn">Eliminate if UTurn</string>
+    <string name="play_audio_warnings">Play audio warnings</string>
+    <string name="actions">Actions</string>
+    <string name="start_poi_tracker">Start POI Tracker</string>
+    <string name="stop_poi_tracker">Stop POI Tracker</string>
+    <string name="detected_pois">Detected POIs</string>
+    <string name="detected_pois_list">Detected POIs</string>
+</resources>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+    <include
+        android:id="@+id/scale_view_title_row"
+        layout="@layout/element_debug_kit_item_section" />
+
+    <include
+        android:id="@+id/callout_view_latitude"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/callout_view_longitude"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/callout_view_offsetX"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/callout_view_minimum_zoom_level"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/callout_view_title_text"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/callout_view_subtitle_text"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/callout_actions_view_title_row"
+        layout="@layout/element_debug_kit_item_section" />
+
+    <include
+        android:id="@+id/callout_view_actions"
+        layout="@layout/element_debug_kit_item_button" />
+
+    <include
+        android:id="@+id/callout_view_hide_callout"
+        layout="@layout/element_debug_kit_item_button" />
+    <include
+        android:id="@+id/callout_view_show_custom_callout"
+        layout="@layout/element_debug_kit_item_button" />
+</LinearLayout>

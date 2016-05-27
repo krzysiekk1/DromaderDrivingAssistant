@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/title_row"
+        layout="@layout/element_debug_kit_item_section" />
+
+    <include
+        android:id="@+id/red_seekbar"
+        layout="@layout/element_debug_kit_item_seekbar" />
+
+    <include
+        android:id="@+id/green_seekbar"
+        layout="@layout/element_debug_kit_item_seekbar" />
+
+    <include
+        android:id="@+id/blue_seekbar"
+        layout="@layout/element_debug_kit_item_seekbar" />
+
+    <include
+        android:id="@+id/alpha_seekbar"
+        layout="@layout/element_debug_kit_item_seekbar" />
+
+    <include
+        android:id="@+id/continuous_check"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/span_seekbar"
+        layout="@layout/element_debug_kit_item_seekbar" />
+
+    <include
+        android:id="@+id/duration_seekbar"
+        layout="@layout/element_debug_kit_item_seekbar" />
+
+    <include
+        android:id="@+id/duration_out_seekbar"
+        layout="@layout/element_debug_kit_item_seekbar" />
+
+    <include layout="@layout/element_debug_kit_item_section" />
+
+    <include
+        android:id="@+id/custom_view_checkbox"
+        layout="@layout/element_debug_kit_item_checkbox" />
+
+    <include
+        android:id="@+id/go_to_current_position"
+        layout="@layout/element_debug_kit_item_button" />
+
+    <include
+        android:id="@+id/start_animation_button"
+        layout="@layout/element_debug_kit_item_button" />
+
+    <include
+        android:id="@+id/stop_animation_button"
+        layout="@layout/element_debug_kit_item_button" />
+
+
+</LinearLayout>

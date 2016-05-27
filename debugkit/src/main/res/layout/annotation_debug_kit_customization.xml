@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/annotation_title_row"
+        layout="@layout/element_debug_kit_item_section" />
+
+    <include
+        android:id="@+id/annotation_identifier"
+        layout="@layout/element_debug_kit_item_edittext" />
+    <include
+        android:id="@+id/annotation_type"
+        layout="@layout/element_debug_kit_item_enter_child" />
+    <include
+        android:id="@+id/annotation_offset_x"
+        layout="@layout/element_debug_kit_item_edittext" />
+    <include
+        android:id="@+id/annotation_offset_y"
+        layout="@layout/element_debug_kit_item_edittext" />
+    <include
+        android:id="@+id/annotation_latitude"
+        layout="@layout/element_debug_kit_item_edittext" />
+    <include
+        android:id="@+id/annotation_longitude"
+        layout="@layout/element_debug_kit_item_edittext" />
+    <include
+        android:id="@+id/annotation_minimum_zoomlevel"
+        layout="@layout/element_debug_kit_item_edittext" />
+    <include
+        android:id="@+id/annotation_minimum_tap_zoomlevel"
+        layout="@layout/element_debug_kit_item_seekbar" />
+    <include
+        android:id="@+id/annotation_view"
+        layout="@layout/element_debug_kit_item_checkbox" />
+    <include
+        android:id="@+id/animation_title_row"
+        layout="@layout/element_debug_kit_item_section" />
+    <include
+        android:id="@+id/animation_type"
+        layout="@layout/element_debug_kit_item_enter_child" />
+    <include
+        android:id="@+id/animation_easing_type"
+        layout="@layout/element_debug_kit_item_enter_child" />
+    <include
+        android:id="@+id/animation_duration"
+        layout="@layout/element_debug_kit_item_seekbar"/>
+    <include
+        android:id="@+id/actions_title_row"
+        layout="@layout/element_debug_kit_item_section" />
+    <include
+        android:id="@+id/annotation_add"
+        layout="@layout/element_debug_kit_item_button"/>
+    <include
+        android:id="@+id/annotation_bring_to_front"
+        layout="@layout/element_debug_kit_item_button"/>
+    <include
+        android:id="@+id/annotation_update"
+        layout="@layout/element_debug_kit_item_button"/>
+    <include
+        android:id="@+id/annotation_remove_identifier"
+        layout="@layout/element_debug_kit_item_edittext" />
+    <include
+        android:id="@+id/annotation_remove"
+        layout="@layout/element_debug_kit_item_button"/>
+    <include
+        android:id="@+id/annotation_clear_all"
+        layout="@layout/element_debug_kit_item_button"/>
+
+
+</LinearLayout>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/map_zoom"
+        layout="@layout/element_debug_kit_item_seekbar" />
+
+    <include
+        android:id="@+id/map_position_latitude"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/map_position_longitude"
+        layout="@layout/element_debug_kit_item_edittext" />
+
+    <include
+        android:id="@+id/map_bearing"
+        layout="@layout/element_debug_kit_item_seekbar" />
+
+
+</LinearLayout>

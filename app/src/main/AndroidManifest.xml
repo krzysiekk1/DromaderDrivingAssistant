@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="15"
-        android:targetSdkVersion="22" />
+        android:targetSdkVersion="23" />
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -27,7 +27,7 @@
 
         <meta-data
             android:name="com.skobbler.ngx.API_KEY"
-            android:value=""/>
+            android:value="0f822d8071477d3c03be73746431295f0bf52d7e364b0b6696470b16fb090fb3"/>
 
         <activity
             android:name=".activity.SplashActivity"

@@ -95,8 +95,6 @@
     <string name="avoid_toll_roads">Avoid Toll Roads</string>
     <string name="avoid_highways">Avoid Highways</string>
     <string name="avoid_ferries">Avoid Ferries</string>
-    <string name="avoid_bicyclewalk">Avoid Bicycle Walk</string>
-    <string name="avoid_bicyclecarry">Avoid Bicycle Carry</string>
 
     <string name="map_style_day">Day</string>
     <string name="map_style_night">Night</string>
@@ -175,10 +173,6 @@
     <string name="route_type_car_fastest">Car fastest</string>
     <string name="route_type_car_shortest">Car shortest</string>
     <string name="route_type_car_efficient">Efficient route</string>
-    <string name="route_type_pedestrian">Pedestrian</string>
-    <string name="route_type_bicycle_fast">Bicycle fastest</string>
-    <string name="route_type_bicycle_short">Bicycle shortest</string>
-    <string name="route_type_bicycle_quiet">Bicycle quietest</string>
     <!-- Distance format -->
     <string name="km_m">Kilometers/Meters</string>
     <string name="mi_feet">Miles/Feet</string>

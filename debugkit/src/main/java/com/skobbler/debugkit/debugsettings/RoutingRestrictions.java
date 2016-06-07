@@ -24,8 +24,6 @@ public class RoutingRestrictions extends DebugSettings {
         keyValuePairs.add(new Pair<String, Object>(context.getResources().getString(R.string.avoid_toll_roads), null));
         keyValuePairs.add(new Pair<String, Object>(context.getResources().getString(R.string.avoid_highways), null));
         keyValuePairs.add(new Pair<String, Object>(context.getResources().getString(R.string.avoid_ferries), null));
-        keyValuePairs.add(new Pair<String, Object>(context.getResources().getString(R.string.avoid_bicyclewalk), null));
-        keyValuePairs.add(new Pair<String, Object>(context.getResources().getString(R.string.avoid_bicyclecarry), null));
         return keyValuePairs;
     }
 
@@ -59,24 +57,6 @@ public class RoutingRestrictions extends DebugSettings {
             public void onClick(View view) {
                 CheckBox ferriesCheckBox = (CheckBox) ferries.findViewById(R.id.property_value);
                 ferriesCheckBox.setChecked(!ferriesCheckBox.isChecked());
-
-            }
-        });
-        final View bicycleWalk = specificLayout.findViewById(R.id.restriction_mode_3);
-        bicycleWalk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CheckBox bicycleWalkCheckBox = (CheckBox) bicycleWalk.findViewById(R.id.property_value);
-                bicycleWalkCheckBox.setChecked(!bicycleWalkCheckBox.isChecked());
-
-            }
-        });
-        final View bicycleCarry = specificLayout.findViewById(R.id.restriction_mode_4);
-        bicycleCarry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CheckBox bicycleCarryCheckBox = (CheckBox) bicycleCarry.findViewById(R.id.property_value);
-                bicycleCarryCheckBox.setChecked(!bicycleCarryCheckBox.isChecked());
 
             }
         });

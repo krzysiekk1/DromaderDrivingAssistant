@@ -232,9 +232,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         }
 
         SKToolsNavigationUIManager.getInstance().setRouteType(configuration.getRouteType());
-        if (configuration.getRouteType() == SKRouteSettings.SKRouteMode.PEDESTRIAN) {
-            SKRouteManager.getInstance().enablePedestrianTrail(true, 5);
-        }
         if (configuration.getRouteType() == SKRouteSettings.SKRouteMode.CAR_SHORTEST) {
             route.setNoOfRoutes(1);
         } else {
@@ -286,22 +283,8 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         this.mapHolder = mapHolder;
         mapView = mapHolder.getMapSurfaceView();
         SKToolsNavigationUIManager.getInstance().setRouteType(configuration.getRouteType());
-        if (configuration.getRouteType() == SKRouteSettings.SKRouteMode.PEDESTRIAN) {
-            currentUserDisplayMode = SKMapSettings.SKMapDisplayMode.MODE_2D;
-            Toast.makeText(this.currentActivity, "The map will turn based on your recent positions.", Toast.LENGTH_SHORT).show();
-            mapView.getMapSettings().setFollowerMode(SKMapSettings.SKMapFollowerMode.HISTORIC_POSITION);
-            SKTrailType trailType = new SKTrailType();
-            trailType.setPedestrianTrailEnabled(true, 1);
-            navigationSettings.setTrailType(trailType);
-            navigationSettings.setCcpAsCurrentPosition(true);
-            mapView.getMapSettings().setCompassPosition(new SKScreenPoint(10, 70));
-            mapView.getMapSettings().setCompassShown(true);
-            navigationSettings.setNavigationMode(SKNavigationSettings.SKNavigationMode.PEDESTRIAN);
-            startPedestrian=true;
-        } else {
-            currentUserDisplayMode = SKMapSettings.SKMapDisplayMode.MODE_3D;
-            mapView.getMapSettings().setFollowerMode(SKMapSettings.SKMapFollowerMode.NAVIGATION);
-        }
+        currentUserDisplayMode = SKMapSettings.SKMapDisplayMode.MODE_3D;
+        mapView.getMapSettings().setFollowerMode(SKMapSettings.SKMapFollowerMode.NAVIGATION);
         mapView.getMapSettings().setMapDisplayMode(currentUserDisplayMode);
         mapView.getMapSettings().setStreetNamePopupsShown(true);
         mapView.getMapSettings().setMapZoomingEnabled(false);
@@ -657,9 +640,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
      * play the last advice
      */
     protected void playLastAdvice() {
-        if (!(configuration.getRouteType() == SKRouteSettings.SKRouteMode.PEDESTRIAN)) {
-            SKToolsAdvicePlayer.getInstance().playAdvice(lastAudioAdvices, SKToolsAdvicePlayer.PRIORITY_USER);
-        }
+        SKToolsAdvicePlayer.getInstance().playAdvice(lastAudioAdvices, SKToolsAdvicePlayer.PRIORITY_USER);
     }
 
     /**
@@ -858,16 +839,12 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
 
     @Override
     public void onSignalNewAdviceWithAudioFiles(String[] audioFiles, boolean specialSoundFile) {
-        if (!(configuration.getRouteType() == SKRouteSettings.SKRouteMode.PEDESTRIAN)) {
-            SKToolsAdvicePlayer.getInstance().playAdvice(audioFiles, SKToolsAdvicePlayer.PRIORITY_NAVIGATION);
-        }
+        SKToolsAdvicePlayer.getInstance().playAdvice(audioFiles, SKToolsAdvicePlayer.PRIORITY_NAVIGATION);
     }
 
     @Override
     public void onSpeedExceededWithAudioFiles(String[] adviceList, boolean speedExceeded) {
-        if (!(configuration.getRouteType() == SKRouteSettings.SKRouteMode.PEDESTRIAN)) {
-            playSoundWhenSpeedIsExceeded(adviceList, speedExceeded);
-        }
+        playSoundWhenSpeedIsExceeded(adviceList, speedExceeded);
     }
 
     /**
@@ -979,10 +956,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         if (SKToolsNavigationUIManager.getInstance().isPreNavigationMode()) {
             SKToolsMapOperationsManager.getInstance().zoomToRoute(currentActivity);
         }
-        if (configuration.getRouteType() == SKRouteSettings.SKRouteMode.PEDESTRIAN) {
-            SKRouteManager.getInstance().renderRouteAsPedestrian(skRouteInfo.getRouteID());
-        }
-
 
         final List<SKRouteAdvice> advices = SKRouteManager.getInstance().getAdviceList(skRouteInfo.getRouteID(), SKMaps.SKDistanceUnitType.DISTANCE_UNIT_KILOMETER_METERS);
         if (advices != null){

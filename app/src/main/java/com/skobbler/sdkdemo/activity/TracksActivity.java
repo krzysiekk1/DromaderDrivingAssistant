@@ -33,7 +33,7 @@ public class TracksActivity extends Activity {
         
     }
     
-    
+    //metoda prawdopodobnie do usunieca
     public void onMenuOptionClick(View v) {
         Intent intent = new Intent(TracksActivity.this, TrackElementsActivity.class);
         switch (v.getId()) {

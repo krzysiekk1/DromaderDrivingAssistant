@@ -50,9 +50,6 @@ import java.util.TreeMap;
  */
 public class ResourceDownloadsListActivity extends Activity {
 
-    /**
-     * Constants
-     */
     public static final long KILO = 1024;
 
     public static final long MEGA = KILO * KILO;
@@ -61,24 +58,12 @@ public class ResourceDownloadsListActivity extends Activity {
 
     public static final long TERRA = GIGA * KILO;
 
-    /**
-     * Download manager used for controlling the download process
-     */
     private SKToolsDownloadManager downloadManager;
 
-    /**
-     * Adapter for download items
-     */
     private DownloadsAdapter adapter;
 
-    /**
-     * List element displaying download items
-     */
     private ListView listView;
 
-    /**
-     * List of items in the current screen
-     */
     private List<ListItem> currentListItems;
 
     /**
@@ -86,29 +71,14 @@ public class ResourceDownloadsListActivity extends Activity {
      */
     private Map<String, ListItem> codesMap = new HashMap<String, ListItem>();
 
-    /**
-     * List of all map resources
-     */
     public static Map<String, MapDownloadResource> allMapResources;
 
-    /**
-     * List of downloads which are currently in progress
-     */
     public static List<DownloadResource> activeDownloads = new ArrayList<DownloadResource>();
 
-    /**
-     * DAO object for accessing the maps database
-     */
     public static MapsDAO mapsDAO;
 
-    /**
-     * Stack containing list indexes for opened screens
-     */
     private Stack<Integer> previousListIndexes = new Stack<Integer>();
 
-    /**
-     * Context object
-     */
     private DemoApplication appContext;
 
     private Map<Long, Long> downloadChunksMap = new TreeMap<Long, Long>();
@@ -205,24 +175,19 @@ public class ResourceDownloadsListActivity extends Activity {
         }
     };
 
-    /**
-     * Starte periodic UI updates
-     */
     private void startPeriodicUpdates() {
         downloadStartTime = System.currentTimeMillis();
         handler.postDelayed(updater, 3000);
     }
 
-    /**
-     * Stops the periodic UI updates
-     */
     private void stopPeriodicUpdates() {
         downloadChunksMap.clear();
         handler.removeCallbacks(updater);
     }
 
     /**
-     * Initializes the map resources (reads them from the database if they are available there or parses them otherwise and stores them in the database)
+     * Initializes the map resources (reads them from the database if they are available there or
+     * parses them otherwise and stores them in the database)
      */
     private boolean initializeMapResources() {
         mapsDAO = ResourcesDAOHandler.getInstance(this).getMapsDAO();
@@ -308,7 +273,6 @@ public class ResourceDownloadsListActivity extends Activity {
 
     /**
      * Gets the list of child items for a given code
-     *
      * @param parentCode
      * @return
      */
@@ -605,7 +569,6 @@ public class ResourceDownloadsListActivity extends Activity {
 
         /**
          * Gets a percentage of how much was downloaded from the given resource
-         *
          * @param downloadResource download resource
          * @return perecntage value
          */
@@ -810,10 +773,6 @@ public class ResourceDownloadsListActivity extends Activity {
         }
     }
 
-    /**
-     * Triggers an update on the list and sets its position to the given value
-     * @param position
-     */
     private void updateListAndScrollToPosition(final int position) {
         listView.setVisibility(View.INVISIBLE);
         adapter.notifyDataSetChanged();
@@ -826,12 +785,6 @@ public class ResourceDownloadsListActivity extends Activity {
         });
     }
 
-    /**
-     * Formats a given value (provided in bytes)
-     *
-     * @param value value (in bytes)
-     * @return formatted string (value and unit)
-     */
     public static String convertBytesToStringRepresentation(final long value) {
         final long[] dividers = new long[]{TERRA, GIGA, MEGA, KILO, 1};
         final String[] units = new String[]{"TB", "GB", "MB", "KB", "B"};
@@ -851,12 +804,6 @@ public class ResourceDownloadsListActivity extends Activity {
         }
     }
 
-    /**
-     * Format the time value given as parameter (in milliseconds)
-     *
-     * @param time time value (provided in milliseconds)
-     * @return formatted time
-     */
     public static String getFormattedTime(long time) {
         String format = String.format("%%0%dd", 2);
         time = time / 1000;
@@ -880,12 +827,6 @@ public class ResourceDownloadsListActivity extends Activity {
         return new DecimalFormat("#,##0.#").format(result) + " " + unit;
     }
 
-    /**
-     * Generates a list of download items based on the list of resources given as input
-     *
-     * @param downloadResources list of resources
-     * @return a list of SKToolsDownloadItem objects
-     */
     private List<SKToolsDownloadItem> createDownloadItemsFromDownloadResources(List<DownloadResource>
                                                                                        downloadResources) {
         List<SKToolsDownloadItem> downloadItems = new ArrayList<SKToolsDownloadItem>();
@@ -903,10 +844,6 @@ public class ResourceDownloadsListActivity extends Activity {
         return downloadItems;
     }
 
-    /**
-     * Click handler
-     * @param view
-     */
     public void onClick(View view) {
         if (view.getId() == R.id.cancel_all_button) {
             boolean cancelled = downloadManager.cancelAllDownloads();

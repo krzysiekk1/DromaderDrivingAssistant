@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/AndroidOpenSourceDemoGradle.iml" filepath="$PROJECT_DIR$/AndroidOpenSourceDemoGradle.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SkobblerDemo.iml" filepath="$PROJECT_DIR$/SkobblerDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/debugkit/debugkit.iml" filepath="$PROJECT_DIR$/debugkit/debugkit.iml" />
       <module fileurl="file://$PROJECT_DIR$/sdktools/sdktools.iml" filepath="$PROJECT_DIR$/sdktools/sdktools.iml" />

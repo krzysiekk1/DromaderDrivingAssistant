@@ -36,9 +36,6 @@ import com.skobbler.sdkdemo.util.DemoUtils;
  */
 public class SplashActivity extends Activity implements SKPrepareMapTextureListener, SKMapUpdateListener {
 
-    /**
-     * Path to the MapResources directory
-     */
     public static String mapResourcesDirPath = "";
 
     private boolean update = false;
@@ -46,9 +43,6 @@ public class SplashActivity extends Activity implements SKPrepareMapTextureListe
     private static final String TAG = "SplashActivity";
     public static int newMapVersionDetected = 0;
 
-    /**
-     * flag that shows whether the debug kit is enabled or not
-     */
     private boolean debugKitEnabled;
 
     @Override
@@ -123,9 +117,6 @@ public class SplashActivity extends Activity implements SKPrepareMapTextureListe
         }
     }
 
-    /**
-     * Copy some additional resources from assets
-     */
     private void copyOtherResources() {
         new Thread() {
 
@@ -265,11 +256,6 @@ public class SplashActivity extends Activity implements SKPrepareMapTextureListe
 
     }
 
-    /**
-     * get the available internal memory size
-     *
-     * @return available memory size in bytes
-     */
     public static long getAvailableMemorySize(String path) {
         StatFs statFs = null;
         try {
@@ -304,10 +290,7 @@ public class SplashActivity extends Activity implements SKPrepareMapTextureListe
         }
     }
 
-    /**
-     * Returns the current version code
-     * @return
-     */
+
     public int getVersionCode() {
         int v = 0;
         try {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">AndroidOpenSourceDemo</string>
+    <string name="app_name">Dromader Driving Assistant</string>
     <string name="options_group_map">Map</string>
     <string name="option_map_display">Map Display</string>
     <string name="option_map_styles">Map Styles</string>
@@ -81,7 +81,6 @@
     <string name="test">Test</string>
     <string name="testing">Testing</string>
 
-
     <string name="real_reach_choose_type">Choose the real reach profile</string>
     <string name="real_reach_profile_time">Time</string>
     <string name="real_reach_profile_energy">Energy</string>
@@ -130,8 +129,5 @@
 
     <string name="open_drawer">OPEN</string>
     <string name="close_drawer">CLOSE</string>
-
-
-
 
 </resources>

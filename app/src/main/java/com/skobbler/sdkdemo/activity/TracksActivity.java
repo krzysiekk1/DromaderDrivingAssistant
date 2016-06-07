@@ -29,8 +29,7 @@ public class TracksActivity extends Activity {
                     }
                 });
         alertDialog.show();
-       
-        
+
     }
     
     //metoda prawdopodobnie do usunieca

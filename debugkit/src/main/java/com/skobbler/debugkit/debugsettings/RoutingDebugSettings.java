@@ -126,14 +126,6 @@ public class RoutingDebugSettings extends DebugSettings implements SKRouteListen
      * Ferry Lines check
      */
     private boolean ferryLinesCheck;
-    /**
-     * Bicycle Walk check
-     */
-    private boolean bicycleWalkCheck;
-    /**
-     * Bicycle Carry check
-     */
-    private boolean bicycleCarryCheck;
 
     /**
      * The insets for zoom to route
@@ -610,15 +602,6 @@ public class RoutingDebugSettings extends DebugSettings implements SKRouteListen
                 case 3:
                     routeMode = SKRouteSettings.SKRouteMode.PEDESTRIAN;
                     break;
-                case 4:
-                    routeMode = SKRouteSettings.SKRouteMode.BICYCLE_FASTEST;
-                    break;
-                case 5:
-                    routeMode = SKRouteSettings.SKRouteMode.BICYCLE_SHORTEST;
-                    break;
-                case 6:
-                    routeMode = SKRouteSettings.SKRouteMode.BICYCLE_QUIETEST;
-                    break;
             }
 
         } else if (changedChild instanceof RoutingRouteConnectionMode) {
@@ -656,16 +639,6 @@ public class RoutingDebugSettings extends DebugSettings implements SKRouteListen
             } else {
                 ferryLinesCheck = false;
             }
-            if (((CheckBox) ((RoutingRestrictions) closedChild).specificLayout.findViewById(R.id.restriction_mode_3).findViewById(R.id.property_value)).isChecked()) {
-                bicycleWalkCheck = true;
-            } else {
-                bicycleWalkCheck = false;
-            }
-            if (((CheckBox) ((RoutingRestrictions) closedChild).specificLayout.findViewById(R.id.restriction_mode_4).findViewById(R.id.property_value)).isChecked()) {
-                bicycleCarryCheck = true;
-            } else {
-                bicycleCarryCheck = false;
-            }
 
         }
     }
@@ -685,8 +658,6 @@ public class RoutingDebugSettings extends DebugSettings implements SKRouteListen
         route.setTollRoadsAvoided(tollRoadsCheck);
         route.setHighWaysAvoided(highwaysCheck);
         route.setAvoidFerries(ferryLinesCheck);
-        route.setBicycleWalkAvoided(bicycleWalkCheck);
-        route.setBicycleCarryAvoided(bicycleCarryCheck);
 
         //set the viaPoints
         if (RoutingViaPoints.getViaPointList() != null) {

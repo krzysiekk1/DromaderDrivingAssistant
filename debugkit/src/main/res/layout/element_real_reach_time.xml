@@ -66,27 +66,6 @@
             android:weightSum="1">
 
             <ImageButton
-                android:id="@+id/real_reach_pedestrian_button"
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="0.33"
-                android:background="@color/grey"
-                android:clickable="true"
-                android:onClick="onClick"
-                android:src="@drawable/icon_dropdownmenu_pedestrian" />
-
-            <ImageButton
-                android:id="@+id/real_reach_bike_button"
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_marginLeft="4dp"
-                android:layout_weight="0.33"
-                android:background="@color/grey"
-                android:clickable="true"
-                android:onClick="onClick"
-                android:src="@drawable/icon_dropdownmenu_bike" />
-
-            <ImageButton
                 android:id="@+id/real_reach_car_button"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"

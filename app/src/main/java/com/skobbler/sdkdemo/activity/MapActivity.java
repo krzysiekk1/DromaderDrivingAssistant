@@ -795,11 +795,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.start_free_drive_button:
-                startFreeDriveFromSKTools();
-                getActionBar().setDisplayHomeAsUpEnabled(false);
-                getActionBar().setHomeButtonEnabled(false);
-                break;
             case R.id.clear_via_point_button:
                 viaPoint = null;
                 mapView.deleteAnnotation(VIA_POINT_ICON_ID);
@@ -822,58 +817,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             default:
                 break;
         }
-    }
-
-    private void startFreeDriveFromSKTools() {
-        SKToolsNavigationConfiguration configuration = new SKToolsNavigationConfiguration();
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String prefDistanceFormat = sharedPreferences.getString(PreferenceTypes.K_DISTANCE_UNIT, "0");
-        if (prefDistanceFormat.equals("0")) {
-            configuration.setDistanceUnitType(SKMaps.SKDistanceUnitType.DISTANCE_UNIT_KILOMETER_METERS);
-        } else if (prefDistanceFormat.equals("1")) {
-            configuration.setDistanceUnitType(SKMaps.SKDistanceUnitType.DISTANCE_UNIT_MILES_FEET);
-        } else {
-            configuration.setDistanceUnitType(SKMaps.SKDistanceUnitType.DISTANCE_UNIT_MILES_YARDS);
-        }
-
-        //set speed in town
-        String prefSpeedInTown = sharedPreferences.getString(PreferenceTypes.K_IN_TOWN_SPEED_WARNING, "0");
-        if (prefSpeedInTown.equals("0")) {
-            configuration.setSpeedWarningThresholdInCity(5.0);
-        } else if (prefSpeedInTown.equals("1")) {
-            configuration.setSpeedWarningThresholdInCity(10.0);
-        } else if (prefSpeedInTown.equals("2")) {
-            configuration.setSpeedWarningThresholdInCity(15.0);
-        } else if (prefSpeedInTown.equals("3")) {
-            configuration.setSpeedWarningThresholdInCity(20.0);
-        }
-        //set speed out
-        String prefSpeedOutTown = sharedPreferences.getString(PreferenceTypes.K_OUT_TOWN_SPEED_WARNING, "0");
-        if (prefSpeedOutTown.equals("0")) {
-            configuration.setSpeedWarningThresholdOutsideCity(5.0);
-        } else if (prefSpeedOutTown.equals("1")) {
-            configuration.setSpeedWarningThresholdOutsideCity(10.0);
-        } else if (prefSpeedOutTown.equals("2")) {
-            configuration.setSpeedWarningThresholdOutsideCity(15.0);
-        } else if (prefSpeedOutTown.equals("3")) {
-            configuration.setSpeedWarningThresholdOutsideCity(20.0);
-        }
-        boolean dayNight = sharedPreferences.getBoolean(PreferenceTypes.K_AUTO_DAY_NIGHT, true);
-        if (!dayNight) {
-            configuration.setAutomaticDayNight(false);
-        }
-        configuration.setNavigationType(SKNavigationType.FILE);
-        configuration.setFreeDriveNavigationFilePath(app.getMapResourcesDirPath() + "logFile/Seattle.log");
-        configuration.setDayStyle(new SKMapViewStyle(app.getMapResourcesDirPath() + "daystyle/",
-                "daystyle.json"));
-        configuration.setNightStyle(new SKMapViewStyle(app.getMapResourcesDirPath() + "nightstyle/",
-                "nightstyle.json"));
-
-        navigationUI.setVisibility(View.GONE);
-        navigationManager = new SKToolsNavigationManager(this, R.id.map_layout_root);
-        navigationManager.setNavigationListener(this);
-        navigationManager.startFreeDriveWithConfiguration(configuration, mapViewGroup);
     }
 
     private void calculateRouteFromSKTools() {
@@ -2123,7 +2066,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 initializeNavigationUI(true);
                 findViewById(R.id.clear_via_point_button).setVisibility(View.GONE);
                 findViewById(R.id.settings_button).setVisibility(View.VISIBLE);
-                ((Button) findViewById(R.id.start_free_drive_button)).setText("Start free drive");
                 break;
             default:
                 break;

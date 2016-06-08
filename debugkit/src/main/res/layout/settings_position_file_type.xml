@@ -8,8 +8,4 @@
         android:id="@+id/log_type"
         layout="@layout/element_debug_kit_radio_button" />
 
-    <include
-        android:id="@+id/gpx_type"
-        layout="@layout/element_debug_kit_radio_button" />
-
 </LinearLayout>

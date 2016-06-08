@@ -13,7 +13,6 @@
     <string name="options_group_navigation">Navigation</string>
     <string name="option_alternative_routes">Alternative routes</string>
     <string name="option_real_reach">Real reach</string>
-    <string name="option_tracks">Tracks</string>
     <string name="option_group_searches">Searches</string>
     <string name="option_address_search">Address search - offline</string>
     <string name="option_category_search">Category search</string>

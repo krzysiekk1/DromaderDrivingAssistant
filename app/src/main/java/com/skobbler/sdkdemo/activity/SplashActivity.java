@@ -31,8 +31,7 @@ import com.skobbler.sdkdemo.application.DemoApplication;
 import com.skobbler.sdkdemo.util.DemoUtils;
 
 /**
- * Activity that installs required resources (from assets/MapResources.zip) to
- * the device
+ * Activity that installs required resources (from assets/MapResources.zip) to the device
  */
 public class SplashActivity extends Activity implements SKPrepareMapTextureListener, SKMapUpdateListener {
 
@@ -122,13 +121,6 @@ public class SplashActivity extends Activity implements SKPrepareMapTextureListe
 
             public void run() {
                 try {
-                    String tracksPath = mapResourcesDirPath + "GPXTracks";
-                    File tracksDir = new File(tracksPath);
-                    if (!tracksDir.exists()) {
-                        tracksDir.mkdirs();
-                    }
-                    DemoUtils.copyAssetsToFolder(getAssets(), "GPXTracks", mapResourcesDirPath + "GPXTracks");
-
                     String imagesPath = mapResourcesDirPath + "images";
                     File imagesDir = new File(imagesPath);
                     if (!imagesDir.exists()) {
@@ -143,7 +135,7 @@ public class SplashActivity extends Activity implements SKPrepareMapTextureListe
     }
 
     /**
-     * Copies the map creator file and logFile from assets to a storage.
+     * Copies the map creator file from assets to a storage.
      */
     private void prepareMapCreatorFile() {
         final DemoApplication app = (DemoApplication) getApplication();
@@ -162,17 +154,9 @@ public class SplashActivity extends Activity implements SKPrepareMapTextureListe
                     }
                     app.setMapCreatorFilePath(mapCreatorFolderPath + "/mapcreatorFile.json");
                     DemoUtils.copyAsset(getAssets(), "MapCreator", mapCreatorFolderPath, "mapcreatorFile.json");
-                    // Copies the log file from assets to a storage.
-                    final String logFolderPath = mapResourcesDirPath + "logFile";
-                    final File logFolder = new File(logFolderPath);
-                    if (!logFolder.exists()) {
-                        logFolder.mkdirs();
-                    }
-                    DemoUtils.copyAsset(getAssets(), "logFile", logFolderPath, "Seattle.log");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
         });
         prepareGPXFileThread.start();

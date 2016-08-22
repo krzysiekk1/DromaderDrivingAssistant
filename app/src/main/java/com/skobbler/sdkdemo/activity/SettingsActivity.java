@@ -9,9 +9,6 @@ import android.util.Log;
 import com.skobbler.sdkdemo.R;
 import com.skobbler.sdkdemo.util.PreferenceTypes;
 
-/**
- * Created by AlexandraP on 17.11.2014.
- */
 public class SettingsActivity extends PreferenceActivity {
 
 

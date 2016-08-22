@@ -153,7 +153,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
     public enum MapOption {
         MAP_DISPLAY, MAP_STYLES, HEAT_MAP, MAP_CREATOR, MAP_OVERLAYS, ANNOTATIONS, MAP_DOWNLOADS, MAP_UPDATES, MAP_INTERACTION, ALTERNATIVE_ROUTES, REAL_REACH,
-        ROUTING_AND_NAVIGATION, POI_TRACKING, NAVI_UI, ADDRESS_SEARCH, NEARBY_SEARCH, CATEGORY_SEARCH, REVERSE_GEOCODING, MAP_SECTION, NAVIGATION_SECTION, SEARCHES_SECTION, TEST_SECTION, TEST
+        ROUTING_AND_NAVIGATION, POI_TRACKING, NAVI_UI, SETTINGS, ADDRESS_SEARCH, NEARBY_SEARCH, CATEGORY_SEARCH, REVERSE_GEOCODING, MAP_SECTION, NAVIGATION_SECTION, SEARCHES_SECTION, TEST_SECTION, TEST
     }
 
     private enum MapAdvices {
@@ -502,6 +502,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         menuItems.put(MapOption.REAL_REACH, create(MapOption.REAL_REACH, getResources().getString(R.string.option_real_reach), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.POI_TRACKING, create(MapOption.POI_TRACKING, getResources().getString(R.string.option_poi_tracking), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.NAVI_UI, create(MapOption.NAVI_UI, getResources().getString(R.string.option_car_navigation_ui), MenuDrawerItem.ITEM_TYPE));
+        menuItems.put(MapOption.SETTINGS, create(MapOption.SETTINGS, getResources().getString(R.string.option_settings), MenuDrawerItem.ITEM_TYPE));
 
         menuItems.put(MapOption.SEARCHES_SECTION, create(MapOption.SEARCHES_SECTION, getResources().getString(R.string.search).toUpperCase(), MenuDrawerItem.SECTION_TYPE));
         menuItems.put(MapOption.ADDRESS_SEARCH, create(MapOption.ADDRESS_SEARCH, getResources().getString(R.string.option_address_search), MenuDrawerItem.ITEM_TYPE));
@@ -790,10 +791,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 getActionBar().setDisplayHomeAsUpEnabled(false);
                 getActionBar().setHomeButtonEnabled(false);
                 calculateRouteFromSKTools();
-                break;
-            case R.id.settings_button:
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
                 break;
             case R.id.clear_via_point_button:
                 viaPoint = null;
@@ -2065,7 +2062,9 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 currentMapOption = MapOption.NAVI_UI;
                 initializeNavigationUI(true);
                 findViewById(R.id.clear_via_point_button).setVisibility(View.GONE);
-                findViewById(R.id.settings_button).setVisibility(View.VISIBLE);
+                break;
+            case SETTINGS:
+                startActivity(new Intent(MapActivity.this, SettingsActivity.class));
                 break;
             default:
                 break;

@@ -66,6 +66,12 @@
             android:name=".activity.SettingsActivity"
             android:configChanges="orientation|screenSize"></activity>
         <activity
+            android:name=".activity.AppSettingsActivity"
+            android:configChanges="orientation|screenSize"></activity>
+        <activity
+            android:name=".activity.NaviSettingsActivity"
+            android:configChanges="orientation|screenSize"></activity>
+        <activity
             android:name=".activity.ResourceDownloadsListActivity"
             android:configChanges="orientation|screenSize"></activity>
         <activity android:name=".activity.MapCacheActivity" android:configChanges="orientation"  >

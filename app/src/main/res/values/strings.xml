@@ -84,6 +84,8 @@
     <string name="round_trip_off">Round trip off</string>
 
     <!--Settings-->
+    <string name="app_settings_button">Application settings</string>
+    <string name="navi_settings_button">Navigation settings</string>
     <string name="general_label">General</string>
     <!--Route type settings-->
     <string name="route_type_car_fastest">Car fastest</string>

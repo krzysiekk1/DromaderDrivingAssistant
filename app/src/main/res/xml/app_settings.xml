@@ -4,63 +4,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ListPreference
-        android:key="pref_route_type"
-        android:title="Route Type"
-        android:entries="@array/route_types"
-        android:entryValues="@array/route_values"
-        android:defaultValue="2"
-        android:summary="%s" />
+    <PreferenceCategory
+        android:title="Alerts">
 
-    <ListPreference
-        android:key="pref_distance_format"
-        android:title="Distance format"
-        android:entries="@array/distance_unit"
-        android:entryValues="@array/distance_unit_values"
-        android:summary="%s" />
+        <CheckBoxPreference
+            android:key="check_pref_car_parks_alerts"
+            android:title="Rest alerts (car parks) "
+            android:defaultValue="true" />
 
-    <ListPreference
-        android:key="pref_navigation_types"
-        android:title="Navigation type"
-        android:entries="@array/navigation_type"
-        android:entryValues="@array/navigation_type_value"
-        android:defaultValue="1"
-        android:summary="%s" />
+        <CheckBoxPreference
+            android:key="check_pref_accommodation_alerts"
+            android:title="Sleep alerts (accommodation) "
+            android:defaultValue="true" />
 
-    <ListPreference
-        android:key="pref_speed_warnings_in_town"
-        android:title="Speed warnings in town"
-        android:summary="%s" />
+        <CheckBoxPreference
+            android:key="check_pref_petrol_stations_alerts"
+            android:title="Fuel level alerts (petrol stations) "
+            android:defaultValue="true" />
 
-    <ListPreference
-        android:key="pref_speed_warnings_out_town"
-        android:title="Speed warnings out of town"
-        android:summary="%s" />
+    </PreferenceCategory>
 
-    <CheckBoxPreference
-        android:key="check_pref_automatic_day_night"
-        android:title="Automatic day/night"
-        android:defaultValue="true" />
+    <PreferenceCategory
+        android:title="Fuel">
 
-    <CheckBoxPreference
-        android:key="check_pref_avoid_toll_roads"
-        android:title="Avoid toll roads"
-        android:defaultValue="false" />
+        <EditTextPreference
+            android:key="pref_tank_capacity"
+            android:title="Tank capacity (l) "
+            android:defaultValue="50" />
 
-    <CheckBoxPreference
-        android:key="check_pref_avoid_ferries"
-        android:title="Avoid ferries"
-        android:defaultValue="false" />
+        <ListPreference
+            android:key="pref_fuel_type"
+            android:title="Fuel type"
+            android:entries="@array/fuel_types"
+            android:entryValues="@array/fuel_values"
+            android:defaultValue="0"
+            android:summary="%s" />
 
-    <CheckBoxPreference
-        android:key="check_pref_avoid_highways"
-        android:title="Avoid highways"
-        android:defaultValue="false" />
+        <EditTextPreference
+            android:key="pref_fuel_consumption"
+            android:title="Avg fuel consumption (l/100km) "
+            android:defaultValue="7" />
 
-    <CheckBoxPreference
-        android:key="check_pref_free_drive"
-        android:title="Continue free drive after navigation ends"
-        android:defaultValue="true" />
+        <EditTextPreference
+            android:key="pref_fuel_level"
+            android:title="Fuel level (l) "
+            android:defaultValue="50" />
 
+    </PreferenceCategory>
 
 </PreferenceScreen>

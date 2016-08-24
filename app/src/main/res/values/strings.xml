@@ -88,13 +88,13 @@
     <string name="navi_settings_button">Navigation settings</string>
     <string name="general_label">General</string>
     <!--Route type settings-->
-    <string name="route_type_car_fastest">Car fastest</string>
-    <string name="route_type_car_shortest">Car shortest</string>
-    <string name="route_type_car_efficient">Efficient route</string>
-    <!-- Distance format -->
-    <string name="km_m">Kilometers/Meters</string>
-    <string name="mi_feet">Miles/Feet</string>
-    <string name="mi_yards">Miles/Yards</string>
+    <string name="route_type_fastest">Fastest</string>
+    <string name="route_type_shortest">Shortest</string>
+    <string name="route_type_efficient">Efficient</string>
+    <!--Fuel type settings-->
+    <string name="petrol">Petrol</string>
+    <string name="diesel">Diesel</string>
+    <string name="lpg">LPG</string>
     <!-- Number of routes-->
     <string name="one_route">1</string>
     <string name="two_routes">2</string>
@@ -103,18 +103,6 @@
     <string name="real_navigation">Real</string>
     <string name="simulation_navigation">Simulation</string>
     <string name="sim_from_log_navigation">File</string>
-    <!-- Speed warnings km/h-->
-    <string name="five">5km/h</string>
-    <string name="ten">10km/h</string>
-    <string name="fifteen">15km/h</string>
-    <string name="twelve">20km/h</string>
-    <string name="less"><![CDATA[<]]></string>
-    <string name="more"><![CDATA[>]]></string>
-    <!-- Speed warnings mi/h-->
-    <string name="five_mi_h">5mi/h</string>
-    <string name="ten_mi_h">10mi/h</string>
-    <string name="fifteen_mi_h">15mi/h</string>
-    <string name="twelve_mi_h">20mi/h</string>
 
     <string name="open_drawer">OPEN</string>
     <string name="close_drawer">CLOSE</string>

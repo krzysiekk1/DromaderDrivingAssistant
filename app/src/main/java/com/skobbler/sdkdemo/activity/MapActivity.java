@@ -560,14 +560,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
         if (currentMapOption == MapOption.NAVI_UI) {
             final ToggleButton selectStartPointBtn = (ToggleButton) findViewById(R.id.select_start_point_button);
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-            String prefNavigationType = sharedPreferences.getString(PreferenceTypes.K_NAVIGATION_TYPE,
-                    "1");
-            if (prefNavigationType.equals("0")) { // real navi
-                selectStartPointBtn.setVisibility(View.GONE);
-            } else if (prefNavigationType.equals("1")) {
-                selectStartPointBtn.setVisibility(View.VISIBLE);
-            }
+            selectStartPointBtn.setVisibility(View.GONE);   // real navi
         }
 
         if (DemoUtils.isMultipleMapSupportEnabled == false && currentMapOption == MapOption.HEAT_MAP && heatMapCategories != null) {
@@ -821,23 +814,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         SKToolsNavigationConfiguration configuration = new SKToolsNavigationConfiguration();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        //set navigation type
-        String prefNavigationType = sharedPreferences.getString(PreferenceTypes.K_NAVIGATION_TYPE,
-                "1");
-        if (prefNavigationType.equals("0")) {
-            configuration.setNavigationType(SKNavigationType.REAL);
-            if (currentPosition == null) {
-                showNoCurrentPosDialog();
-                return;
-            }
-            startPoint = currentPosition.getCoordinate();
-        } else if (prefNavigationType.equals("1")) {
-            configuration.setNavigationType(SKNavigationType.SIMULATION);
-
-        }
-
-
-        //set route type
+        // set route type
         String prefRouteType = sharedPreferences.getString(PreferenceTypes.K_ROUTE_TYPE, "2");
         if (prefRouteType.equals("0")) {
             configuration.setRouteType(SKRouteMode.CAR_SHORTEST);
@@ -847,60 +824,32 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             configuration.setRouteType(SKRouteMode.EFFICIENT);
         }
 
-        //set distance format
-        String prefDistanceFormat = sharedPreferences.getString(PreferenceTypes.K_DISTANCE_UNIT,
-                "0");
-        if (prefDistanceFormat.equals("0")) {
-            configuration.setDistanceUnitType(SKMaps.SKDistanceUnitType.DISTANCE_UNIT_KILOMETER_METERS);
-        } else if (prefDistanceFormat.equals("1")) {
-            configuration.setDistanceUnitType(SKMaps.SKDistanceUnitType.DISTANCE_UNIT_MILES_FEET);
-        } else {
-            configuration.setDistanceUnitType(SKMaps.SKDistanceUnitType.DISTANCE_UNIT_MILES_YARDS);
-        }
-
-        //set speed in town
-        String prefSpeedInTown = sharedPreferences.getString(PreferenceTypes.K_IN_TOWN_SPEED_WARNING, "0");
-        if (prefSpeedInTown.equals("0")) {
-            configuration.setSpeedWarningThresholdInCity(5.0);
-        } else if (prefSpeedInTown.equals("1")) {
-            configuration.setSpeedWarningThresholdInCity(10.0);
-        } else if (prefSpeedInTown.equals("2")) {
-            configuration.setSpeedWarningThresholdInCity(15.0);
-        } else if (prefSpeedInTown.equals("3")) {
-            configuration.setSpeedWarningThresholdInCity(20.0);
-        }
-        //set speed out
-        String prefSpeedOutTown = sharedPreferences.getString(PreferenceTypes.K_OUT_TOWN_SPEED_WARNING, "0");
-        if (prefSpeedOutTown.equals("0")) {
-            configuration.setSpeedWarningThresholdOutsideCity(5.0);
-        } else if (prefSpeedOutTown.equals("1")) {
-            configuration.setSpeedWarningThresholdOutsideCity(10.0);
-        } else if (prefSpeedOutTown.equals("2")) {
-            configuration.setSpeedWarningThresholdOutsideCity(15.0);
-        } else if (prefSpeedOutTown.equals("3")) {
-            configuration.setSpeedWarningThresholdOutsideCity(20.0);
-        }
-
-        boolean dayNight = sharedPreferences.getBoolean(PreferenceTypes.K_AUTO_DAY_NIGHT, true);
-        if (!dayNight) {
-            configuration.setAutomaticDayNight(false);
-        }
-        boolean tollRoads = sharedPreferences.getBoolean(PreferenceTypes.K_AVOID_TOLL_ROADS, false);
+        // set avoiding tolls
+        boolean tollRoads = sharedPreferences.getBoolean(PreferenceTypes.K_AVOID_TOLLS, false);
         if (tollRoads) {
             configuration.setTollRoadsAvoided(true);
         }
-        boolean avoidFerries = sharedPreferences.getBoolean(PreferenceTypes.K_AVOID_FERRIES, false);
-        if (avoidFerries) {
-            configuration.setFerriesAvoided(true);
+
+        // set navigation type
+        configuration.setNavigationType(SKNavigationType.REAL);
+        if (currentPosition == null) {
+            showNoCurrentPosDialog();
+            return;
         }
-        boolean highWays = sharedPreferences.getBoolean(PreferenceTypes.K_AVOID_HIGHWAYS, false);
-        if (highWays) {
-            configuration.setHighWaysAvoided(true);
-        }
-        boolean freeDrive = sharedPreferences.getBoolean(PreferenceTypes.K_FREE_DRIVE, true);
-        if (!freeDrive) {
-            configuration.setContinueFreeDriveAfterNavigationEnd(false);
-        }
+        startPoint = currentPosition.getCoordinate();
+
+        // set distance format
+        configuration.setDistanceUnitType(SKMaps.SKDistanceUnitType.DISTANCE_UNIT_KILOMETER_METERS);
+
+        // set speed warnings
+        configuration.setSpeedWarningThresholdInCity(20.0);
+        configuration.setSpeedWarningThresholdOutsideCity(20.0);
+
+        // other settings
+        configuration.setAutomaticDayNight(true);
+        configuration.setFerriesAvoided(false);
+        configuration.setHighWaysAvoided(false);
+        configuration.setContinueFreeDriveAfterNavigationEnd(true);
 
         navigationUI.setVisibility(View.GONE);
         configuration.setStartCoordinate(startPoint);
@@ -938,15 +887,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         final ToggleButton selectViaPointBtn = (ToggleButton) findViewById(R.id.select_via_point_button);
         startOrientationSensorInPedestrian();
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String prefNavigationType = sharedPreferences.getString(PreferenceTypes.K_NAVIGATION_TYPE,
-                "1");
-        if (prefNavigationType.equals("0")) { // real navi
-            selectStartPointBtn.setVisibility(View.GONE);
-        } else if (prefNavigationType.equals("1")) {
-
-            selectStartPointBtn.setVisibility(View.VISIBLE);
-        }
+        selectStartPointBtn.setVisibility(View.GONE);   // real navi
 
         if (showStartingAndDestinationAnnotations) {
             startPoint = new SKCoordinate(19.948295, 50.007004);

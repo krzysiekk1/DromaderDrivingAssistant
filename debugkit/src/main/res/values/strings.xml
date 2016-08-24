@@ -162,9 +162,9 @@
     <!--Settings-->
     <string name="general_label">General</string>
     <!--Route type settings-->
-    <string name="route_type_car_fastest">Car fastest</string>
-    <string name="route_type_car_shortest">Car shortest</string>
-    <string name="route_type_car_efficient">Efficient route</string>
+    <string name="route_type_fastest">Car fastest</string>
+    <string name="route_type_shortest">Car shortest</string>
+    <string name="route_type_efficient">Efficient route</string>
     <!-- Distance format -->
     <string name="km_m">Kilometers/Meters</string>
     <string name="mi_feet">Miles/Feet</string>

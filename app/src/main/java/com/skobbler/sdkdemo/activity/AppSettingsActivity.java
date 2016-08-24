@@ -8,6 +8,8 @@ import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceScreen;
+import android.text.InputType;
 import android.util.Log;
 import com.skobbler.sdkdemo.R;
 import com.skobbler.sdkdemo.util.PreferenceTypes;
@@ -51,11 +53,11 @@ public class AppSettingsActivity extends PreferenceActivity {
 
         final EditTextPreference tankCapacityPreference = (EditTextPreference) findPreference(PreferenceTypes
                 .K_TANK_CAPACITY);
+        tankCapacityPreference.setSummary(tankCapacityPreference.getText());
         tankCapacityPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                SharedPreferences store = getSharedPreferences("storage", Context.MODE_PRIVATE);
-                tankCapacityPreference.setText(store.getString(PreferenceTypes.K_TANK_CAPACITY, "0"));
+                tankCapacityPreference.setText(newValue.toString());
                 preference.setSummary(tankCapacityPreference.getText());
                 return false;
             }
@@ -73,12 +75,11 @@ public class AppSettingsActivity extends PreferenceActivity {
 
         final EditTextPreference fuelConsumptionPreference = (EditTextPreference) findPreference(PreferenceTypes
                 .K_FUEL_CONSUMPTION);
-        final SharedPreferences store2 = getSharedPreferences("storage", Context.MODE_PRIVATE);
+        fuelConsumptionPreference.setSummary(fuelConsumptionPreference.getText());
         fuelConsumptionPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                fuelConsumptionPreference.setText(store2.getString(PreferenceTypes.K_FUEL_CONSUMPTION, "0"));
-                //fuelConsumptionPreference.setText(newValue.toString());
+                fuelConsumptionPreference.setText(newValue.toString());
                 preference.setSummary(fuelConsumptionPreference.getText());
                 return false;
             }
@@ -86,6 +87,7 @@ public class AppSettingsActivity extends PreferenceActivity {
 
         final EditTextPreference fuelLevelPreference = (EditTextPreference) findPreference(PreferenceTypes
                 .K_FUEL_LEVEL);
+        fuelLevelPreference.setSummary(fuelLevelPreference.getText());
         fuelLevelPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {

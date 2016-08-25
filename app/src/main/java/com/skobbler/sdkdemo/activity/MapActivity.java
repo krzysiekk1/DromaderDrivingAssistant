@@ -152,7 +152,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     public static SKPOICategory[] heatMapCategories;
 
     public enum MapOption {
-        MAP_DISPLAY, MAP_STYLES, HEAT_MAP, MAP_CREATOR, MAP_OVERLAYS, ANNOTATIONS, MAP_DOWNLOADS, MAP_UPDATES, MAP_INTERACTION, ALTERNATIVE_ROUTES, REAL_REACH,
+        MAP_DISPLAY, MAP_STYLES, HEAT_MAP, MAP_CREATOR, MAP_OVERLAYS, ANNOTATIONS, MAP_DOWNLOADS, MAP_INTERACTION, ALTERNATIVE_ROUTES, REAL_REACH,
         ROUTING_AND_NAVIGATION, POI_TRACKING, NAVI_UI, SETTINGS, ADDRESS_SEARCH, NEARBY_SEARCH, CATEGORY_SEARCH, REVERSE_GEOCODING, OTHER_SECTION
     }
 
@@ -488,7 +488,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         menuItems.put(MapOption.SETTINGS, create(MapOption.SETTINGS, getResources().getString(R.string.option_settings), MenuDrawerItem.ITEM_TYPE));
 
         menuItems.put(MapOption.OTHER_SECTION, create(MapOption.OTHER_SECTION, getResources().getString(R.string.other_section).toUpperCase(), MenuDrawerItem.SECTION_TYPE));
-        menuItems.put(MapOption.MAP_UPDATES, create(MapOption.MAP_UPDATES, getResources().getString(R.string.option_map_updates), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.MAP_DISPLAY, create(MapOption.MAP_DISPLAY, getResources().getString(R.string.option_map_display), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.MAP_STYLES, create(MapOption.MAP_STYLES, getResources().getString(R.string.option_map_styles), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.HEAT_MAP, create(MapOption.HEAT_MAP, getResources().getString(R.string.option_heat_map), MenuDrawerItem.ITEM_TYPE));
@@ -1918,6 +1917,22 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     protected void handleMenuItemClick(MapOption mapOption) {
         clearMap();
         switch (mapOption) {
+            case NAVI_UI:
+                currentMapOption = MapOption.NAVI_UI;
+                initializeNavigationUI(true);
+                findViewById(R.id.clear_via_point_button).setVisibility(View.GONE);
+                break;
+            case MAP_DOWNLOADS:
+                if (DemoUtils.isInternetAvailable(this)) {
+                    startActivity(new Intent(MapActivity.this, ResourceDownloadsListActivity.class));
+                } else {
+                    Toast.makeText(this, getResources().getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
+                            .show();
+                }
+                break;
+            case SETTINGS:
+                startActivity(new Intent(MapActivity.this, SettingsActivity.class));
+                break;
             case MAP_DISPLAY:
                 mapView.clearHeatMapsDisplay();
                 currentMapOption = MapOption.MAP_DISPLAY;
@@ -1953,14 +1968,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 mapView.centerMapOnPosition(new SKCoordinate(13.4127, 52.5233));
                 realReachLayout.setVisibility(View.VISIBLE);
                 break;
-            case MAP_DOWNLOADS:
-                if (DemoUtils.isInternetAvailable(this)) {
-                    startActivity(new Intent(MapActivity.this, ResourceDownloadsListActivity.class));
-                } else {
-                    Toast.makeText(this, getResources().getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
-                            .show();
-                }
-                break;
             case REVERSE_GEOCODING:
                 startActivity(new Intent(this, ReverseGeocodingActivity.class));
                 break;
@@ -1992,17 +1999,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             case HEAT_MAP:
                 currentMapOption = MapOption.HEAT_MAP;
                 startActivity(new Intent(this, POICategoriesListActivity.class));
-                break;
-            case MAP_UPDATES:
-                SKVersioningManager.getInstance().checkNewVersion(3);
-                break;
-            case NAVI_UI:
-                currentMapOption = MapOption.NAVI_UI;
-                initializeNavigationUI(true);
-                findViewById(R.id.clear_via_point_button).setVisibility(View.GONE);
-                break;
-            case SETTINGS:
-                startActivity(new Intent(MapActivity.this, SettingsActivity.class));
                 break;
             default:
                 break;

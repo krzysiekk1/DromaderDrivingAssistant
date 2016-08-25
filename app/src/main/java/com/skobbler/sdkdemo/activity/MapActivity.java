@@ -153,7 +153,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
     public enum MapOption {
         MAP_DISPLAY, MAP_STYLES, HEAT_MAP, MAP_CREATOR, MAP_OVERLAYS, ANNOTATIONS, MAP_DOWNLOADS, MAP_UPDATES, MAP_INTERACTION, ALTERNATIVE_ROUTES, REAL_REACH,
-        ROUTING_AND_NAVIGATION, POI_TRACKING, NAVI_UI, SETTINGS, ADDRESS_SEARCH, NEARBY_SEARCH, CATEGORY_SEARCH, REVERSE_GEOCODING, MAP_SECTION, NAVIGATION_SECTION, SEARCHES_SECTION, TEST_SECTION, TEST
+        ROUTING_AND_NAVIGATION, POI_TRACKING, NAVI_UI, SETTINGS, ADDRESS_SEARCH, NEARBY_SEARCH, CATEGORY_SEARCH, REVERSE_GEOCODING, OTHER_SECTION
     }
 
     private enum MapAdvices {
@@ -483,28 +483,25 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
     public void initializeMenuItems() {
         menuItems = new LinkedHashMap<MapOption, MenuDrawerItem>();
-        menuItems.put(MapOption.MAP_SECTION, create(MapOption.MAP_SECTION, getResources().getString(R.string.options_group_map).toUpperCase(), MenuDrawerItem.SECTION_TYPE));
+        menuItems.put(MapOption.NAVI_UI, create(MapOption.NAVI_UI, getResources().getString(R.string.option_map), MenuDrawerItem.ITEM_TYPE));
+        menuItems.put(MapOption.MAP_DOWNLOADS, create(MapOption.MAP_DOWNLOADS, getResources().getString(R.string.option_map_downloads), MenuDrawerItem.ITEM_TYPE));
+        menuItems.put(MapOption.SETTINGS, create(MapOption.SETTINGS, getResources().getString(R.string.option_settings), MenuDrawerItem.ITEM_TYPE));
+
+        menuItems.put(MapOption.OTHER_SECTION, create(MapOption.OTHER_SECTION, getResources().getString(R.string.other_section).toUpperCase(), MenuDrawerItem.SECTION_TYPE));
+        menuItems.put(MapOption.MAP_UPDATES, create(MapOption.MAP_UPDATES, getResources().getString(R.string.option_map_updates), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.MAP_DISPLAY, create(MapOption.MAP_DISPLAY, getResources().getString(R.string.option_map_display), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.MAP_STYLES, create(MapOption.MAP_STYLES, getResources().getString(R.string.option_map_styles), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.HEAT_MAP, create(MapOption.HEAT_MAP, getResources().getString(R.string.option_heat_map), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.MAP_CREATOR, create(MapOption.MAP_CREATOR, getResources().getString(R.string.option_map_creator), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.MAP_OVERLAYS, create(MapOption.MAP_OVERLAYS, getResources().getString(R.string.option_overlays), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.ANNOTATIONS, create(MapOption.ANNOTATIONS, getResources().getString(R.string.option_annotations), MenuDrawerItem.ITEM_TYPE));
-        menuItems.put(MapOption.MAP_DOWNLOADS, create(MapOption.MAP_DOWNLOADS, getResources().getString(R.string.option_map_xml_and_downloads), MenuDrawerItem.ITEM_TYPE));
-        menuItems.put(MapOption.MAP_UPDATES, create(MapOption.MAP_UPDATES, getResources().getString(R.string.option_map_updates), MenuDrawerItem.ITEM_TYPE));
         if (DemoUtils.isMultipleMapSupportEnabled) {
             menuItems.put(MapOption.MAP_INTERACTION, create(MapOption.MAP_INTERACTION, getResources().getString(R.string.option_other_map), MenuDrawerItem.ITEM_TYPE));
         }
-
-        menuItems.put(MapOption.NAVIGATION_SECTION, create(MapOption.NAVIGATION_SECTION, getResources().getString(R.string.options_group_navigation).toUpperCase(), MenuDrawerItem.SECTION_TYPE));
         menuItems.put(MapOption.ROUTING_AND_NAVIGATION, create(MapOption.ROUTING_AND_NAVIGATION, getResources().getString(R.string.option_routing_and_navigation), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.ALTERNATIVE_ROUTES, create(MapOption.ALTERNATIVE_ROUTES, getResources().getString(R.string.option_alternative_routes), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.REAL_REACH, create(MapOption.REAL_REACH, getResources().getString(R.string.option_real_reach), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.POI_TRACKING, create(MapOption.POI_TRACKING, getResources().getString(R.string.option_poi_tracking), MenuDrawerItem.ITEM_TYPE));
-        menuItems.put(MapOption.NAVI_UI, create(MapOption.NAVI_UI, getResources().getString(R.string.option_car_navigation_ui), MenuDrawerItem.ITEM_TYPE));
-        menuItems.put(MapOption.SETTINGS, create(MapOption.SETTINGS, getResources().getString(R.string.option_settings), MenuDrawerItem.ITEM_TYPE));
-
-        menuItems.put(MapOption.SEARCHES_SECTION, create(MapOption.SEARCHES_SECTION, getResources().getString(R.string.search).toUpperCase(), MenuDrawerItem.SECTION_TYPE));
         menuItems.put(MapOption.ADDRESS_SEARCH, create(MapOption.ADDRESS_SEARCH, getResources().getString(R.string.option_address_search), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.NEARBY_SEARCH, create(MapOption.NEARBY_SEARCH, getResources().getString(R.string.option_nearby_search), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.CATEGORY_SEARCH, create(MapOption.CATEGORY_SEARCH, getResources().getString(R.string.option_category_search), MenuDrawerItem.ITEM_TYPE));

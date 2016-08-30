@@ -25,7 +25,7 @@ import com.skobbler.ngx.sdktools.download.SKToolsDownloadManager;
 import com.skobbler.ngx.versioning.SKVersioningManager;
 import com.skobbler.sdkdemo.R;
 import com.skobbler.sdkdemo.application.ApplicationPreferences;
-import com.skobbler.sdkdemo.application.DemoApplication;
+import com.skobbler.sdkdemo.application.DDAApplication;
 import com.skobbler.sdkdemo.database.DownloadResource;
 import com.skobbler.sdkdemo.database.MapDataParser;
 import com.skobbler.sdkdemo.database.MapDownloadResource;
@@ -80,7 +80,7 @@ public class ResourceDownloadsListActivity extends Activity {
 
     private Stack<Integer> previousListIndexes = new Stack<Integer>();
 
-    private DemoApplication appContext;
+    private DDAApplication appContext;
 
     private Map<Long, Long> downloadChunksMap = new TreeMap<Long, Long>();
 
@@ -126,7 +126,7 @@ public class ResourceDownloadsListActivity extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_downloads_list);
-        appContext = (DemoApplication) getApplication();
+        appContext = (DDAApplication) getApplication();
         handler = new Handler();
 
         final ListItem mapResourcesItem = new ListItem();

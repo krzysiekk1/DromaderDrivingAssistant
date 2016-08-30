@@ -27,8 +27,8 @@ import com.skobbler.ngx.versioning.SKMapUpdateListener;
 import com.skobbler.ngx.versioning.SKVersioningManager;
 import com.skobbler.sdkdemo.R;
 import com.skobbler.sdkdemo.application.ApplicationPreferences;
-import com.skobbler.sdkdemo.application.DemoApplication;
-import com.skobbler.sdkdemo.util.DemoUtils;
+import com.skobbler.sdkdemo.application.DDAApplication;
+import com.skobbler.sdkdemo.util.Utils;
 
 /**
  * Activity that installs required resources (from assets/MapResources.zip) to the device
@@ -63,7 +63,7 @@ public class SplashActivity extends Activity implements SKPrepareMapTextureListe
         }
         if (multipleMapSupport){
             SKMapSurfaceView.preserveGLContext = false;
-            DemoUtils.isMultipleMapSupportEnabled = true;
+            Utils.isMultipleMapSupportEnabled = true;
         }
 
         String applicationPath = chooseStoragePath(this);
@@ -74,8 +74,8 @@ public class SplashActivity extends Activity implements SKPrepareMapTextureListe
         } else {
             // show a dialog and then finish
         }
-        ((DemoApplication)getApplicationContext()).getAppPrefs().saveStringPreference("mapResourcesPath", mapResourcesDirPath);
-        ((DemoApplication) getApplication()).setMapResourcesDirPath(mapResourcesDirPath);
+        ((DDAApplication)getApplicationContext()).getAppPrefs().saveStringPreference("mapResourcesPath", mapResourcesDirPath);
+        ((DDAApplication) getApplication()).setMapResourcesDirPath(mapResourcesDirPath);
         checkForUpdate();
         if (!new File(mapResourcesDirPath).exists()) {
             // copy some other resource needed
@@ -83,11 +83,11 @@ public class SplashActivity extends Activity implements SKPrepareMapTextureListe
             copyOtherResources();
             prepareMapCreatorFile();
         } else if(!update){
-            final DemoApplication app = (DemoApplication) getApplication();
+            final DDAApplication app = (DDAApplication) getApplication();
             app.setMapCreatorFilePath(mapResourcesDirPath + "MapCreator/mapcreatorFile.json");
             Toast.makeText(SplashActivity.this, "Map resources copied in a previous run", Toast.LENGTH_SHORT).show();
             prepareMapCreatorFile();
-            DemoUtils.initializeLibrary(this);
+            Utils.initializeLibrary(this);
             SKVersioningManager.getInstance().setMapUpdateListener(this);
             goToMap();
         }
@@ -100,7 +100,7 @@ public class SplashActivity extends Activity implements SKPrepareMapTextureListe
         SKVersioningManager.getInstance().setMapUpdateListener(this);
         Toast.makeText(SplashActivity.this, "Map resources were copied", Toast.LENGTH_SHORT).show();
 
-        if (DemoUtils.initializeLibrary(this)) {
+        if (Utils.initializeLibrary(this)) {
             goToMap();
         }
     }
@@ -126,7 +126,7 @@ public class SplashActivity extends Activity implements SKPrepareMapTextureListe
                     if (!imagesDir.exists()) {
                         imagesDir.mkdirs();
                     }
-                    DemoUtils.copyAssetsToFolder(getAssets(), "images", mapResourcesDirPath + "images");
+                    Utils.copyAssetsToFolder(getAssets(), "images", mapResourcesDirPath + "images");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -138,7 +138,7 @@ public class SplashActivity extends Activity implements SKPrepareMapTextureListe
      * Copies the map creator file from assets to a storage.
      */
     private void prepareMapCreatorFile() {
-        final DemoApplication app = (DemoApplication) getApplication();
+        final DDAApplication app = (DDAApplication) getApplication();
         final Thread prepareGPXFileThread = new Thread(new Runnable() {
 
             @Override
@@ -153,7 +153,7 @@ public class SplashActivity extends Activity implements SKPrepareMapTextureListe
                         mapCreatorFolder.mkdirs();
                     }
                     app.setMapCreatorFilePath(mapCreatorFolderPath + "/mapcreatorFile.json");
-                    DemoUtils.copyAsset(getAssets(), "MapCreator", mapCreatorFolderPath, "mapcreatorFile.json");
+                    Utils.copyAsset(getAssets(), "MapCreator", mapCreatorFolderPath, "mapcreatorFile.json");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -222,7 +222,7 @@ public class SplashActivity extends Activity implements SKPrepareMapTextureListe
     * Checks if the current version code is grater than the previous and overwrites the map resources.
     */
     public void checkForUpdate(){
-        DemoApplication appContext = (DemoApplication) getApplication();
+        DDAApplication appContext = (DDAApplication) getApplication();
         int currentVersionCode = appContext.getAppPrefs().getIntPreference(ApplicationPreferences.CURRENT_VERSION_CODE);
         int versionCode = getVersionCode();
         if(currentVersionCode == 0){
@@ -232,7 +232,7 @@ public class SplashActivity extends Activity implements SKPrepareMapTextureListe
         if( 0 < currentVersionCode && currentVersionCode < versionCode){
             update = true;
             appContext.getAppPrefs().setCurrentVersionCode(versionCode);
-            DemoUtils.deleteFileOrDirectory(new File(mapResourcesDirPath));
+            Utils.deleteFileOrDirectory(new File(mapResourcesDirPath));
             new SKPrepareMapTextureThread(this, mapResourcesDirPath, "SKMaps.zip", this).start();
             copyOtherResources();
             prepareMapCreatorFile();

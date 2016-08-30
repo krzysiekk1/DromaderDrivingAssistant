@@ -115,10 +115,10 @@ import com.skobbler.ngx.versioning.SKVersioningManager;
 import com.skobbler.sdkdemo.R;
 import com.skobbler.sdkdemo.adapter.MenuDrawerAdapter;
 import com.skobbler.sdkdemo.application.ApplicationPreferences;
-import com.skobbler.sdkdemo.application.DemoApplication;
+import com.skobbler.sdkdemo.application.DDAApplication;
 import com.skobbler.sdkdemo.database.MapDownloadResource;
 import com.skobbler.sdkdemo.model.MenuDrawerItem;
-import com.skobbler.sdkdemo.util.DemoUtils;
+import com.skobbler.sdkdemo.util.Utils;
 import com.skobbler.sdkdemo.util.PreferenceTypes;
 
 /**
@@ -187,7 +187,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     /**
      * Application context object
      */
-    private DemoApplication app;
+    private DDAApplication app;
 
     // Views and layouts
     private SKMapSurfaceView mapView;
@@ -311,15 +311,15 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             requestPermissions(INITIAL_PERMS, 1337);
         }
 
-        DemoUtils.initializeLibrary(this);
+        Utils.initializeLibrary(this);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_map);
-        app = (DemoApplication) getApplication();
+        app = (DDAApplication) getApplication();
 
         currentPositionProvider = new SKCurrentPositionProvider(this);
         currentPositionProvider.setCurrentPositionListener(this);
-        currentPositionProvider.requestLocationUpdates(DemoUtils.hasGpsModule(this), DemoUtils.hasNetworkModule(this), false);
+        currentPositionProvider.requestLocationUpdates(Utils.hasGpsModule(this), Utils.hasNetworkModule(this), false);
 
         mapViewGroup = (SKMapViewHolder) findViewById(R.id.view_group_map);
         mapViewGroup.setMapSurfaceListener(MapActivity.this);
@@ -504,7 +504,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         menuItems.put(MapOption.MAP_CREATOR, create(MapOption.MAP_CREATOR, getResources().getString(R.string.option_map_creator), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.MAP_OVERLAYS, create(MapOption.MAP_OVERLAYS, getResources().getString(R.string.option_overlays), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.ANNOTATIONS, create(MapOption.ANNOTATIONS, getResources().getString(R.string.option_annotations), MenuDrawerItem.ITEM_TYPE));
-        if (DemoUtils.isMultipleMapSupportEnabled) {
+        if (Utils.isMultipleMapSupportEnabled) {
             menuItems.put(MapOption.MAP_INTERACTION, create(MapOption.MAP_INTERACTION, getResources().getString(R.string.option_other_map), MenuDrawerItem.ITEM_TYPE));
         }
         menuItems.put(MapOption.ROUTING_AND_NAVIGATION, create(MapOption.ROUTING_AND_NAVIGATION, getResources().getString(R.string.option_routing_and_navigation), MenuDrawerItem.ITEM_TYPE));
@@ -569,7 +569,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             selectStartPointBtn.setVisibility(View.GONE);   // real navi
         }
 
-        if (DemoUtils.isMultipleMapSupportEnabled == false && currentMapOption == MapOption.HEAT_MAP && heatMapCategories != null) {
+        if (Utils.isMultipleMapSupportEnabled == false && currentMapOption == MapOption.HEAT_MAP && heatMapCategories != null) {
             mapView.showHeatMapsWithPoiType(heatMapCategories);
         }
 
@@ -616,7 +616,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             mapView.getMapSettings().setFollowerMode(SKMapFollowerMode.NONE);
         }
 
-        if (DemoUtils.isMultipleMapSupportEnabled == true && currentMapOption == MapOption.HEAT_MAP && heatMapCategories != null) {
+        if (Utils.isMultipleMapSupportEnabled == true && currentMapOption == MapOption.HEAT_MAP && heatMapCategories != null) {
             mapView.showHeatMapsWithPoiType(heatMapCategories);
         }
 
@@ -1335,7 +1335,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                     if (orientationValues[0] != 0) {
                         if ((System.currentTimeMillis() - lastTimeWhenReceivedGpsSignal) > MINIMUM_TIME_UNTILL_MAP_CAN_BE_UPDATED) {
                             applySmoothAlgorithm(orientationValues[0]);
-                            int currentExactScreenOrientation = DemoUtils.getExactScreenOrientation(this);
+                            int currentExactScreenOrientation = Utils.getExactScreenOrientation(this);
                             if (lastExactScreenOrientation != currentExactScreenOrientation) {
                                 lastExactScreenOrientation = currentExactScreenOrientation;
                                 switch (lastExactScreenOrientation) {
@@ -1760,8 +1760,8 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         if (currentMapOption == MapOption.ALTERNATIVE_ROUTES) {
             int routeIndex = routeIds.size();
             routeIds.add(routeInfo.getRouteID());
-            alternativeRoutesButtons[routeIndex].setText(DemoUtils.formatDistance(routeInfo.getDistance()) + "\n"
-                    + DemoUtils.formatTime(routeInfo.getEstimatedTime()));
+            alternativeRoutesButtons[routeIndex].setText(Utils.formatDistance(routeInfo.getDistance()) + "\n"
+                    + Utils.formatTime(routeInfo.getEstimatedTime()));
             if (routeIndex == 0) {
                 // select 1st alternative by default
                 selectAlternativeRoute(0);
@@ -1933,7 +1933,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 findViewById(R.id.clear_via_point_button).setVisibility(View.GONE);
                 break;
             case MAP_DOWNLOADS:
-                if (DemoUtils.isInternetAvailable(this)) {
+                if (Utils.isInternetAvailable(this)) {
                     startActivity(new Intent(MapActivity.this, ResourceDownloadsListActivity.class));
                 } else {
                     Toast.makeText(this, getResources().getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)

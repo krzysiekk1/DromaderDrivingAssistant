@@ -28,10 +28,10 @@ import com.skobbler.ngx.SKMapsInitSettings;
 import com.skobbler.ngx.map.SKMapViewStyle;
 import com.skobbler.ngx.navigation.SKAdvisorSettings;
 import com.skobbler.ngx.util.SKLogging;
-import com.skobbler.sdkdemo.application.DemoApplication;
+import com.skobbler.sdkdemo.application.DDAApplication;
 
 
-public class DemoUtils {
+public class Utils {
 
     /**
      * true if multiple map instances can be created
@@ -174,7 +174,7 @@ public class DemoUtils {
         // get object holding map initialization settings
         SKMapsInitSettings initMapSettings = new SKMapsInitSettings();
 
-        final String  mapResourcesPath = ((DemoApplication)context.getApplicationContext()).getAppPrefs().getStringPreference("mapResourcesPath");
+        final String  mapResourcesPath = ((DDAApplication)context.getApplicationContext()).getAppPrefs().getStringPreference("mapResourcesPath");
         // set path to map resources and initial map style
         initMapSettings.setMapResourcesPaths(mapResourcesPath,
                 new SKMapViewStyle(mapResourcesPath + "daystyle/", "daystyle.json"));
@@ -187,7 +187,7 @@ public class DemoUtils {
         initMapSettings.setAdvisorSettings(advisorSettings);
 
         // EXAMPLE OF ADDING PREINSTALLED MAPS
-//         initMapSettings.setPreinstalledMapsPath(((DemoApplication)context.getApplicationContext()).getMapResourcesDirPath()
+//         initMapSettings.setPreinstalledMapsPath(((DDAApplication)context.getApplicationContext()).getMapResourcesDirPath()
 //         + "/PreinstalledMaps");
         // initMapSettings.setConnectivityMode(SKMaps.CONNECTIVITY_MODE_OFFLINE);
 

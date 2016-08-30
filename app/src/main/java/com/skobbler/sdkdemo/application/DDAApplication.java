@@ -6,7 +6,7 @@ import android.app.Application;
 /**
  * Class that stores global application state
  */
-public class DemoApplication extends Application {
+public class DDAApplication extends Application {
 
     /**
      * Path to the map resources directory on the device

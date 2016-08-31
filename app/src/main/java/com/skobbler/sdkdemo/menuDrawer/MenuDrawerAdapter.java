@@ -1,4 +1,4 @@
-package com.skobbler.sdkdemo.adapter;
+package com.skobbler.sdkdemo.menuDrawer;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,10 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.skobbler.sdkdemo.R;
-import com.skobbler.sdkdemo.model.MenuDrawerItem;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by AlexandraP on 04.03.2015.

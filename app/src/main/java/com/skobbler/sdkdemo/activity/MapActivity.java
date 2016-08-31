@@ -113,11 +113,11 @@ import com.skobbler.ngx.util.SKLogging;
 import com.skobbler.ngx.versioning.SKMapUpdateListener;
 import com.skobbler.ngx.versioning.SKVersioningManager;
 import com.skobbler.sdkdemo.R;
-import com.skobbler.sdkdemo.adapter.MenuDrawerAdapter;
+import com.skobbler.sdkdemo.menuDrawer.MenuDrawerAdapter;
 import com.skobbler.sdkdemo.application.ApplicationPreferences;
 import com.skobbler.sdkdemo.application.DDAApplication;
 import com.skobbler.sdkdemo.database.MapDownloadResource;
-import com.skobbler.sdkdemo.model.MenuDrawerItem;
+import com.skobbler.sdkdemo.menuDrawer.MenuDrawerItem;
 import com.skobbler.sdkdemo.util.Utils;
 import com.skobbler.sdkdemo.util.PreferenceTypes;
 

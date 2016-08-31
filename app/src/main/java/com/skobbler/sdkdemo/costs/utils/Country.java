@@ -13,7 +13,7 @@ public enum Country {
     private final String code;
     private final int vignetteCost; // in EUR
 
-    private Country(String name, String code, int vignetteCost) {
+    Country(String name, String code, int vignetteCost) {
         this.name = name;
         this.code = code;
         this.vignetteCost = vignetteCost;

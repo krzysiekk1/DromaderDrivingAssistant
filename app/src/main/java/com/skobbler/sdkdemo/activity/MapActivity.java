@@ -125,7 +125,7 @@ import com.skobbler.sdkdemo.util.PreferenceTypes;
 /**
  * Activity displaying the map
  */
-public class MapActivity extends Activity implements SKMapSurfaceListener, SKRouteListener, SKNavigationListener,
+public class  MapActivity extends Activity implements SKMapSurfaceListener, SKRouteListener, SKNavigationListener,
         SKRealReachListener, SKPOITrackerListener, SKCurrentPositionListener, SensorEventListener,
         SKMapUpdateListener, SKToolsNavigationListener {
 

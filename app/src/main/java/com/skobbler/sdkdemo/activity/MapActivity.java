@@ -113,6 +113,7 @@ import com.skobbler.ngx.util.SKLogging;
 import com.skobbler.ngx.versioning.SKMapUpdateListener;
 import com.skobbler.ngx.versioning.SKVersioningManager;
 import com.skobbler.sdkdemo.R;
+import com.skobbler.ngx.sdktools.navigationui.costs.tolls.TollsCostCalculator;
 import com.skobbler.sdkdemo.menuDrawer.MenuDrawerAdapter;
 import com.skobbler.sdkdemo.application.ApplicationPreferences;
 import com.skobbler.sdkdemo.application.DDAApplication;
@@ -994,6 +995,8 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         route.setRouteMode(SKRouteMode.CAR_FASTEST);
         // set whether the route should be shown on the map after it's computed
         route.setRouteExposed(true);
+        route.setExtendedPointsReturned(true);
+        route.setCountryCodesReturned(true);
 
         // set the route listener to be notified of route calculation events
         SKRouteManager.getInstance().setRouteListener(this);
@@ -1008,6 +1011,8 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         route.setNoOfRoutes(3);
         route.setRouteMode(SKRouteMode.CAR_FASTEST);
         route.setRouteExposed(true);
+        route.setExtendedPointsReturned(true);
+        route.setCountryCodesReturned(true);
         SKRouteManager.getInstance().setRouteListener(this);
         SKRouteManager.getInstance().calculateRoute(route);
     }
@@ -1760,8 +1765,9 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         if (currentMapOption == MapOption.ALTERNATIVE_ROUTES) {
             int routeIndex = routeIds.size();
             routeIds.add(routeInfo.getRouteID());
+            double tollsCost = TollsCostCalculator.getTollsCost(routeInfo);
             alternativeRoutesButtons[routeIndex].setText(Utils.formatDistance(routeInfo.getDistance()) + "\n"
-                    + Utils.formatTime(routeInfo.getEstimatedTime()));
+                                        + Utils.formatTime(routeInfo.getEstimatedTime()) + "\n" + tollsCost + " EUR");
             if (routeIndex == 0) {
                 // select 1st alternative by default
                 selectAlternativeRoute(0);

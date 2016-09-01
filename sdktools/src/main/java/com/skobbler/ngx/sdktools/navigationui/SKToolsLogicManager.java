@@ -46,6 +46,7 @@ import com.skobbler.ngx.routing.SKRouteManager;
 import com.skobbler.ngx.routing.SKRouteSettings;
 import com.skobbler.ngx.routing.SKViaPoint;
 import com.skobbler.ngx.sdktools.navigationui.autonight.SKToolsAutoNightManager;
+import com.skobbler.ngx.sdktools.navigationui.costs.tolls.TollsCostCalculator;
 import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.ngx.trail.SKTrailType;
 import com.skobbler.ngx.util.SKLogging;
@@ -243,6 +244,8 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         route.setTollRoadsAvoided(configuration.isTollRoadsAvoided());
         route.setAvoidFerries(configuration.isFerriesAvoided());
         route.setHighWaysAvoided(configuration.isHighWaysAvoided());
+        route.setExtendedPointsReturned(true);
+        route.setCountryCodesReturned(true);
         SKRouteManager.getInstance().setRouteListener(this);
 
         SKRouteManager.getInstance().calculateRoute(route);
@@ -999,8 +1002,8 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                         final String distance = SKToolsUtils.convertAndFormatDistance(skRouteInfoList.get(i)
                                         .getDistance(),
                                 configuration.getDistanceUnitType(), currentActivity);
-
-                        SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance);
+                        final String cost = String.valueOf(TollsCostCalculator.getTollsCost(skRouteInfoList.get(i)));
+                        SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, cost);
                     }
 
                     int routeId = skRouteInfoList.get(0).getRouteID();

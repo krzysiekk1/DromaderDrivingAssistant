@@ -896,8 +896,9 @@ class SKToolsNavigationUIManager {
      * @param id
      * @param time
      * @param distance
+     * @param cost
      */
-    public void sePreNavigationButtons(final int id, final String time, final String distance) {
+    public void sePreNavigationButtons(final int id, final String time, final String distance, final String cost) {
         if (preNavigationPanel != null) {
             final TextView oneRoute = (TextView) preNavigationPanel.findViewById(R.id.first_route);
             final TextView twoRoutes = (TextView) preNavigationPanel.findViewById(R.id.second_route);
@@ -915,18 +916,18 @@ class SKToolsNavigationUIManager {
                         twoRoutes.setVisibility(View.GONE);
                         threeRoutes.setVisibility(View.GONE);
                         altRoutesButtons[0].setText(time + "\n"
-                                + distance);
+                                + distance + "\n" + cost + " EUR");
 
                     } else if (id == 1) {
                         twoRoutes.setVisibility(View.VISIBLE);
                         threeRoutes.setVisibility(View.GONE);
                         altRoutesButtons[1].setText(time + "\n"
-                                + distance);
+                                + distance + "\n" + cost + " EUR");
 
                     } else if (id == 2) {
                         threeRoutes.setVisibility(View.VISIBLE);
                         altRoutesButtons[2].setText(time + "\n"
-                                + distance);
+                                + distance + "\n" + cost + " EUR");
 
                     }
                 }

@@ -370,7 +370,7 @@ public class MapDownloadResource extends DownloadResource implements Comparable<
 
     @Override
     public SKToolsDownloadItem toDownloadItem() {
-        SKPackageURLInfo info = SKPackageManager.getInstance().getURLInfoForPackageWithCode(code, null ,skmFilePath.startsWith("custom-packages"));
+        SKPackageURLInfo info = SKPackageManager.getInstance().getURLInfoForPackageWithCode(code, skmFilePath.startsWith("custom-packages"));
         List<SKToolsFileDownloadStep> downloadSteps = new ArrayList<SKToolsFileDownloadStep>();
         downloadSteps.add(new SKToolsFileDownloadStep(info.getMapURL(), new StringBuilder(downloadPath).append(code)
                 .append(SKToolsDownloadManager.SKM_FILE_EXTENSION).toString(), skmFileSize));

@@ -16,7 +16,6 @@ import com.skobbler.ngx.util.SKLogging;
 
 /**
  * This class provides methods for parsing the "Maps" json file
- * Created by CatalinM on 11/11/2014.
  */
 public class SecondMapDataParser {
 
@@ -99,7 +98,6 @@ public class SecondMapDataParser {
      */
     public void parseMapJsonData(List<MapDownloadResource> maps, Map<String, String> mapsItemsCodes, Map<String, String> regionItemsCodes,
                                  InputStream inputStream) throws JSONException, IOException {
-        System.out.println("Catalin ; start parsing !!!");
         long startTime = System.currentTimeMillis();
         JSONObject reader = new JSONObject(convertJSONFileContentToAString(inputStream));
         JSONArray regionsArray = reader.getJSONArray(REGIONS_ID);
@@ -120,7 +118,6 @@ public class SecondMapDataParser {
         /*-for (Map.Entry<String, String> currentEntry : mapsItemsCodes.entrySet()) {
             System.out.println("Catalin ; key = " + currentEntry.getKey() + " ; value = " + currentEntry.getValue());
         }*/
-        System.out.println("Catalin ; total loading time = " + (System.currentTimeMillis() - startTime) + " ; maps size = " + maps.size());
     }
 
     /**

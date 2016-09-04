@@ -15,7 +15,6 @@ import java.util.Map;
 
 /**
  * This class provides methods for accessing the "Maps" table
- * Created by CatalinM on 11/10/2014.
  */
 public class MapsDAO {
 

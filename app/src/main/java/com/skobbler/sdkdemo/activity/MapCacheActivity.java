@@ -28,7 +28,7 @@ import com.skobbler.ngx.routing.SKRouteSettings;
 import com.skobbler.sdkdemo.R;
 
 /**
- * Created by Filip Tudic on 27-Mar-15.
+ * Class for showing second map instance
  */
 public class MapCacheActivity extends Activity implements SKMapSurfaceListener, SKNavigationListener, SKRouteListener {
 
@@ -38,9 +38,9 @@ public class MapCacheActivity extends Activity implements SKMapSurfaceListener, 
 
     private SKMapViewHolder mapViewGroup;
 
-    private SKCoordinate currentPosition = new SKCoordinate(19.948295, 50.007004);
+    private SKCoordinate currentPosition = new SKCoordinate(46.773716,23.593823);
 
-    private SKCoordinate routeDestinationPoint = new SKCoordinate(21.016957, 52.218425);
+    private SKCoordinate routeDestinationPoint = new SKCoordinate(46.770088,23.596824 );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +83,7 @@ public class MapCacheActivity extends Activity implements SKMapSurfaceListener, 
         final RelativeLayout chessBackground = (RelativeLayout) findViewById(R.id.chess_board_background);
         chessBackground.setVisibility(View.GONE);
         mapView = mapViewGroup.getMapSurfaceView();
-        mapView.setPositionAsCurrent(currentPosition, 0, true);
+       // mapView.setPositionAsCurrent(currentPosition, 0, true);
         mapView.setZoom(17);
         SKNavigationManager.getInstance().setNavigationListener(this);
         addStartDestinationPins();
@@ -122,7 +122,7 @@ public class MapCacheActivity extends Activity implements SKMapSurfaceListener, 
         route.setStartCoordinate(startPoint);
         route.setDestinationCoordinate(destinationPoint);
         // set the number of routes to be calculated
-        route.setNoOfRoutes(1);
+        route.setMaximumReturnedRoutes(1);
         // set the route mode
         route.setRouteMode(SKRouteSettings.SKRouteMode.CAR_FASTEST);
         // set whether the route should be shown on the map after it's computed
@@ -182,6 +182,8 @@ public class MapCacheActivity extends Activity implements SKMapSurfaceListener, 
     public void onInternationalisationCalled(int result) {
     }
 
+
+
     @Override
     public void onCustomPOISelected(SKMapCustomPOI customPoi) {
     }
@@ -213,6 +215,7 @@ public class MapCacheActivity extends Activity implements SKMapSurfaceListener, 
                                       SKNavigationState navigationState) {
     }
 
+
     @Override
     public void onPOIClusterSelected(SKPOICluster arg0) {
     }
@@ -220,6 +223,7 @@ public class MapCacheActivity extends Activity implements SKMapSurfaceListener, 
     @Override
     public void onTunnelEvent(boolean arg0) {
     }
+
 
     @Override
     public void onMapRegionChangeEnded(SKCoordinateRegion arg0) {

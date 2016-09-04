@@ -82,6 +82,26 @@
             android:text="@string/calculate_routes"
             android:textSize="14dp"/>
 
+        <Button
+            android:id="@+id/start_free_drive_button"
+            android:layout_width="fill_parent"
+            android:layout_marginTop="5dp"
+            android:layout_height="50dp"
+            android:background="@android:color/darker_gray"
+            android:onClick="onClick"
+            android:text="@string/start_free_drive"
+            android:textSize="14dp"/>
+
+        <Button
+            android:id="@+id/settings_button"
+            android:background="@android:color/darker_gray"
+            android:layout_marginTop="5dp"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:onClick="onClick"
+            android:text="@string/settings_nav_ui"
+            android:textSize="14dp"/>
+
     </LinearLayout>
 
     <ImageButton

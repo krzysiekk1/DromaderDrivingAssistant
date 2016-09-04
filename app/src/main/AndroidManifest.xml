@@ -66,6 +66,13 @@
             android:name=".activity.SettingsActivity"
             android:configChanges="orientation|screenSize"></activity>
         <activity
+            android:name=".activity.SearchResultsActivity"
+            android:configChanges="orientation|screenSize">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".activity.AppSettingsActivity"
             android:configChanges="orientation|screenSize"></activity>
         <activity

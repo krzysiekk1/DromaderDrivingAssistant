@@ -1767,7 +1767,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             routeIds.add(routeInfo.getRouteID());
             double tollsCost = TollsCostCalculator.getTollsCost(routeInfo);
             alternativeRoutesButtons[routeIndex].setText(Utils.formatDistance(routeInfo.getDistance()) + "\n"
-                                        + Utils.formatTime(routeInfo.getEstimatedTime()) + "\n" + tollsCost + " EUR");
+                    + Utils.formatTime(routeInfo.getEstimatedTime()) + "\n" + tollsCost + " EUR");
             if (routeIndex == 0) {
                 // select 1st alternative by default
                 selectAlternativeRoute(0);

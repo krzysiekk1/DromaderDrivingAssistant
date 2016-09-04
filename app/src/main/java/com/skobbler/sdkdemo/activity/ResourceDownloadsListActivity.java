@@ -80,7 +80,7 @@ public class ResourceDownloadsListActivity extends Activity {
 
     private Stack<Integer> previousListIndexes = new Stack<Integer>();
 
-    private DDAApplication appContext;
+    private DDAApplication  appContext;
 
     private Map<Long, Long> downloadChunksMap = new TreeMap<Long, Long>();
 

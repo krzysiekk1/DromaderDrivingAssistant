@@ -66,4 +66,25 @@
     <string name="download_cancel">CANCEL</string>
     <string name="download_pause">PAUSE</string>
     <string name="download_resume">RESUME</string>
+
+    <!-- Onebox search  -->
+    <string name="category_food_type">Food</string>
+    <string name="category_health_type">Health</string>
+    <string name="category_leisure_type">Leisure</string>
+    <string name="category_nightlife_type">Nightlife</string>
+    <string name="category_public_type">Public</string>
+    <string name="category_service_type">Services</string>
+    <string name="category_shopping_type">Shopping</string>
+    <string name="category_sleeping_type">Sleeping</string>
+    <string name="category_transport_type">Transport</string>
+    <string name="see_all_label">See all Categories</string>
+    <string name="no_results">No results</string>
+
+
+
+
+
+
+
+
 </resources>

@@ -14,7 +14,6 @@ import com.skobbler.ngx.util.SKLogging;
 
 /**
  * Contains utility methods used for download component
- * Created by CatalinM on 11/20/2014.
  */
 public class SKToolsDownloadUtils {
 

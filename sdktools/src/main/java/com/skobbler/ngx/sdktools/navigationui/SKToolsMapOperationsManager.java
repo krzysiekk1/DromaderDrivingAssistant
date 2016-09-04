@@ -14,7 +14,6 @@ import com.skobbler.ngx.positioner.SKPosition;
 import com.skobbler.ngx.positioner.SKPositionerManager;
 import com.skobbler.ngx.routing.SKRouteManager;
 import com.skobbler.ngx.sdktools.navigationui.autonight.SKToolsAutoNightManager;
-import com.skobbler.ngx.util.SKLogging;
 
 
 /**
@@ -145,7 +144,7 @@ class SKToolsMapOperationsManager {
                                   SKAnimationSettings annotationAnimationType) {
         SKAnnotation annotation = new SKAnnotation(id);
         annotation.setAnnotationType(type);
-        annotation.setLocation(new SKCoordinate(longitude, latitude));
+        annotation.setLocation(new SKCoordinate(latitude,longitude));
         mapView.addAnnotation(annotation, annotationAnimationType);
     }
 
@@ -158,9 +157,9 @@ class SKToolsMapOperationsManager {
         SKMapSettings mapSettings = mapView.getMapSettings();
         mapSettings.setMapZoomingEnabled(true);
         mapSettings.setMapRotationEnabled(false);
-        mapSettings.setFollowerMode(SKMapSettings.SKMapFollowerMode.NONE_WITH_HEADING);
+        mapSettings.setHeadingMode(SKMapSettings.SKHeadingMode.ROUTE);
         mapSettings.setMapDisplayMode(SKMapSettings.SKMapDisplayMode.MODE_2D);
-        mapView.rotateTheMapToNorth();
+        mapView.animateToBearing(0,true,0);
     }
 
     /**
@@ -173,9 +172,10 @@ class SKToolsMapOperationsManager {
         mapSettings.setInertiaPanningEnabled(true);
         mapSettings.setMapZoomingEnabled(true);
         mapSettings.setMapRotationEnabled(true);
-        mapView.getMapSettings().setCompassPosition(new SKScreenPoint(5, 5));
+      //  mapView.getMapSettings().setCompassPosition(new SKScreenPoint(5, 5));
         mapView.getMapSettings().setCompassShown(true);
-        mapView.getMapSettings().setFollowerMode(SKMapSettings.SKMapFollowerMode.NONE_WITH_HEADING);
+        mapView.getMapSettings().setFollowPositions(false);
+        mapView.getMapSettings().setHeadingMode(SKMapSettings.SKHeadingMode.ROUTE);
         mapView.getMapSettings().setMapDisplayMode(SKMapSettings.SKMapDisplayMode.MODE_2D);
     }
 
@@ -186,12 +186,13 @@ class SKToolsMapOperationsManager {
     public void setMapInNavigationMode() {
         mapView.setZoom(zoomBeforeSwitch);
         mapView.getMapSettings().setMapZoomingEnabled(false);
+        mapView.getMapSettings().setHeadingMode(SKMapSettings.SKHeadingMode.ROUTE);
+          mapView.getMapSettings().setFollowPositions(true);
 
-        mapView.getMapSettings().setFollowerMode(SKMapSettings.SKMapFollowerMode.NAVIGATION);
 
         final SKPosition naviPosition = SKPositionerManager.getInstance().getCurrentGPSPosition(true);
         if (naviPosition != null) {
-            mapView.rotateMapWithAngle((float) naviPosition.getHeading());
+            mapView.animateToBearing((float) naviPosition.getHeading(),true,1000);
         }
     }
 
@@ -219,7 +220,7 @@ class SKToolsMapOperationsManager {
      */
     public void switchMapDisplayMode(SKMapSettings.SKMapDisplayMode displayMode) {
         mapView.getMapSettings().setMapDisplayMode(displayMode);
-        mapView.getMapSettings().setFollowerMode(SKMapSettings.SKMapFollowerMode.NAVIGATION);
+        mapView.getMapSettings().setHeadingMode(SKMapSettings.SKHeadingMode.ROUTE);
     }
 
     /**
@@ -287,18 +288,18 @@ class SKToolsMapOperationsManager {
                 .SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE) {
             // large and xlarge
             SKRouteManager.getInstance().zoomToRoute(1.3f, 1.5f,
-                    offsetPixelsTop, 10, 5, 5);
+                    offsetPixelsTop, 10, 5, 5, 0);
         } else if (SKToolsUtils.getDisplaySizeInches(currentActivity) < FULL_SCREEN_MINIMAL_SCREENSIZE) {
             // small
             SKRouteManager.getInstance().zoomToRoute(1.3f, 2.5f,
-                    offsetPixelsTop, 10, 5, 5);
+                    offsetPixelsTop, 10, 5, 5,0);
         } else {
             if (currentActivity.getResources().getConfiguration().screenLayout == Configuration.ORIENTATION_PORTRAIT) {
                 SKRouteManager.getInstance().zoomToRoute(1.3f, 2.2f,
-                        offsetPixelsTop, 10, 5, 5);
+                        offsetPixelsTop, 10, 5, 5,0);
             } else {
                 SKRouteManager.getInstance().zoomToRoute(1.3f, 2.2f,
-                        0, 10, 5, 5);
+                        0, 10, 5, 5,0);
             }
         }
     }

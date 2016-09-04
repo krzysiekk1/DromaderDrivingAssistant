@@ -245,6 +245,7 @@ public class MapCacheDebugSettings extends DebugSettings implements SKMapSurface
 
     }
 
+
     @Override
     public void onBoundingBoxImageRendered(int i) {
 

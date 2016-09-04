@@ -13,7 +13,7 @@ import com.skobbler.debugkit.model.MenuDrawerItem;
 import java.util.ArrayList;
 
 /**
- * Created by AlexandraP on 04.03.2015.
+ * Adapter for navigation drawer.
  */
 public class MenuDrawerAdapter extends ArrayAdapter<MenuDrawerItem> {
     /**

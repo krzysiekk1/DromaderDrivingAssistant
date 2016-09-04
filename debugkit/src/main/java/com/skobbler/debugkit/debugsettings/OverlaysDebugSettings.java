@@ -125,11 +125,11 @@ public class OverlaysDebugSettings extends DebugSettings {
         Object overlay = overlayMap.get(id);
         if (overlay != null) {
             if (overlay instanceof SKCircle) {
-                activity.getMapView().centerMapOnPosition(((SKCircle) overlay).getCircleCenter());
+                activity.getMapView().animateToLocation(((SKCircle) overlay).getCircleCenter(),0);
             } else if (overlay instanceof SKPolygon) {
-                activity.getMapView().centerMapOnPosition(((SKPolygon) overlay).getNodes().get(0));
+                activity.getMapView().animateToLocation(((SKPolygon) overlay).getNodes().get(0),0);
             } else if (overlay instanceof SKPolyline) {
-                activity.getMapView().centerMapOnPosition(((SKPolyline) overlay).getNodes().get(0));
+                activity.getMapView().animateToLocation(((SKPolyline) overlay).getNodes().get(0),0);
             }
             Toast.makeText(activity, "Showing " + getOverlayTypeForId(id) + " #" + id, Toast.LENGTH_SHORT).show();
         } else {

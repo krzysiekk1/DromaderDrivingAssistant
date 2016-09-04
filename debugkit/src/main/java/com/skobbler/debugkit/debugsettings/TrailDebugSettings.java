@@ -8,10 +8,9 @@ import android.widget.TextView;
 
 import com.skobbler.debugkit.R;
 import com.skobbler.ngx.SKCoordinate;
-import com.skobbler.ngx.routing.SKRouteManager;
 import com.skobbler.ngx.trail.SKTrailManager;
 import com.skobbler.ngx.trail.SKTrailPosition;
-import com.skobbler.ngx.trail.SKTrailType;
+import com.skobbler.ngx.trail.SKTrailSettings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,7 @@ public class TrailDebugSettings extends DebugSettings {
 
     private boolean trailWasSet;
 
-    private SKTrailType trailType = new SKTrailType();
+    private SKTrailSettings trailType = new SKTrailSettings();
 
     @Override
     List<Pair<String, Object>> defineKeyValuePairs() {
@@ -55,8 +54,8 @@ public class TrailDebugSettings extends DebugSettings {
             applyTrailSettings();
             trailWasSet = true;
         }
-        activity.getMapView().rotateTheMapToNorth();
-        activity.getMapView().centerMapOnPosition(new SKCoordinate(13.420195, 52.522157));
+        activity.getMapView().animateToBearing(0,true,0);
+        activity.getMapView().animateToLocation(new SKCoordinate(52.522157,13.420195),0);
         activity.getMapView().setZoom(15.7f);
     }
 
@@ -78,15 +77,14 @@ public class TrailDebugSettings extends DebugSettings {
         int width = ((SeekBar) specificLayout.findViewById(R.id.trail_width).findViewById(R.id.property_seekbar)).getProgress();
         trailType.setSize(width);
 
-        trailManager.setTrailType(trailType);
+        //trailManager.set(trailType);
 
         boolean pedestrianTrail = ((CheckBox) specificLayout.findViewById(R.id.trail_pedestrian).findViewById(R.id.property_value)).isChecked();
         int smoothness = ((SeekBar) specificLayout.findViewById(R.id.trail_smooth_level).findViewById(R.id.property_seekbar)).getProgress();
-        SKRouteManager.getInstance().enablePedestrianTrail(pedestrianTrail,smoothness);
         trailType.setPedestrianTrailEnabled(pedestrianTrail, smoothness);
 
         boolean shown = ((CheckBox) specificLayout.findViewById(R.id.trail_enabled).findViewById(R.id.property_value)).isChecked();
-        trailManager.setShowTrail(shown);
+      //  trailManager.setShowTrail(shown);
 
         activity.getMapView().requestRender();
     }

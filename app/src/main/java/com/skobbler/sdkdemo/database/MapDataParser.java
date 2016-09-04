@@ -9,6 +9,7 @@ import com.google.gson.stream.JsonReader;
 
 /**
  * This class provides methods for parsing the "Maps" json file
+ * Created by CatalinM on 11/11/2014.
  */
 public class MapDataParser {
 

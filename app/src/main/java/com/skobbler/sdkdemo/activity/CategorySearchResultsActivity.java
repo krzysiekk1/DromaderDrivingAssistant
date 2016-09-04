@@ -80,7 +80,7 @@ public class CategorySearchResultsActivity extends Activity implements SKSearchL
         // get a search object
         SKNearbySearchSettings searchObject = new SKNearbySearchSettings();
         // set nearby search center and radius
-        searchObject.setLocation(new SKCoordinate(52.516929,13.387165));
+        searchObject.setLocation(new SKCoordinate(19.948295, 50.007004));
         short radius = 1500;
         searchObject.setRadius(radius);
         // set the maximum number of search results to be returned

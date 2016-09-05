@@ -126,6 +126,14 @@ public class RoutingDebugSettings extends DebugSettings implements SKRouteListen
      * Ferry Lines check
      */
     private boolean ferryLinesCheck;
+    /**
+     * Bicycle Walk check
+     */
+    private boolean bicycleWalkCheck;
+    /**
+     * Bicycle Carry check
+     */
+    private boolean bicycleCarryCheck;
 
     /**
      * The insets for zoom to route
@@ -314,9 +322,9 @@ public class RoutingDebugSettings extends DebugSettings implements SKRouteListen
                 CheckBox requestExtendedCheckBox = (CheckBox) requestExtended.findViewById(R.id.property_value);
                 requestExtendedCheckBox.setChecked(!requestExtendedCheckBox.isChecked());
                 if (requestExtendedCheckBox.isChecked()) {
-                    route.setExtendedPointsReturned(true);
+                    route.setRequestExtendedPoints(true);
                 } else {
-                    route.setExtendedPointsReturned(false);
+                    route.setRequestExtendedPoints(false);
                 }
             }
         });
@@ -327,9 +335,9 @@ public class RoutingDebugSettings extends DebugSettings implements SKRouteListen
                 CheckBox requestCountryCheckBox = (CheckBox) requestCountry.findViewById(R.id.property_value);
                 requestCountryCheckBox.setChecked(!requestCountryCheckBox.isChecked());
                 if (requestCountryCheckBox.isChecked()) {
-                    route.setCountryCodesReturned(true);
+                    route.setRequestExtendedPoints(true);
                 } else {
-                    route.setCountryCodesReturned(false);
+                    route.setRequestExtendedPoints(false);
 
                 }
             }
@@ -526,7 +534,7 @@ public class RoutingDebugSettings extends DebugSettings implements SKRouteListen
             @Override
             public void onClick(View view) {
                 SKRouteManager.getInstance().loadRouteFromCache(loadRouteId);
-                SKRouteManager.getInstance().zoomMapToCurrentRoute();
+                SKRouteManager.getInstance().zoomMapToCurrentRoute(0);
             }
         });
         zoomToRouteButton.setOnClickListener(new View.OnClickListener() {
@@ -536,7 +544,7 @@ public class RoutingDebugSettings extends DebugSettings implements SKRouteListen
                 leftInset = Integer.parseInt(leftInsetEditText.getText().toString());
                 bottomInset = Integer.parseInt(bottomInsetEditText.getText().toString());
                 rightInset = Integer.parseInt(rightInsetEditText.getText().toString());
-                SKRouteManager.getInstance().zoomToRoute(1, 1, topInset, bottomInset, leftInset, rightInset);
+                SKRouteManager.getInstance().zoomToRoute(1, 1, topInset, bottomInset, leftInset, rightInset, 0);
                 activity.getMapView().requestRender();
             }
         });
@@ -602,6 +610,15 @@ public class RoutingDebugSettings extends DebugSettings implements SKRouteListen
                 case 3:
                     routeMode = SKRouteSettings.SKRouteMode.PEDESTRIAN;
                     break;
+                case 4:
+                    routeMode = SKRouteSettings.SKRouteMode.BICYCLE_FASTEST;
+                    break;
+                case 5:
+                    routeMode = SKRouteSettings.SKRouteMode.BICYCLE_SHORTEST;
+                    break;
+                case 6:
+                    routeMode = SKRouteSettings.SKRouteMode.BICYCLE_QUIETEST;
+                    break;
             }
 
         } else if (changedChild instanceof RoutingRouteConnectionMode) {
@@ -639,6 +656,16 @@ public class RoutingDebugSettings extends DebugSettings implements SKRouteListen
             } else {
                 ferryLinesCheck = false;
             }
+            if (((CheckBox) ((RoutingRestrictions) closedChild).specificLayout.findViewById(R.id.restriction_mode_3).findViewById(R.id.property_value)).isChecked()) {
+                bicycleWalkCheck = true;
+            } else {
+                bicycleWalkCheck = false;
+            }
+            if (((CheckBox) ((RoutingRestrictions) closedChild).specificLayout.findViewById(R.id.restriction_mode_4).findViewById(R.id.property_value)).isChecked()) {
+                bicycleCarryCheck = true;
+            } else {
+                bicycleCarryCheck = false;
+            }
 
         }
     }
@@ -647,17 +674,19 @@ public class RoutingDebugSettings extends DebugSettings implements SKRouteListen
 
         // set start and destination points
         if (configPoints) {
-            route.setStartCoordinate(new SKCoordinate(startPoint.getLongitude(), startPoint.getLatitude()));
-            route.setDestinationCoordinate(new SKCoordinate(destinationPoint.getLongitude(), destinationPoint.getLatitude()));
+            route.setStartCoordinate(new SKCoordinate(startPoint.getLatitude(),startPoint.getLongitude()));
+            route.setDestinationCoordinate(new SKCoordinate(destinationPoint.getLatitude(),destinationPoint.getLongitude()));
 
         } else {
-            route.setStartCoordinate(new SKCoordinate(longitudeStartPoint, latitudeStartPoint));
-            route.setDestinationCoordinate(new SKCoordinate(longitudeEndPoint, latitudeEndPoint));
+            route.setStartCoordinate(new SKCoordinate(latitudeStartPoint,longitudeStartPoint ));
+            route.setDestinationCoordinate(new SKCoordinate(latitudeEndPoint,longitudeEndPoint));
         }
         //set the avoid route type
-        route.setTollRoadsAvoided(tollRoadsCheck);
-        route.setHighWaysAvoided(highwaysCheck);
-        route.setAvoidFerries(ferryLinesCheck);
+        route.getRouteRestrictions().setTollRoadsAvoided(tollRoadsCheck);
+        route.getRouteRestrictions().setHighWaysAvoided(highwaysCheck);
+        route.getRouteRestrictions().setFerriesAvoided(ferryLinesCheck);
+        route.getRouteRestrictions().setBicycleWalkAvoided(bicycleWalkCheck);
+        route.getRouteRestrictions().setBicycleCarryAvoided(bicycleCarryCheck);
 
         //set the viaPoints
         if (RoutingViaPoints.getViaPointList() != null) {
@@ -666,7 +695,7 @@ public class RoutingDebugSettings extends DebugSettings implements SKRouteListen
         //set the route connection mode
         route.setRouteConnectionMode(routeConnectionMode);
         // set the number of routes to be calculated
-        route.setNoOfRoutes(numberOfRoutes);
+        route.setMaximumReturnedRoutes(numberOfRoutes);
         // set the route mode
         route.setRouteMode(routeMode);
         // set the corridor width
@@ -676,7 +705,7 @@ public class RoutingDebugSettings extends DebugSettings implements SKRouteListen
         SKRouteManager.getInstance().setRouteListener(this);
         // pass the route to the calculation routine
         SKRouteManager.getInstance().calculateRoute(route);
-        SKRouteManager.getInstance().zoomMapToCurrentRoute();
+        SKRouteManager.getInstance().zoomMapToCurrentRoute(0);
     }
 
     public static ArrayList<SKRouteAdvice> getAdviceList() {
@@ -747,10 +776,10 @@ public class RoutingDebugSettings extends DebugSettings implements SKRouteListen
             corridorDownloadInfo.setText(context.getResources().getString(R.string.no));
         }
         if (requestAdvicesCheck) {
-            advicesList.addAll(SKRouteManager.getInstance().getAdviceList(skRouteInfo.getRouteID(), SKMaps.SKDistanceUnitType.DISTANCE_UNIT_KILOMETER_METERS));
+            advicesList.addAll(SKRouteManager.getInstance().getAdviceListForRouteByUniqueId(skRouteInfo.getRouteID(), SKMaps.SKDistanceUnitType.DISTANCE_UNIT_KILOMETER_METERS));
         }
         if (requestCoordinatesCheck) {
-            coordinatesList = SKRouteManager.getInstance().getCoordinatesForRoute(skRouteInfo.getRouteID());
+            coordinatesList = SKRouteManager.getInstance().getCoordinatesForRouteByUniqueId(skRouteInfo.getRouteID());
         }
         if (requestCountryCodesCheck) {
             countryCodesList.addAll(SKRouteManager.getInstance().getCountriesTraversedByRouteByUniqueId(skRouteInfo.getRouteID()));

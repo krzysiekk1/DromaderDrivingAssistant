@@ -34,6 +34,7 @@ import com.skobbler.debugkit.debugsettings.MapCacheDebugSettings;
 import com.skobbler.debugkit.debugsettings.MapDebugSettings;
 import com.skobbler.debugkit.debugsettings.MapStateDebugSettings;
 import com.skobbler.debugkit.debugsettings.MapStyleDebugSettings;
+import com.skobbler.debugkit.debugsettings.RouteWithPointsDebugSettings;
 import com.skobbler.debugkit.debugsettings.RoutingDebugSettings;
 import com.skobbler.debugkit.debugsettings.PoiTrackerDebugSettings;
 import com.skobbler.debugkit.debugsettings.PositionLoggingDebugSettings;
@@ -71,7 +72,8 @@ import com.skobbler.ngx.routing.SKRouteInfo;
 import com.skobbler.ngx.routing.SKRouteJsonAnswer;
 import com.skobbler.ngx.routing.SKRouteListener;
 import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationListener;
-import com.skobbler.ngx.versioning.SKMapUpdateListener;
+import com.skobbler.ngx.versioning.SKMapVersioningListener;
+import com.skobbler.ngx.versioning.SKMapVersioningListener;
 import com.skobbler.ngx.versioning.SKVersioningManager;
 
 import java.util.ArrayList;
@@ -79,11 +81,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- * Created by Filip Tudic on 20-May-15.
+ * Class that handles map events.
  */
 public class DebugMapActivity extends Activity implements SKMapSurfaceListener, SKRouteListener, SKNavigationListener,
         SKRealReachListener, SKPOITrackerListener, SKCurrentPositionListener, SensorEventListener,
-        SKMapUpdateListener, SKToolsNavigationListener {
+        SKMapVersioningListener, SKToolsNavigationListener {
 
     /**
      * time, in milliseconds, from the moment when the application receives new
@@ -170,7 +172,7 @@ public class DebugMapActivity extends Activity implements SKMapSurfaceListener, 
 
     public enum TestingOption {
         TESTING_OPTION, ANNOTATION_OPTION, MAP_VIEW_SETTINGS_OPTION, MAP_CACHE_OPTION, LAST_RENDERED_FRAME_OPTION, ANIMATION_CUSTOM_VIEW_OPTION, BOUNDING_BOX_OPTION, INTERNALIZATION_OPTION, ANIMATE_OPTION, MAP_STYLE_OPTION, SCALE_VIEW_OPTION, CALLOUT_VIEW_OPTION,
-        ROUTING_OPTION, MAP_VERSION_OPTION, OVERLAYS_OPTION, POSITION_LOGGING_OPTION, POI_TRACKER
+        ROUTING_OPTION, MAP_VERSION_OPTION, OVERLAYS_OPTION, POSITION_LOGGING_OPTION, POI_TRACKER, ROUTE_WITH_POINTS
     }
 
     @Override
@@ -237,6 +239,7 @@ public class DebugMapActivity extends Activity implements SKMapSurfaceListener, 
         menuItems.put(TestingOption.SCALE_VIEW_OPTION, create(TestingOption.SCALE_VIEW_OPTION, getResources().getString(R.string.option_scale_view), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(TestingOption.CALLOUT_VIEW_OPTION, create(TestingOption.CALLOUT_VIEW_OPTION, getResources().getString(R.string.option_callout_view), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(TestingOption.ROUTING_OPTION, create(TestingOption.ROUTING_OPTION, getResources().getString(R.string.option_routing), MenuDrawerItem.ITEM_TYPE));
+        menuItems.put(TestingOption.ROUTE_WITH_POINTS, create(TestingOption.ROUTE_WITH_POINTS, getResources().getString(R.string.option_routing_with_points),MenuDrawerItem.ITEM_TYPE));
         menuItems.put(TestingOption.MAP_VERSION_OPTION, create(TestingOption.MAP_VERSION_OPTION, getResources().getString(R.string.option_map_version_information), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(TestingOption.OVERLAYS_OPTION, create(TestingOption.OVERLAYS_OPTION, getResources().getString(R.string.option_overlays), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(TestingOption.POI_TRACKER, create(TestingOption.POI_TRACKER, getResources().getString(R.string.option_poi_tracker), MenuDrawerItem.ITEM_TYPE));
@@ -452,6 +455,7 @@ public class DebugMapActivity extends Activity implements SKMapSurfaceListener, 
 
     }
 
+
     @Override
     public void onBoundingBoxImageRendered(int i) {
         if (DebugSettings.currentSettings instanceof BoundingBoxDebugSettings) {
@@ -533,6 +537,7 @@ public class DebugMapActivity extends Activity implements SKMapSurfaceListener, 
     public void onTunnelEvent(boolean b) {
 
     }
+
 
     @Override
     public void onRealReachCalculationCompleted(SKBoundingBox skBoundingBox) {
@@ -729,6 +734,9 @@ public class DebugMapActivity extends Activity implements SKMapSurfaceListener, 
                 break;
             case ROUTING_OPTION:
                 DebugSettings.getInstanceForType(RoutingDebugSettings.class).open(debugBaseLayout,null);
+                break;
+            case ROUTE_WITH_POINTS:
+                DebugSettings.getInstanceForType(RouteWithPointsDebugSettings.class).open(debugBaseLayout,null);
                 break;
             default:
                 break;

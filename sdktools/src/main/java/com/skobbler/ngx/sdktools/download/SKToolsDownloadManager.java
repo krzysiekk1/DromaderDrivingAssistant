@@ -6,7 +6,6 @@ import java.util.Queue;
 
 /**
  * Component that manages current downloads list
- * Created by CatalinM on 11/13/2014.
  */
 public class SKToolsDownloadManager {
 

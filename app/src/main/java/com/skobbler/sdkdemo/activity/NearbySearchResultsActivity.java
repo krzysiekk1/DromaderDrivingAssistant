@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.search.SKNearbySearchSettings;
+import com.skobbler.ngx.search.SKOnelineSearchSettings;
 import com.skobbler.ngx.search.SKSearchListener;
 import com.skobbler.ngx.search.SKSearchManager;
 import com.skobbler.ngx.search.SKSearchResult;
@@ -59,18 +60,25 @@ public class NearbySearchResultsActivity extends Activity implements SKSearchLis
         // get a nearby search object
         SKNearbySearchSettings nearbySearchObject = new SKNearbySearchSettings();
         // set the position around which to do the search and the search radius
-        nearbySearchObject.setLocation(new SKCoordinate(getIntent().getDoubleExtra("longitude", 0), getIntent()
-                .getDoubleExtra("latitude", 0)));
+        nearbySearchObject.setLocation(new SKCoordinate(getIntent().getDoubleExtra("latitude", 0), getIntent()
+                .getDoubleExtra("longitude", 0)));
         nearbySearchObject.setRadius(getIntent().getShortExtra("radius", (short)0));
         // set the search topic
         nearbySearchObject.setSearchTerm(getIntent().getStringExtra("searchTopic"));
         // initiate the nearby search
-        SKSearchStatus status = searchManager.nearbySearch(nearbySearchObject);
-        if (status != SKSearchStatus.SK_SEARCH_NO_ERROR) {
-            Toast.makeText(this, "An error occurred", Toast.LENGTH_SHORT).show();
-        }
+        searchManager.nearbySearch(nearbySearchObject);
+
     }
 
+    private SKOnelineSearchSettings getOneLineSearchSettings(String term, SKCoordinate coordinate) {
+        SKOnelineSearchSettings onelineSearchSettings = new SKOnelineSearchSettings(term, SKSearchManager.SKSearchMode.ONLINE );
+        onelineSearchSettings.setGpsCoordinates(coordinate);
+
+        // TODO add country code
+//        onelineSearchSettings.setCountryCode();
+
+        return onelineSearchSettings;
+    }
     @Override
     public void onReceivedSearchResults(final List<SKSearchResult> results) {
         findViewById(R.id.label_operation_in_progress).setVisibility(View.GONE);

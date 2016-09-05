@@ -9,12 +9,15 @@
     <color name="bullet_gray">#898989</color>
     <color name="bullet_green">#30e162</color>
     <color name="speed_exceeded">#FF5649</color>
+    <color name="ripple_gray_color">#c6c6c6</color>
+    <color name="dark_gray">#3A3A3A</color>
 
     <color name="navigation_semitransparent_separator">#1A000000</color>
     <color name="navigation_next_advice_overlay_background">#16000000</color>
     <color name="speed_panel_night_background">#717171</color>
     <color name="grey_options_group">#a0a0a0</color>
-
+    <color name="list_separator">#EDEDED</color>
+    <color name="light_gray">#898989</color>
 
     <!-- navigation panels-->
     <color name="navigation_style_day">#494949</color>
@@ -27,6 +30,7 @@
 
     <color name="blue_panel_day_background">#005EBC</color>
     <color name="blue_panel_night_background">#0080FF</color>
+    <color name="navigate_blue_button">#0080ff</color>
     <color name="blue_panel_night_text">#7FBFFF</color>
 
     <color name="yellow_panel_day_background">#FFC702</color>

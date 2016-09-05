@@ -10,7 +10,7 @@ public class FollowerModeDebugSettings extends EnumBasedDebugSettings {
 
     @Override
     Class defineEnumClass() {
-        return SKMapSettings.SKMapFollowerMode.class;
+        return SKMapSettings.SKHeadingMode.class;
     }
 
     @Override

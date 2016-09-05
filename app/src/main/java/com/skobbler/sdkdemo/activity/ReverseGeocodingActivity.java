@@ -11,7 +11,7 @@ import com.skobbler.ngx.reversegeocode.SKReverseGeocoderManager;
 import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.ngx.search.SKSearchResultParent;
 import com.skobbler.sdkdemo.R;
-import com.skobbler.sdkdemo.application.DDAApplication;
+import com.skobbler.sdkdemo.application.DemoApplication;
 
 
 /**
@@ -19,13 +19,13 @@ import com.skobbler.sdkdemo.application.DDAApplication;
  */
 public class ReverseGeocodingActivity extends Activity {
     
-    private DDAApplication application;
+    private DemoApplication application;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reverse_geocoding);
-        application = (DDAApplication) getApplication();
+        application = (DemoApplication) getApplication();
     }
     
     public void onClick(View v) {
@@ -70,7 +70,7 @@ public class ReverseGeocodingActivity extends Activity {
             if (longitude > 180 || longitude < -180) {
                 return null;
             }
-            return new SKCoordinate(longitude, latitude);
+            return new SKCoordinate(latitude, longitude);
         } catch (NumberFormatException nfe) {
             return null;
         }

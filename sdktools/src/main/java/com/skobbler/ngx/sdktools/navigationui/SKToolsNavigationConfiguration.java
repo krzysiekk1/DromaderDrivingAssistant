@@ -153,7 +153,6 @@ public class SKToolsNavigationConfiguration {
 
     /**
      * Sets the destination coordinate of the route
-     *
      * @param destinationCoordinate
      */
     public void setDestinationCoordinate(SKCoordinate destinationCoordinate) {

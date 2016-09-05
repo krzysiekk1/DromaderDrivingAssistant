@@ -114,14 +114,14 @@ public class CustomPoiDebugSettings extends DebugSettings {
     private void prepareCustomPoi() {
         SKMapCustomPOI customPOI = new SKMapCustomPOI();
         customPOI.setUniqueID(identifier);
-        customPOI.setLocation(new SKCoordinate(longitude, latitude));
+        customPOI.setLocation(new SKCoordinate(latitude,longitude));
         customPOI.setPoiType(skPoiType);
         customPOI.setCategory(skpoiMainCategory);
         activity.getMapView().addCustomPOI(customPOI);
         // set map zoom level
         activity.getMapView().setZoom(15);
         // center map on a position
-        activity.getMapView().centerMapOnPosition(new SKCoordinate(longitude, latitude));
+        activity.getMapView().setPositionAsCurrent(new SKCoordinate(latitude,longitude),10,true);
     }
 
     @Override

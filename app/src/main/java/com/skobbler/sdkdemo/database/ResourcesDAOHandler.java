@@ -4,7 +4,6 @@ import android.content.Context;
 
 /**
  * This class provides methods for accessing the database tables
- * Created by CatalinM on 11/11/2014.
  */
 public class ResourcesDAOHandler {
 

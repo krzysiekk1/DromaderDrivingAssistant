@@ -38,6 +38,12 @@
         android:id="@+id/padding_height"
         layout="@layout/element_debug_kit_item_seekbar"/>
     <include
+        android:id="@+id/padding_bottom"
+        layout="@layout/element_debug_kit_item_seekbar"/>
+    <include
+        android:id="@+id/padding_top"
+        layout="@layout/element_debug_kit_item_seekbar"/>
+    <include
         android:id="@+id/fit_bounding_box_button"
         layout="@layout/element_debug_kit_item_button"/>
 

@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.3'
+        classpath 'com.android.tools.build:gradle:2.1.0'
     }
 }
 
@@ -12,14 +12,15 @@ apply plugin: 'com.android.application'
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
     compile fileTree(dir: "$buildDir", include: 'native-libs.jar')
-    compile 'com.android.support:support-v4:22.1.1'
-    compile project (':sdktools')
+    compile project(':sdktools')
     compile project(':debugkit')
+    compile 'com.android.support:support-v4:23.2.1'
+    compile 'com.android.support:appcompat-v7:23.2.1'
 }
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    buildToolsVersion "23.0.1"
 
     compileOptions {
         sourceCompatibility = org.gradle.api.JavaVersion.VERSION_1_6
@@ -38,5 +39,6 @@ android {
         }
     }
 }
+
 
 

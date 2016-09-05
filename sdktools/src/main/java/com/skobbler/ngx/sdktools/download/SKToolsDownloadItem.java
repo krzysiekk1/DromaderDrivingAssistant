@@ -4,7 +4,6 @@ import java.util.List;
 
 /**
  * Describes an item that is downloaded
- * Created by CatalinM on 11/13/2014.
  */
 public class SKToolsDownloadItem {
 

@@ -3,22 +3,16 @@ package com.skobbler.debugkit.debugsettings;
 import android.content.Context;
 import android.util.Pair;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.skobbler.debugkit.R;
-import com.skobbler.debugkit.activity.DebugMapActivity;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.map.SKCalloutView;
-import com.skobbler.ngx.map.SKMapViewHolder;
-
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by mirceab on 23.06.2015.
- */
+
 public class CalloutViewDebugSettings extends DebugSettings {
     /**
      * Title string
@@ -143,8 +137,8 @@ public class CalloutViewDebugSettings extends DebugSettings {
                 }
             });
 
-            skCalloutView.showAtLocation(new SKCoordinate(longitude, latitude), true);
-            activity.getMapView().centerMapOnPosition(new SKCoordinate(longitude, latitude));
+            skCalloutView.showAtLocation(new SKCoordinate(latitude,longitude), true);
+            activity.getMapView().animateToLocation(new SKCoordinate(latitude,longitude),0);
         }
         hideCalloutViewButton = false;
     }
@@ -156,8 +150,8 @@ public class CalloutViewDebugSettings extends DebugSettings {
         } else {
             View view = View.inflate(activity, R.layout.callout_view_custom_view, null);
             skCalloutViewCustom.setCustomView(view);
-            skCalloutViewCustom.showAtLocation(new SKCoordinate(longitude, latitude), true);
-            activity.getMapView().centerMapOnPosition(new SKCoordinate(longitude, latitude));
+            skCalloutViewCustom.showAtLocation(new SKCoordinate(latitude,longitude), true);
+            activity.getMapView().animateToLocation(new SKCoordinate(latitude,longitude),0);
         }
         hideCalloutViewButton = false;
     }

@@ -197,7 +197,7 @@ public class CurrentPositionDebugSettings extends DebugSettings {
             @Override
             public void onClick(View view) {
                 if (activity.getCurrentPosition() != null) {
-                    activity.getMapView().centerMapOnCurrentPositionSmooth(17, 1500);
+                    activity.getMapView().centerOnCurrentPosition(17, true ,1500);
                 } else {
                     Toast.makeText(activity, "Current position not available", Toast.LENGTH_SHORT).show();
                 }

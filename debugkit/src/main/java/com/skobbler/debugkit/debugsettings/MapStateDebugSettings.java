@@ -60,8 +60,8 @@ public class MapStateDebugSettings extends DebugSettings {
         int bearing = ((SeekBar) specificLayout.findViewById(R.id.map_bearing).findViewById(R.id.property_seekbar)).getProgress();
 
         activity.getMapView().setZoom(zoom);
-        activity.getMapView().centerMapOnPosition(new SKCoordinate(longitude, latitude));
-        activity.getMapView().rotateMapWithAngle(bearing);
+        activity.getMapView().setPositionAsCurrent(new SKCoordinate(latitude,longitude),10,true);
+        activity.getMapView().animateToBearing(bearing,true,0);
     }
 
     @Override

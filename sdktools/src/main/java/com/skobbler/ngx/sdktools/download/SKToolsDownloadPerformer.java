@@ -23,8 +23,7 @@ import com.skobbler.ngx.packages.SKPackageManager;
 import com.skobbler.ngx.util.SKLogging;
 
 /**
- * perform download for queued items
- * Created by Tudor on 11/14/2014.
+ * Perform download for queued items
  */
 public class SKToolsDownloadPerformer extends Thread {
 

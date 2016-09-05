@@ -29,7 +29,7 @@ import com.skobbler.sdkdemo.R;
 import com.skobbler.sdkdemo.application.ApplicationPreferences;
 import com.skobbler.sdkdemo.application.DDAApplication;
 import com.skobbler.sdkdemo.util.Utils;
-//mały komentarz
+
 /**
  * Activity that installs required resources (from assets/MapResources.zip) to the device
  */

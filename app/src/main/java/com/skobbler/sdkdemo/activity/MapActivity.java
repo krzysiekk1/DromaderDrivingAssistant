@@ -66,7 +66,6 @@ import com.skobbler.ngx.map.SKCircle;
 import com.skobbler.ngx.map.SKCoordinateRegion;
 import com.skobbler.ngx.map.SKMapCustomPOI;
 import com.skobbler.ngx.map.SKMapPOI;
-import com.skobbler.ngx.map.SKMapSettings.SKMapFollowerMode;
 import com.skobbler.ngx.map.SKMapSurfaceListener;
 import com.skobbler.ngx.map.SKMapSurfaceView;
 import com.skobbler.ngx.map.SKMapViewHolder;
@@ -110,7 +109,6 @@ import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationListener;
 import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationManager;
 import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.ngx.util.SKLogging;
-import com.skobbler.ngx.versioning.SKMapUpdateListener;
 import com.skobbler.ngx.versioning.SKVersioningManager;
 import com.skobbler.sdkdemo.R;
 import com.skobbler.ngx.sdktools.navigationui.costs.tolls.TollsCostCalculator;
@@ -127,7 +125,7 @@ import com.skobbler.sdkdemo.util.PreferenceTypes;
  */
 public class MapActivity extends Activity implements SKMapSurfaceListener, SKRouteListener, SKNavigationListener,
         SKRealReachListener, SKPOITrackerListener, SKCurrentPositionListener, SensorEventListener,
-        SKMapUpdateListener, SKToolsNavigationListener {
+         SKToolsNavigationListener {
 
     private static final byte GREEN_PIN_ICON_ID = 0;
     private static final byte RED_PIN_ICON_ID = 1;
@@ -156,7 +154,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
     public enum MapOption {
         MAP_DISPLAY, MAP_STYLES, HEAT_MAP, MAP_CREATOR, MAP_OVERLAYS, ANNOTATIONS, MAP_DOWNLOADS, MAP_INTERACTION, ALTERNATIVE_ROUTES, REAL_REACH,
-        ROUTING_AND_NAVIGATION, POI_TRACKING, NAVI_UI, SETTINGS, ADDRESS_SEARCH, NEARBY_SEARCH, CATEGORY_SEARCH, REVERSE_GEOCODING, OTHER_SECTION
+        ROUTING_AND_NAVIGATION, POI_TRACKING, NAVI_UI, SETTINGS, ADDRESS_SEARCH, NEARBY_SEARCH, CATEGORY_SEARCH, REVERSE_GEOCODING, OTHER_SECTION, ONEBOX_SEARCH
     }
 
     private enum MapAdvices {
@@ -469,6 +467,8 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         });
         // END REAL REACH
 
+
+
         navigationUI = (RelativeLayout) findViewById(R.id.navigation_ui_layout);
         initializeTrackablePOIs();
 
@@ -497,7 +497,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         menuItems.put(MapOption.NAVI_UI, create(MapOption.NAVI_UI, getResources().getString(R.string.option_map), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.MAP_DOWNLOADS, create(MapOption.MAP_DOWNLOADS, getResources().getString(R.string.option_map_downloads), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.SETTINGS, create(MapOption.SETTINGS, getResources().getString(R.string.option_settings), MenuDrawerItem.ITEM_TYPE));
-
+        menuItems.put(MapOption.ONEBOX_SEARCH, create(MapOption.ONEBOX_SEARCH, getResources().getString(R.string.option_onebox), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.OTHER_SECTION, create(MapOption.OTHER_SECTION, getResources().getString(R.string.other_section).toUpperCase(), MenuDrawerItem.SECTION_TYPE));
         menuItems.put(MapOption.MAP_DISPLAY, create(MapOption.MAP_DISPLAY, getResources().getString(R.string.option_map_display), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.MAP_STYLES, create(MapOption.MAP_STYLES, getResources().getString(R.string.option_map_styles), MenuDrawerItem.ITEM_TYPE));
@@ -887,6 +887,24 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             stopOrientationSensor();
         }
     }
+
+
+
+    private void initializeOneBox() {
+               if(currentPosition != null){
+                    OneBoxManager.setCurrentPosition(currentPosition.getCoordinate());
+                }
+                getActionBar().hide();
+
+                android.app.FragmentManager fragmentManager = getFragmentManager();
+                android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                OneBoxFragment oneboxFragment = new OneBoxFragment();
+                fragmentTransaction.add(R.id.onebox_fragment, oneboxFragment, OneBoxManager.ONEBOX_FRAGMENT_ID);
+                fragmentTransaction.addToBackStack(OneBoxManager.ONEBOX_FRAGMENT_ID);
+                fragmentTransaction.commit();
+                ((OneBoxFragment)getFragmentManager().findFragmentByTag(OneBoxManager.ONEBOX_FRAGMENT_ID)).ONEBOX_ACTIVATED = true;
+            }
+
 
     private void initializeNavigationUI(boolean showStartingAndDestinationAnnotations) {
         final ToggleButton selectStartPointBtn = (ToggleButton) findViewById(R.id.select_start_point_button);
@@ -1674,6 +1692,14 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     public void onBackPressed() {
         // TODO Auto-generated method stub
 
+        if (((OneBoxFragment)getFragmentManager().findFragmentByTag(OneBoxManager.ONEBOX_FRAGMENT_ID)).ONEBOX_ACTIVATED) {
+            if(getFragmentManager().findFragmentByTag(OneBoxManager.ONEBOX_FRAGMENT_ID) != null)
+                ((OneBoxFragment)getFragmentManager().findFragmentByTag(OneBoxManager.ONEBOX_FRAGMENT_ID)).handleBackButtonPressed();
+                return;
+        }
+
+
+
         if (skToolsNavigationInProgress || skToolsRouteCalculated) {
             AlertDialog.Builder alert = new AlertDialog.Builder(MapActivity.this);
             alert.setTitle("Really quit?");
@@ -1903,6 +1929,10 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        if(!((OneBoxFragment)getFragmentManager().findFragmentByTag(OneBoxManager.ONEBOX_FRAGMENT_ID)).ONEBOX_ACTIVATED){
+                        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                    }
         // Pass the event to ActionBarDrawerToggle, if it returns
         // true, then it has handled the app icon touch event
         if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
@@ -1992,6 +2022,11 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 break;
             case NEARBY_SEARCH:
                 startActivity(new Intent(this, NearbySearchActivity.class));
+                break;
+            case ONEBOX_SEARCH:
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                initializeOneBox();
+                currentMapOption = MapOption.ONEBOX_SEARCH;
                 break;
             case ANNOTATIONS:
                 currentMapOption = MapOption.ANNOTATIONS;

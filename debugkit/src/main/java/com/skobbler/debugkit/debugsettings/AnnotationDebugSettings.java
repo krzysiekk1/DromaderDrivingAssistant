@@ -13,28 +13,18 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.skobbler.debugkit.R;
 import com.skobbler.ngx.SKCoordinate;
-import com.skobbler.ngx.SKMaps;
 import com.skobbler.ngx.map.SKAnimationSettings;
 import com.skobbler.ngx.map.SKAnnotation;
 import com.skobbler.ngx.map.SKAnnotationView;
-import com.skobbler.ngx.map.SKMapSettings;
-import com.skobbler.ngx.map.SKPulseAnimationSettings;
 import com.skobbler.ngx.map.SKScreenPoint;
-import com.skobbler.ngx.positioner.SKPosition;
-
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by mirceab on 03.06.2015.
- */
+
 public class AnnotationDebugSettings extends DebugSettings {
     /**
      * Custom view for adding an annotation
@@ -279,7 +269,7 @@ public class AnnotationDebugSettings extends DebugSettings {
             SKAnnotationView annotationView = new SKAnnotationView();
             // // add an annotation with a view
             SKAnnotation annotationFromView = new SKAnnotation(15);
-            annotationFromView.setLocation(new SKCoordinate(longitude, latitude));
+            annotationFromView.setLocation(new SKCoordinate(latitude,longitude));
             annotationFromView.setMininumZoomLevel(5);
             annotationView = new SKAnnotationView();
             customView =
@@ -299,7 +289,7 @@ public class AnnotationDebugSettings extends DebugSettings {
             if (updateAnnotationCheck == false) {
                 skAnimationType.setDuration(animatationDurationProgress);
                 // set annotation location
-                annotation1.setLocation(new SKCoordinate(longitude, latitude));
+                annotation1.setLocation(new SKCoordinate(latitude,longitude));
 
                 // set offset
                 annotation1.setOffset(new SKScreenPoint(offsetX, offsetY));
@@ -313,7 +303,7 @@ public class AnnotationDebugSettings extends DebugSettings {
                 // render annotation on map
                 activity.getMapView().addAnnotation(annotation1, skAnimationType);
             } else {
-                annotation1.setLocation(new SKCoordinate(longitude, latitude));
+                annotation1.setLocation(new SKCoordinate(latitude,longitude));
                 annotation1.setOffset(new SKScreenPoint(offsetX, offsetY));
                 annotation1.setMininumZoomLevel(minimumZoomLevel);
                 annotation1.setAnnotationType(skAnnotation);
@@ -324,7 +314,7 @@ public class AnnotationDebugSettings extends DebugSettings {
         // set map zoom level
         activity.getMapView().setZoom(15);
         // center map on a position
-        activity.getMapView().centerMapOnPosition(new SKCoordinate(longitude, latitude));
+        activity.getMapView().setPositionAsCurrent(new SKCoordinate(latitude,longitude),10,true);
     }
 
     @Override
@@ -349,7 +339,7 @@ public class AnnotationDebugSettings extends DebugSettings {
                     ((TextView) specificLayout.findViewById(R.id.annotation_type).findViewById(R.id.property_value)).setText("Purple");
                     break;
                 case 4:
-                    skAnnotation = SKAnnotation.SK_ANNOTATION_TYPE_MARKER;
+                    skAnnotation = SKAnnotation.SK_ANNOTATION_TYPE_PURPLE;
                     ((TextView) specificLayout.findViewById(R.id.annotation_type).findViewById(R.id.property_value)).setText("Marker");
                     break;
                 case 5:

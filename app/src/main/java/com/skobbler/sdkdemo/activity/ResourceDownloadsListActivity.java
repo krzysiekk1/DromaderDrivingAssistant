@@ -25,12 +25,13 @@ import com.skobbler.ngx.sdktools.download.SKToolsDownloadListener;
 import com.skobbler.ngx.sdktools.download.SKToolsDownloadManager;
 import com.skobbler.sdkdemo.R;
 import com.skobbler.sdkdemo.application.ApplicationPreferences;
-import com.skobbler.sdkdemo.application.DemoApplication;
+import com.skobbler.sdkdemo.application.DDAApplication;
 import com.skobbler.sdkdemo.database.DownloadResource;
 import com.skobbler.sdkdemo.database.MapDataParser;
 import com.skobbler.sdkdemo.database.MapDownloadResource;
 import com.skobbler.sdkdemo.database.MapsDAO;
 import com.skobbler.sdkdemo.database.ResourcesDAOHandler;
+import com.skobbler.ngx.versioning.SKVersioningManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -110,7 +111,7 @@ public class ResourceDownloadsListActivity extends Activity {
     /**
      * Context object
      */
-    private DemoApplication appContext;
+    private DDAApplication appContext;
 
     private Map<Long, Long> downloadChunksMap = new TreeMap<Long, Long>();
 
@@ -156,7 +157,7 @@ public class ResourceDownloadsListActivity extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_downloads_list);
-        appContext = (DemoApplication) getApplication();
+        appContext = (DDAApplication) getApplication();
         handler = new Handler();
 
         final ListItem mapResourcesItem = new ListItem();
@@ -176,8 +177,13 @@ public class ResourceDownloadsListActivity extends Activity {
                     listView = (ListView) findViewById(R.id.list_view);
                     adapter = new DownloadsAdapter();
                     listView.setAdapter(adapter);
-                    ResourceDownloadsListActivity.this.findViewById(R.id.cancel_all_button).setVisibility(activeDownloads.isEmpty() ? View.GONE : View.VISIBLE);
-                    downloadManager = SKToolsDownloadManager.getInstance(adapter);
+                    if (activeDownloads.isEmpty()) {
+                         ResourceDownloadsListActivity.this.findViewById(R.id.cancel_all_button).setVisibility(View.GONE);
+                         ResourceDownloadsListActivity.this.findViewById(R.id.check_for_updates_button).setVisibility(View.VISIBLE);
+                     } else {
+                         ResourceDownloadsListActivity.this.findViewById(R.id.check_for_updates_button).setVisibility(View.GONE);
+                         ResourceDownloadsListActivity.this.findViewById(R.id.cancel_all_button).setVisibility(View.VISIBLE);
+                     }                    downloadManager = SKToolsDownloadManager.getInstance(adapter);
                     if (!activeDownloads.isEmpty() && activeDownloads.get(0).getDownloadState() == SKToolsDownloadItem.DOWNLOADING) {
                         startPeriodicUpdates();
                     }
@@ -599,7 +605,13 @@ public class ResourceDownloadsListActivity extends Activity {
 
         @Override
         public void notifyDataSetChanged() {
-            ResourceDownloadsListActivity.this.findViewById(R.id.cancel_all_button).setVisibility(activeDownloads.isEmpty() ? View.GONE : View.VISIBLE);
+            if (activeDownloads.isEmpty()) {
+                 ResourceDownloadsListActivity.this.findViewById(R.id.cancel_all_button).setVisibility(View.GONE);
+                 ResourceDownloadsListActivity.this.findViewById(R.id.check_for_updates_button).setVisibility(View.VISIBLE);
+             } else {
+                 ResourceDownloadsListActivity.this.findViewById(R.id.check_for_updates_button).setVisibility(View.GONE);
+                 ResourceDownloadsListActivity.this.findViewById(R.id.cancel_all_button).setVisibility(View.VISIBLE);
+             }
             super.notifyDataSetChanged();
             listView.postInvalidate();
         }
@@ -909,6 +921,9 @@ public class ResourceDownloadsListActivity extends Activity {
      * @param view
      */
     public void onClick(View view) {
+        if (view.getId() == R.id.check_for_updates_button) {
+             SKVersioningManager.getInstance().checkNewVersion(3);
+         }
         if (view.getId() == R.id.cancel_all_button) {
             boolean cancelled = downloadManager.cancelAllDownloads();
             if (!cancelled) {

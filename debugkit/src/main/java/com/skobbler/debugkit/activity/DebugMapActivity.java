@@ -182,7 +182,7 @@ public class DebugMapActivity extends Activity implements SKMapSurfaceListener, 
         runningInstances++;
 
         setContentView(R.layout.debug_activity_map);
-        //app = (DemoApplication) getApplication();
+        //app = (DDAApplication) getApplication();
 
         currentPositionProvider = new SKCurrentPositionProvider(this);
         currentPositionProvider.setCurrentPositionListener(this);

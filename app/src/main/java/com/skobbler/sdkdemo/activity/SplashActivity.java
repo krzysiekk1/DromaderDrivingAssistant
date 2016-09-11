@@ -27,8 +27,8 @@ import com.skobbler.ngx.versioning.SKMapVersioningListener;
 import com.skobbler.ngx.versioning.SKVersioningManager;
 import com.skobbler.sdkdemo.R;
 import com.skobbler.sdkdemo.application.ApplicationPreferences;
-import com.skobbler.sdkdemo.application.DemoApplication;
-import com.skobbler.sdkdemo.util.DemoUtils;
+import com.skobbler.sdkdemo.application.DDAApplication;
+import com.skobbler.sdkdemo.util.Utils;
 
 /**
  * Activity that installs required resources (from assets/MapResources.zip) to
@@ -65,7 +65,7 @@ public class SplashActivity extends Activity implements SKMapsInitializationList
         }
         if (multipleMapSupport) {
             SKMapSurfaceView.preserveGLContext = false;
-            DemoUtils.isMultipleMapSupportEnabled = true;
+            Utils.isMultipleMapSupportEnabled = true;
         }
 
         try {
@@ -79,7 +79,7 @@ public class SplashActivity extends Activity implements SKMapsInitializationList
             SKMaps.getInstance().initializeSKMaps(getApplication(), this);
         } catch (SKDeveloperKeyException exception) {
             exception.printStackTrace();
-            DemoUtils.showApiKeyErrorDialog(this);
+            Utils.showApiKeyErrorDialog(this);
         }
 
     }
@@ -89,7 +89,7 @@ public class SplashActivity extends Activity implements SKMapsInitializationList
     public void onLibraryInitialized(boolean isSuccessful) {
         SKLogging.writeLog(TAG, " SKMaps library initialized isSuccessful= " + isSuccessful + " time= " + (System.currentTimeMillis() - startLibInitTime), SKLogging.LOG_DEBUG);
         if (isSuccessful) {
-            final DemoApplication app = (DemoApplication) getApplication();
+            final DDAApplication app = (DDAApplication) getApplication();
             app.setMapCreatorFilePath(SKMaps.getInstance().getMapInitSettings().getMapResourcesPath() + "MapCreator/mapcreatorFile.json");
             app.setMapResourcesDirPath(SKMaps.getInstance().getMapInitSettings().getMapResourcesPath());
             copyOtherResources();
@@ -122,17 +122,6 @@ public class SplashActivity extends Activity implements SKMapsInitializationList
             public void run() {
                 try {
                     boolean resAlreadyExist;
-
-                    String tracksPath = mapResourcesDirPath + "GPXTracks";
-                    File tracksDir = new File(tracksPath);
-                    resAlreadyExist = tracksDir.exists();
-                    if (!resAlreadyExist || update) {
-                        if (!resAlreadyExist) {
-                            tracksDir.mkdirs();
-                        }
-                        DemoUtils.copyAssetsToFolder(getAssets(), "GPXTracks", mapResourcesDirPath + "GPXTracks");
-                    }
-
                     String imagesPath = mapResourcesDirPath + "images";
                     File imagesDir = new File(imagesPath);
                     resAlreadyExist = imagesDir.exists();
@@ -140,7 +129,7 @@ public class SplashActivity extends Activity implements SKMapsInitializationList
                         if (!resAlreadyExist) {
                             imagesDir.mkdirs();
                         }
-                        DemoUtils.copyAssetsToFolder(getAssets(), "images", mapResourcesDirPath + "images");
+                        Utils.copyAssetsToFolder(getAssets(), "images", mapResourcesDirPath + "images");
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -154,7 +143,7 @@ public class SplashActivity extends Activity implements SKMapsInitializationList
      */
     private void prepareMapCreatorFile() {
         final String mapResourcesDirPath = SKMaps.getInstance().getMapInitSettings().getMapResourcesPath();
-        final DemoApplication app = (DemoApplication) getApplication();
+        final DDAApplication app = (DDAApplication) getApplication();
         final Thread prepareGPXFileThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -174,23 +163,13 @@ public class SplashActivity extends Activity implements SKMapsInitializationList
                             mapCreatorFolder.mkdirs();
                         }
                         app.setMapCreatorFilePath(mapCreatorFolderPath + "/mapcreatorFile.json");
-                        DemoUtils.copyAsset(getAssets(), "MapCreator", mapCreatorFolderPath, "mapcreatorFile.json");
+                        Utils.copyAsset(getAssets(), "MapCreator", mapCreatorFolderPath, "mapcreatorFile.json");
                     }
 
-                    // Copies the log file from assets to a storage.
-                    final String logFolderPath = mapResourcesDirPath + "logFile";
-                    final File logFolder = new File(logFolderPath);
-                    resAlreadyExist = logFolder.exists();
-                    if (!resAlreadyExist || update) {
-                        if (!resAlreadyExist) {
-                            logFolder.mkdirs();
-                        }
-                        DemoUtils.copyAsset(getAssets(), "logFile", logFolderPath, "Seattle.log");
-                    }
+                 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
         });
         prepareGPXFileThread.start();
@@ -201,7 +180,7 @@ public class SplashActivity extends Activity implements SKMapsInitializationList
      * Checks if the current version code is grater than the previous and performs an SDK update.
      */
     public void checkForSDKUpdate() {
-        DemoApplication appContext = (DemoApplication) getApplication();
+        DDAApplication appContext = (DDAApplication) getApplication();
         int currentVersionCode = appContext.getAppPrefs().getIntPreference(ApplicationPreferences.CURRENT_VERSION_CODE);
         int versionCode = getVersionCode();
         if (currentVersionCode == 0) {

@@ -116,6 +116,7 @@ import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationManager;
 import com.skobbler.ngx.sdktools.onebox.SKToolsSearchServiceManager;
 import com.skobbler.ngx.sdktools.onebox.fragments.OneBoxFragment;
 import com.skobbler.ngx.sdktools.onebox.fragments.OneBoxManager;
+import com.skobbler.ngx.sdktools.navigationui.costs.tolls.TollsCostCalculator;
 import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.ngx.util.SKLogging;
 import com.skobbler.ngx.versioning.SKMapVersioningListener;
@@ -123,11 +124,11 @@ import com.skobbler.ngx.versioning.SKVersioningManager;
 import com.skobbler.sdkdemo.R;
 import com.skobbler.sdkdemo.adapter.MenuDrawerAdapter;
 import com.skobbler.sdkdemo.application.ApplicationPreferences;
-import com.skobbler.sdkdemo.application.DemoApplication;
+import com.skobbler.sdkdemo.application.DDAApplication;
 import com.skobbler.sdkdemo.database.MapDownloadResource;
 import com.skobbler.sdkdemo.fragments.MapFragment;
 import com.skobbler.sdkdemo.model.MenuDrawerItem;
-import com.skobbler.sdkdemo.util.DemoUtils;
+import com.skobbler.sdkdemo.util.Utils;
 import com.skobbler.sdkdemo.util.PreferenceTypes;
 
 import android.support.v7.app.AppCompatActivity;
@@ -147,8 +148,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     public static final byte VIA_POINT_ICON_ID = 4;
 
     private static final String TAG = "MapActivity";
-
-    public static final int TRACKS = 1;
 
     public ToggleButton toggleButton;
 
@@ -177,8 +176,8 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     public static SKPOICategory[] heatMapCategories;
 
     public enum MapOption {
-        MAP_DISPLAY, MAP_STYLES, HEAT_MAP, MAP_CREATOR, MAP_OVERLAYS, ANNOTATIONS, MAP_DOWNLOADS, MAP_UPDATES, MAP_INTERACTION, ALTERNATIVE_ROUTES, REAL_REACH, TRACKS,
-        ROUTING_AND_NAVIGATION, POI_TRACKING, NAVI_UI, ADDRESS_SEARCH, NEARBY_SEARCH, CATEGORY_SEARCH, REVERSE_GEOCODING, MAP_SECTION, NAVIGATION_SECTION, SEARCHES_SECTION, PEDESTRIAN_NAVI, ONEBOX_SEARCH
+        MAP_DISPLAY, MAP_STYLES, HEAT_MAP, MAP_CREATOR, MAP_OVERLAYS, ANNOTATIONS, MAP_DOWNLOADS,  MAP_INTERACTION, ALTERNATIVE_ROUTES, REAL_REACH, 
+        ROUTING_AND_NAVIGATION, POI_TRACKING, NAVI_UI, SETTINGS, ADDRESS_SEARCH, NEARBY_SEARCH, CATEGORY_SEARCH, REVERSE_GEOCODING, OTHER_SECTION, ONEBOX_SEARCH
     }
 
     private enum MapAdvices {
@@ -221,7 +220,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     /**
      * Application context object
      */
-    private DemoApplication app;
+    private DDAApplication app;
 
     /**
      * Surface view for displaying the map
@@ -369,19 +368,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
      */
     private SKRouteSettings.SKRouteConnectionMode skRouteConnectionMode = SKRouteSettings.SKRouteConnectionMode.OFFLINE;
 
-    /**
-     * Pedestrian button
-     */
-    private ImageButton pedestrianButton;
 
-    /**
-     * Bike button
-     */
-    private ImageButton bikeButton;
-
-    /**
-     * Car button
-     */
     private ImageButton carButton;
 
     /**
@@ -492,11 +479,11 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
     public void initialize(View fragmentView) {
         view = fragmentView;
-        app = (DemoApplication) getApplication();
+        app = (DDAApplication) getApplication();
 
         currentPositionProvider = new SKCurrentPositionProvider(this);
         currentPositionProvider.setCurrentPositionListener(this);
-        currentPositionProvider.requestLocationUpdates(DemoUtils.hasGpsModule(this), DemoUtils.hasNetworkModule(this), false);
+        currentPositionProvider.requestLocationUpdates(Utils.hasGpsModule(this), Utils.hasNetworkModule(this), false);
 
         mapViewGroup = (SKMapViewHolder) view.findViewById(R.id.view_group_map);
 
@@ -519,8 +506,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         positionMeButton = (Button) view.findViewById(R.id.position_me_button);
         headingButton = (Button) view.findViewById(R.id.heading_button);
 
-        pedestrianButton = (ImageButton) view.findViewById(R.id.real_reach_pedestrian_button);
-        bikeButton = (ImageButton) view.findViewById(R.id.real_reach_bike_button);
         carButton = (ImageButton) view.findViewById(R.id.real_reach_car_button);
 
         SKVersioningManager.getInstance().setMapUpdateListener(this);
@@ -586,8 +571,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
                     realReachVehicleType = SKRealReachSettings.SKRealReachVehicleType.CAR;
                     carButton.setBackgroundColor(getResources().getColor(R.color.blue_filling));
-                    bikeButton.setBackgroundColor(getResources().getColor(R.color.grey));
-                    pedestrianButton.setBackgroundColor(getResources().getColor(R.color.grey));
                     findViewById(R.id.real_reach_vehicle_layout).setVisibility(View.VISIBLE);
 
                     if (unit.equals(getString(R.string.real_reach_profile_distance))) {
@@ -600,12 +583,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                         showRealReach(realReachUnitType, realReachVehicleType, realReachRange, skRouteConnectionMode);
                     }
 
-                } else {
-                    realReachUnitType = SKRealReachSettings.SKRealReachMeasurementUnit.MILIWATT_HOURS;
-                    realReachVehicleType = SKRealReachSettings.SKRealReachVehicleType.BICYCLE;
-                    realReachSeekBar.setMax(100);
-                    findViewById(R.id.real_reach_vehicle_layout).setVisibility(View.GONE);
-                    showRealReach(realReachUnitType, SKRealReachSettings.SKRealReachVehicleType.BICYCLE, realReachRange, skRouteConnectionMode);
                 }
             }
 
@@ -667,30 +644,29 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
      */
     public void initializeMenuItems() {
         menuItems = new LinkedHashMap<MapOption, MenuDrawerItem>();
-        menuItems.put(MapOption.MAP_SECTION, create(MapOption.MAP_SECTION, getResources().getString(R.string.options_group_map).toUpperCase(), MenuDrawerItem.SECTION_TYPE));
+         menuItems.put(MapOption.NAVI_UI, create(MapOption.NAVI_UI, getResources().getString(R.string.option_map), MenuDrawerItem.ITEM_TYPE));
+         menuItems.put(MapOption.MAP_DOWNLOADS, create(MapOption.MAP_DOWNLOADS, getResources().getString(R.string.option_map_downloads), MenuDrawerItem.ITEM_TYPE));
+         menuItems.put(MapOption.SETTINGS, create(MapOption.SETTINGS, getResources().getString(R.string.option_settings), MenuDrawerItem.ITEM_TYPE));
+         menuItems.put(MapOption.OTHER_SECTION, create(MapOption.OTHER_SECTION, getResources().getString(R.string.other_section).toUpperCase(), MenuDrawerItem.SECTION_TYPE));
+
         menuItems.put(MapOption.MAP_DISPLAY, create(MapOption.MAP_DISPLAY, getResources().getString(R.string.option_map_display), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.MAP_STYLES, create(MapOption.MAP_STYLES, getResources().getString(R.string.option_map_styles), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.HEAT_MAP, create(MapOption.HEAT_MAP, getResources().getString(R.string.option_heat_map), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.MAP_CREATOR, create(MapOption.MAP_CREATOR, getResources().getString(R.string.option_map_creator), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.MAP_OVERLAYS, create(MapOption.MAP_OVERLAYS, getResources().getString(R.string.option_overlays), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.ANNOTATIONS, create(MapOption.ANNOTATIONS, getResources().getString(R.string.option_annotations), MenuDrawerItem.ITEM_TYPE));
-        menuItems.put(MapOption.MAP_DOWNLOADS, create(MapOption.MAP_DOWNLOADS, getResources().getString(R.string.option_map_xml_and_downloads), MenuDrawerItem.ITEM_TYPE));
-        menuItems.put(MapOption.MAP_UPDATES, create(MapOption.MAP_UPDATES, getResources().getString(R.string.option_map_updates), MenuDrawerItem.ITEM_TYPE));
-        if (DemoUtils.isMultipleMapSupportEnabled) {
+        if (Utils.isMultipleMapSupportEnabled) {
             menuItems.put(MapOption.MAP_INTERACTION, create(MapOption.MAP_INTERACTION, getResources().getString(R.string.option_other_map), MenuDrawerItem.ITEM_TYPE));
         }
 
-        menuItems.put(MapOption.NAVIGATION_SECTION, create(MapOption.NAVIGATION_SECTION, getResources().getString(R.string.options_group_navigation).toUpperCase(), MenuDrawerItem.SECTION_TYPE));
+//        menuItems.put(MapOption.NAVIGATION_SECTION, create(MapOption.NAVIGATION_SECTION, getResources().getString(R.string.options_group_navigation).toUpperCase(), MenuDrawerItem.SECTION_TYPE));
         menuItems.put(MapOption.ROUTING_AND_NAVIGATION, create(MapOption.ROUTING_AND_NAVIGATION, getResources().getString(R.string.option_routing_and_navigation), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.ALTERNATIVE_ROUTES, create(MapOption.ALTERNATIVE_ROUTES, getResources().getString(R.string.option_alternative_routes), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.REAL_REACH, create(MapOption.REAL_REACH, getResources().getString(R.string.option_real_reach), MenuDrawerItem.ITEM_TYPE));
-        menuItems.put(MapOption.TRACKS, create(MapOption.TRACKS, getResources().getString(R.string.option_tracks), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.POI_TRACKING, create(MapOption.POI_TRACKING, getResources().getString(R.string.option_poi_tracking), MenuDrawerItem.ITEM_TYPE));
-        menuItems.put(MapOption.NAVI_UI, create(MapOption.NAVI_UI, getResources().getString(R.string.option_car_navigation_ui), MenuDrawerItem.ITEM_TYPE));
-        menuItems.put(MapOption.PEDESTRIAN_NAVI, create(MapOption.PEDESTRIAN_NAVI, getResources().getString(R.string.option_pedestrian_navigation_ui), MenuDrawerItem.ITEM_TYPE));
+//        menuItems.put(MapOption.NAVI_UI, create(MapOption.NAVI_UI, getResources().getString(R.string.option_car_navigation_ui), MenuDrawerItem.ITEM_TYPE));
 
-
-        menuItems.put(MapOption.SEARCHES_SECTION, create(MapOption.SEARCHES_SECTION, getResources().getString(R.string.search).toUpperCase(), MenuDrawerItem.SECTION_TYPE));
+//        menuItems.put(MapOption.SEARCHES_SECTION, create(MapOption.SEARCHES_SECTION, getResources().getString(R.string.search).toUpperCase(), MenuDrawerItem.SECTION_TYPE));
         menuItems.put(MapOption.ADDRESS_SEARCH, create(MapOption.ADDRESS_SEARCH, getResources().getString(R.string.option_address_search), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.NEARBY_SEARCH, create(MapOption.NEARBY_SEARCH, getResources().getString(R.string.option_nearby_search), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.ONEBOX_SEARCH, create(MapOption.ONEBOX_SEARCH, getResources().getString(R.string.option_onebox), MenuDrawerItem.ITEM_TYPE));
@@ -773,17 +749,10 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
         if (currentMapOption == MapOption.NAVI_UI) {
             final ToggleButton selectStartPointBtn = (ToggleButton) findViewById(R.id.select_start_point_button);
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-            String prefNavigationType = sharedPreferences.getString(PreferenceTypes.K_NAVIGATION_TYPE,
-                    "1");
-            if (prefNavigationType.equals("0")) { // real navi
-                selectStartPointBtn.setVisibility(View.GONE);
-            } else if (prefNavigationType.equals("1")) {
-                selectStartPointBtn.setVisibility(View.VISIBLE);
-            }
+            selectStartPointBtn.setVisibility(View.GONE);
         }
 
-        if (DemoUtils.isMultipleMapSupportEnabled == false && currentMapOption == MapOption.HEAT_MAP && heatMapCategories != null) {
+        if (Utils.isMultipleMapSupportEnabled == false && currentMapOption == MapOption.HEAT_MAP && heatMapCategories != null) {
             mapView.showHeatMapsWithPoiType(heatMapCategories);
         }
 
@@ -830,7 +799,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             mapView.getMapSettings().setHeadingMode(SKMapSettings.SKHeadingMode.NONE);
         }
 
-        if (DemoUtils.isMultipleMapSupportEnabled == true && currentMapOption == MapOption.HEAT_MAP && heatMapCategories != null) {
+        if (Utils.isMultipleMapSupportEnabled == true && currentMapOption == MapOption.HEAT_MAP && heatMapCategories != null) {
             mapView.showHeatMapsWithPoiType(heatMapCategories);
         }
 
@@ -861,21 +830,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
-                case TRACKS:
-                    if (currentMapOption.equals(MapOption.TRACKS) && TrackElementsActivity.selectedTrackElement !=
-                            null) {
-                        TrackElementsActivity.selectedTrackElement.setRenderAttributes(new float[]{255,0,0,1});
-
-                        mapView.drawTrackElement(TrackElementsActivity.selectedTrackElement);
-                        mapView.fitTrackElementInView(TrackElementsActivity.selectedTrackElement, false);
-
-                        SKRouteManager.getInstance().setRouteListener(this);
-                        SKRouteManager.getInstance().createRouteFromTrackElement(
-                                TrackElementsActivity.selectedTrackElement, SKRouteMode.CAR_FASTEST, true, true,
-                                false);
-                    }
-                    break;
-
                 default:
                     break;
             }
@@ -924,9 +878,9 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                         "grayscalestyle.json"));
                 break;
             case R.id.bottom_button:
-                if (currentMapOption == MapOption.ROUTING_AND_NAVIGATION || currentMapOption == MapOption.TRACKS) {
+                if (currentMapOption == MapOption.ROUTING_AND_NAVIGATION)  {
                     if (bottomButton.getText().equals(getResources().getString(R.string.calculate_route))) {
-                        launchRouteCalculation(new SKCoordinate(37.761278, -122.397674), new SKCoordinate(37.738761, -122.448270));
+                        launchRouteCalculation(new SKCoordinate(19.948295, 50.007004), new SKCoordinate(21.016957, 52.218425));
                     } else if (bottomButton.getText().equals(getResources().getString(R.string.start_navigation))) {
                         new AlertDialog.Builder(this)
                                 .setMessage("Choose the advice type")
@@ -1003,26 +957,10 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                             .show();
                 }
                 break;
-            case R.id.real_reach_pedestrian_button:
-                realReachVehicleType = SKRealReachSettings.SKRealReachVehicleType.PEDESTRIAN;
-                showRealReach(realReachUnitType, realReachVehicleType, realReachRange, skRouteConnectionMode);
-                pedestrianButton.setBackgroundColor(getResources().getColor(R.color.blue_filling));
-                bikeButton.setBackgroundColor(getResources().getColor(R.color.grey));
-                carButton.setBackgroundColor(getResources().getColor(R.color.grey));
-                break;
-            case R.id.real_reach_bike_button:
-                realReachVehicleType = SKRealReachSettings.SKRealReachVehicleType.BICYCLE;
-                showRealReach(realReachUnitType, realReachVehicleType, realReachRange, skRouteConnectionMode);
-                bikeButton.setBackgroundColor(getResources().getColor(R.color.blue_filling));
-                pedestrianButton.setBackgroundColor(getResources().getColor(R.color.grey));
-                carButton.setBackgroundColor(getResources().getColor(R.color.grey));
-                break;
             case R.id.real_reach_car_button:
                 realReachVehicleType = SKRealReachSettings.SKRealReachVehicleType.CAR;
                 showRealReach(realReachUnitType, realReachVehicleType, realReachRange, skRouteConnectionMode);
                 carButton.setBackgroundColor(getResources().getColor(R.color.blue_filling));
-                pedestrianButton.setBackgroundColor(getResources().getColor(R.color.grey));
-                bikeButton.setBackgroundColor(getResources().getColor(R.color.grey));
                 break;
             case R.id.navigation_ui_back_button:
                 Button backButton = (Button) findViewById(R.id.navigation_ui_back_button);
@@ -1043,15 +981,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 calculateRouteFromSKTools();
                 break;
 
-            case R.id.settings_button:
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.start_free_drive_button:
-                startFreeDriveFromSKTools();
-                getActionBar().setDisplayHomeAsUpEnabled(false);
-                getActionBar().setHomeButtonEnabled(false);
-                break;
             case R.id.clear_via_point_button:
                 viaPoint = null;
                 mapView.deleteAnnotation(VIA_POINT_ICON_ID);
@@ -1076,89 +1005,15 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         }
     }
 
-    private void startFreeDriveFromSKTools() {
-        SKToolsNavigationConfiguration configuration = new SKToolsNavigationConfiguration();
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String prefDistanceFormat = sharedPreferences.getString(PreferenceTypes.K_DISTANCE_UNIT, "0");
-        if (prefDistanceFormat.equals("0")) {
-            configuration.setDistanceUnitType(SKMaps.SKDistanceUnitType.DISTANCE_UNIT_KILOMETER_METERS);
-        } else if (prefDistanceFormat.equals("1")) {
-            configuration.setDistanceUnitType(SKMaps.SKDistanceUnitType.DISTANCE_UNIT_MILES_FEET);
-        } else {
-            configuration.setDistanceUnitType(SKMaps.SKDistanceUnitType.DISTANCE_UNIT_MILES_YARDS);
-        }
-
-
-        //set speed in town
-        String prefSpeedInTown = sharedPreferences.getString(PreferenceTypes.K_IN_TOWN_SPEED_WARNING, "0");
-        if (prefSpeedInTown.equals("0")) {
-            configuration.setSpeedWarningThresholdInCity(5.0);
-        } else if (prefSpeedInTown.equals("1")) {
-            configuration.setSpeedWarningThresholdInCity(10.0);
-        } else if (prefSpeedInTown.equals("2")) {
-            configuration.setSpeedWarningThresholdInCity(15.0);
-        } else if (prefSpeedInTown.equals("3")) {
-            configuration.setSpeedWarningThresholdInCity(20.0);
-        }
-        //set speed out
-        String prefSpeedOutTown = sharedPreferences.getString(PreferenceTypes.K_OUT_TOWN_SPEED_WARNING, "0");
-        if (prefSpeedOutTown.equals("0")) {
-            configuration.setSpeedWarningThresholdOutsideCity(5.0);
-        } else if (prefSpeedOutTown.equals("1")) {
-            configuration.setSpeedWarningThresholdOutsideCity(10.0);
-        } else if (prefSpeedOutTown.equals("2")) {
-            configuration.setSpeedWarningThresholdOutsideCity(15.0);
-        } else if (prefSpeedOutTown.equals("3")) {
-            configuration.setSpeedWarningThresholdOutsideCity(20.0);
-        }
-        boolean dayNight = sharedPreferences.getBoolean(PreferenceTypes.K_AUTO_DAY_NIGHT, true);
-        if (!dayNight) {
-            configuration.setAutomaticDayNight(false);
-        }
-        configuration.setNavigationType(SKNavigationType.FILE);
-        configuration.setFreeDriveNavigationFilePath(app.getMapResourcesDirPath() + "logFile/Seattle.log");
-        configuration.setDayStyle(new SKMapViewStyle(app.getMapResourcesDirPath() + "daystyle/",
-                "daystyle.json"));
-        configuration.setNightStyle(new SKMapViewStyle(app.getMapResourcesDirPath() + "nightstyle/",
-                "nightstyle.json"));
-
-        navigationUI.setVisibility(View.GONE);
-        navigationManager = new SKToolsNavigationManager(this, R.id.map_layout_root);
-        navigationManager.setNavigationListener(this);
-        if (currentMapOption == MapOption.PEDESTRIAN_NAVI) {
-            configuration.setRouteType(SKRouteMode.PEDESTRIAN);
-        }
-        navigationManager.startFreeDriveWithConfiguration(configuration, mapViewGroup);
-
-    }
-
     private void calculateRouteFromSKTools() {
 
         SKToolsNavigationConfiguration configuration = new SKToolsNavigationConfiguration();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        //set navigation type
-        String prefNavigationType = sharedPreferences.getString(PreferenceTypes.K_NAVIGATION_TYPE,
-                "1");
-        if (prefNavigationType.equals("0")) {
-            configuration.setNavigationType(SKNavigationType.REAL);
-            if (currentPosition == null) {
-                showNoCurrentPosDialog();
-                return;
-            }
-            startPoint = currentPosition.getCoordinate();
-        } else if (prefNavigationType.equals("1")) {
-            configuration.setNavigationType(SKNavigationType.SIMULATION);
-
-        }
 
 
         //set route type
         String prefRouteType = "0";
-        if (currentMapOption == MapOption.PEDESTRIAN_NAVI) {
-            configuration.setRouteType(SKRouteMode.PEDESTRIAN);
-        } else {
             prefRouteType = sharedPreferences.getString(PreferenceTypes.K_ROUTE_TYPE,
                     "2");
             if (prefRouteType.equals("0")) {
@@ -1167,69 +1022,34 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 configuration.setRouteType(SKRouteMode.CAR_FASTEST);
             } else if (prefRouteType.equals("2")) {
                 configuration.setRouteType(SKRouteMode.EFFICIENT);
-            } else if (prefRouteType.equals("3")) {
-                configuration.setRouteType(SKRouteMode.BICYCLE_FASTEST);
-            } else if (prefRouteType.equals("4")) {
-                configuration.setRouteType(SKRouteMode.BICYCLE_SHORTEST);
-            } else if (prefRouteType.equals("5")) {
-                configuration.setRouteType(SKRouteMode.BICYCLE_QUIETEST);
             }
-        }
-        //set distance format
-        String prefDistanceFormat = sharedPreferences.getString(PreferenceTypes.K_DISTANCE_UNIT,
-                "0");
-        if (prefDistanceFormat.equals("0")) {
-            configuration.setDistanceUnitType(SKMaps.SKDistanceUnitType.DISTANCE_UNIT_KILOMETER_METERS);
-        } else if (prefDistanceFormat.equals("1")) {
-            configuration.setDistanceUnitType(SKMaps.SKDistanceUnitType.DISTANCE_UNIT_MILES_FEET);
-        } else {
-            configuration.setDistanceUnitType(SKMaps.SKDistanceUnitType.DISTANCE_UNIT_MILES_YARDS);
-        }
-
-        //set speed in town
-        String prefSpeedInTown = sharedPreferences.getString(PreferenceTypes.K_IN_TOWN_SPEED_WARNING, "0");
-        if (prefSpeedInTown.equals("0")) {
-            configuration.setSpeedWarningThresholdInCity(5.0);
-        } else if (prefSpeedInTown.equals("1")) {
-            configuration.setSpeedWarningThresholdInCity(10.0);
-        } else if (prefSpeedInTown.equals("2")) {
-            configuration.setSpeedWarningThresholdInCity(15.0);
-        } else if (prefSpeedInTown.equals("3")) {
-            configuration.setSpeedWarningThresholdInCity(20.0);
-        }
-
-        //set speed out
-        String prefSpeedOutTown = sharedPreferences.getString(PreferenceTypes.K_OUT_TOWN_SPEED_WARNING, "0");
-        if (prefSpeedOutTown.equals("0")) {
-            configuration.setSpeedWarningThresholdOutsideCity(5.0);
-        } else if (prefSpeedOutTown.equals("1")) {
-            configuration.setSpeedWarningThresholdOutsideCity(10.0);
-        } else if (prefSpeedOutTown.equals("2")) {
-            configuration.setSpeedWarningThresholdOutsideCity(15.0);
-        } else if (prefSpeedOutTown.equals("3")) {
-            configuration.setSpeedWarningThresholdOutsideCity(20.0);
-        }
-        boolean dayNight = sharedPreferences.getBoolean(PreferenceTypes.K_AUTO_DAY_NIGHT, true);
-        if (!dayNight) {
-            configuration.setAutomaticDayNight(false);
-        }
-        boolean tollRoads = sharedPreferences.getBoolean(PreferenceTypes.K_AVOID_TOLL_ROADS, false);
+        
+   
+        boolean tollRoads = sharedPreferences.getBoolean(PreferenceTypes.K_AVOID_TOLLS, false);
         if (tollRoads) {
             configuration.setTollRoadsAvoided(true);
         }
-        boolean avoidFerries = sharedPreferences.getBoolean(PreferenceTypes.K_AVOID_FERRIES, false);
-        if (avoidFerries) {
-            configuration.setFerriesAvoided(true);
-        }
-        boolean highWays = sharedPreferences.getBoolean(PreferenceTypes.K_AVOID_HIGHWAYS, false);
-        if (highWays) {
-            configuration.setHighWaysAvoided(true);
-        }
-        boolean freeDrive = sharedPreferences.getBoolean(PreferenceTypes.K_FREE_DRIVE, true);
-        if (!freeDrive) {
-            configuration.setContinueFreeDriveAfterNavigationEnd(false);
-        }
+       
 
+        configuration.setNavigationType(SKNavigationType.REAL);
+         if (currentPosition == null) {
+             showNoCurrentPosDialog();
+             return;
+          }
+         startPoint = currentPosition.getCoordinate();
+ 
+         // set distance format
+         configuration.setDistanceUnitType(SKMaps.SKDistanceUnitType.DISTANCE_UNIT_KILOMETER_METERS);
+ 
+         // set speed warnings
+         configuration.setSpeedWarningThresholdInCity(20.0);
+         configuration.setSpeedWarningThresholdOutsideCity(20.0);
+ 
+         // other settings
+         configuration.setAutomaticDayNight(true);
+         configuration.setFerriesAvoided(false);
+         configuration.setHighWaysAvoided(false);
+         configuration.setContinueFreeDriveAfterNavigationEnd(true);       
         navigationUI.setVisibility(View.GONE);
         configuration.setStartCoordinate(startPoint);
         configuration.setDestinationCoordinate(destinationPoint);
@@ -1250,15 +1070,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         }
     }
 
-    private void startOrientationSensorInPedestrian() {
-        compassAvailable = getPackageManager().hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS);
-        if (compassAvailable) {
-            startOrientationSensor();
-        }
-        if (compassAvailable == false) {
-            stopOrientationSensor();
-        }
-    }
 
     /**
      * Initializes navigation UI menu
@@ -1269,20 +1080,10 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         final ToggleButton selectViaPointBtn = (ToggleButton) findViewById(R.id.select_via_point_button);
         final ToggleButton selectStartPointBtn = (ToggleButton) findViewById(R.id.select_start_point_button);
         final ToggleButton selectEndPointBtn = (ToggleButton) findViewById(R.id.select_end_point_button);
-        startOrientationSensorInPedestrian();
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String prefNavigationType = sharedPreferences.getString(PreferenceTypes.K_NAVIGATION_TYPE,
-                "1");
-        if (prefNavigationType.equals("0")) { // real navi
-            selectStartPointBtn.setVisibility(View.GONE);
-        } else if (prefNavigationType.equals("1")) {
-
-            selectStartPointBtn.setVisibility(View.VISIBLE);
-        }
-
+        selectStartPointBtn.setVisibility(View.GONE);
         if (showStartingAndDestinationAnnotations) {
-            startPoint = new SKCoordinate(52.513086884218325, 13.34615707397461);
+            startPoint = new SKCoordinate(50.007004, 19.948295);
             SKAnnotation annotation = new SKAnnotation(GREEN_PIN_ICON_ID);
             annotation
                     .setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_GREEN);
@@ -1290,7 +1091,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             mapView.addAnnotation(annotation,
                     SKAnimationSettings.ANIMATION_NONE);
 
-            destinationPoint = new SKCoordinate(52.50995268098114, 13.398685455322266);
+            destinationPoint = new SKCoordinate(21.016957, 52.218425);
             annotation = new SKAnnotation(RED_PIN_ICON_ID);
             annotation
                     .setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_RED);
@@ -1401,6 +1202,8 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         route.setRouteMode(SKRouteMode.CAR_FASTEST);
         // set whether the route should be shown on the map after it's computed
         route.setRouteExposed(true);
+//        route.setExtendedPointsReturned(true);
+//         route.setCountryCodesReturned(true);
         // set the route listener to be notified of route calculation
         // events
         SKRouteManager.getInstance().setRouteListener(this);
@@ -1419,6 +1222,8 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         route.setMaximumReturnedRoutes(3);
         route.setRouteMode(SKRouteMode.CAR_FASTEST);
         route.setRouteExposed(true);
+//        route.setExtendedPointsReturned(true);
+//        route.setCountryCodesReturned(true);
         SKRouteManager.getInstance().setRouteListener(this);
         SKRouteManager.getInstance().calculateRoute(route);
     }
@@ -1567,24 +1372,15 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             case MAP_STYLES:
                 mapStylesView.setVisibility(View.GONE);
                 break;
-            case TRACKS:
-                if (navigationInProgress) {
-                    // stop the navigation
-                    stopNavigation();
-                }
-                bottomButton.setVisibility(View.GONE);
-                if (TrackElementsActivity.selectedTrackElement != null) {
-                    mapView.clearTrackElement(TrackElementsActivity.selectedTrackElement);
-                    SKRouteManager.getInstance().clearCurrentRoute();
-                }
-                TrackElementsActivity.selectedTrackElement = null;
-                break;
             case REAL_REACH:
                 // removes real reach from the map
                 mapView.clearRealReachDisplay();
                 realReachLayout.setVisibility(View.GONE);
                 Spinner spinner = (Spinner) findViewById(R.id.real_reach_spinner);
                 spinner.setSelection(0);
+                break;
+            case SETTINGS:
+                startActivity(new Intent(MapActivity.this, SettingsActivity.class));
                 break;
             case ANNOTATIONS:
                 mapPopup.setVisibility(View.GONE);
@@ -1615,11 +1411,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 mapView.clearHeatMapsDisplay();
                 break;
             case NAVI_UI:
-            case PEDESTRIAN_NAVI:
-                navigationUI.setVisibility(View.GONE);
-                viaPoint = null;
-                mapView.deleteAllAnnotationsAndCustomPOIs();
-                break;
             case MAP_INTERACTION:
                 mapView.deleteAllAnnotationsAndCustomPOIs();
                 bottomButton.setVisibility(View.GONE);
@@ -1662,10 +1453,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
      * Launches a navigation on the current route
      */
     private void launchNavigation() {
-        if (TrackElementsActivity.selectedTrackElement != null) {
-            mapView.clearTrackElement(TrackElementsActivity.selectedTrackElement);
-
-        }
         // get navigation settings object
         SKNavigationSettings navigationSettings = new SKNavigationSettings();
         // set the desired navigation settings
@@ -1714,17 +1501,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         routeIds.clear();
         if (textToSpeechEngine != null && !textToSpeechEngine.isSpeaking()) {
             textToSpeechEngine.stop();
-        }
-        if (currentMapOption.equals(MapOption.TRACKS) && TrackElementsActivity.selectedTrackElement !=
-                null) {
-            SKRouteManager.getInstance().clearCurrentRoute();
-            mapView.drawTrackElement(TrackElementsActivity.selectedTrackElement);
-            mapView.fitTrackElementInView(TrackElementsActivity.selectedTrackElement, false);
-
-            SKRouteManager.getInstance().setRouteListener(this);
-            SKRouteManager.getInstance().createRouteFromTrackElement(
-                    TrackElementsActivity.selectedTrackElement, SKRouteMode.BICYCLE_FASTEST, true, true,
-                    false);
         }
 
         SKNavigationManager.getInstance().stopNavigation();
@@ -1848,7 +1624,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                     if (orientationValues[0] != 0) {
                         if ((System.currentTimeMillis() - lastTimeWhenReceivedGpsSignal) > MINIMUM_TIME_UNTILL_MAP_CAN_BE_UPDATED) {
                             applySmoothAlgorithm(orientationValues[0]);
-                            int currentExactScreenOrientation = DemoUtils.getExactScreenOrientation(this);
+                            int currentExactScreenOrientation = Utils.getExactScreenOrientation(this);
                             if (lastExactScreenOrientation != currentExactScreenOrientation) {
                                 lastExactScreenOrientation = currentExactScreenOrientation;
                                 switch (lastExactScreenOrientation) {
@@ -2349,9 +2125,10 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         if (currentMapOption == MapOption.ALTERNATIVE_ROUTES) {
             int routeIndex = routeIds.size();
             routeIds.add(routeInfo.getRouteID());
-            altRoutesButtons[routeIndex].setText(DemoUtils.formatDistance(routeInfo.getDistance()) + "\n"
-                    + DemoUtils.formatTime(routeInfo.getEstimatedTime()));
-            if (routeIndex == 0) {
+            double tollsCost = TollsCostCalculator.getTollsCost(routeInfo);
+            altRoutesButtons[routeIndex].setText(Utils.formatDistance(routeInfo.getDistance()) + "\n");
+//            Utils.formatTime(routeInfo.getEstimatedTime() + "\n" + tollsCost + " EUR");
+              if (routeIndex == 0) {
                 // select 1st alternative by default
                 selectAlternativeRoute(0);
             }
@@ -2365,11 +2142,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             if (currentMapOption == MapOption.ROUTING_AND_NAVIGATION) {
                 bottomButton.setText(getResources().getString(R.string.start_navigation));
             }
-        } else if (currentMapOption == MapOption.TRACKS) {
-            SKRouteManager.getInstance().zoomToRoute(1, 1, 8, 8, 8, 8, 0);
-            bottomButton.setVisibility(View.VISIBLE);
-            bottomButton.setText(getResources().getString(R.string.start_navigation));
-        } else if (currentMapOption == MapOption.MAP_INTERACTION) {
+        }  else if (currentMapOption == MapOption.MAP_INTERACTION) {
             if (shouldCacheTheNextRoute) {
                 cachedRouteId = routeInfo.getRouteID();
             }
@@ -2563,23 +2336,10 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 currentMapOption = MapOption.MAP_DISPLAY;
                 mapView.applySettingsFromFile(app.getMapCreatorFilePath());
                 break;
-            case TRACKS:
-                currentMapOption = MapOption.TRACKS;
-                Intent trackIntent = new Intent(this, TracksActivity.class);
-                startActivityForResult(trackIntent, TRACKS);
-                break;
             case REAL_REACH:
                 currentMapOption = MapOption.REAL_REACH;
                 mapView.animateToLocation(new SKCoordinate(52.5233, 13.4127), 10);
                 realReachLayout.setVisibility(View.VISIBLE);
-                break;
-            case MAP_DOWNLOADS:
-                if (DemoUtils.isInternetAvailable(this)) {
-                    startActivity(new Intent(MapActivity.this, ResourceDownloadsListActivity.class));
-                } else {
-                    Toast.makeText(this, getResources().getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
-                            .show();
-                }
                 break;
             case REVERSE_GEOCODING:
                 startActivity(new Intent(this, ReverseGeocodingActivity.class));
@@ -2618,27 +2378,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 currentMapOption = MapOption.HEAT_MAP;
                 startActivity(new Intent(this, POICategoriesListActivity.class));
                 break;
-            case MAP_UPDATES:
-                SKVersioningManager.getInstance().checkNewVersion(3);
-                break;
-            case NAVI_UI:
-                currentMapOption = MapOption.NAVI_UI;
-                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-
-                initializeNavigationUI(true);
-                findViewById(R.id.clear_via_point_button).setVisibility(View.GONE);
-                findViewById(R.id.settings_button).setVisibility(View.VISIBLE);
-                ((Button) findViewById(R.id.start_free_drive_button)).setText("Start free drive");
-                break;
-            case PEDESTRIAN_NAVI:
-                currentMapOption = MapOption.PEDESTRIAN_NAVI;
-                initializeNavigationUI(true);
-                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-                findViewById(R.id.clear_via_point_button).setVisibility(View.GONE);
-                findViewById(R.id.settings_button).setVisibility(View.GONE);
-                ((Button) findViewById(R.id.start_free_drive_button)).setText("Start free walk");
-                Toast.makeText(MapActivity.this, "Pedestrian navigation: illustrating optimized 2D view with previous positions trail and pedestrian specific follow-modes: historic, compass & north bound",
-                        Toast.LENGTH_LONG).show();
             default:
                 break;
         }

@@ -96,8 +96,6 @@
     <string name="avoid_toll_roads">Avoid Toll Roads</string>
     <string name="avoid_highways">Avoid Highways</string>
     <string name="avoid_ferries">Avoid Ferries</string>
-    <string name="avoid_bicyclewalk">Avoid Bicycle Walk</string>
-    <string name="avoid_bicyclecarry">Avoid Bicycle Carry</string>
 
     <string name="map_style_day">Day</string>
     <string name="map_style_night">Night</string>
@@ -128,20 +126,12 @@
     <string name="no_position_available">Current position is not available</string>
     <string name="route_calculation_failed">Route calculation failed</string>
     <string name="show_heat_map">SHOW HEAT MAP FOR\nTHE SELECTED CATEGORIES</string>
-    <string name="gpx_license_notification_text">GPX track navigation is available for commercial use with a enterprise license. Usage without such a license will lead to your API KEY being suspended.</string>
     <string name="ok_text">OK</string>
     <string name="update_label">Update</string>
     <string name="cancel_label">Cancel</string>
-    <string name="gpx_route_1">Berlin Unter den Linden - Berlin Hohenzollerndamm</string>
-    <string name="gpx_route_2">Berlin Unter den Linden - Berlin Grunewaldstrasse</string>
-    <string name="gpx_route_3">Munchen Oskar-von-Miller-Ring – Herterichstrasse</string>
-    <string name="gpx_route_4">Berlin – Hamburg</string>
-    <string name="gpx_route_5">Chicago city route</string>
     <string name="start_point_nav">Select start point</string>
     <string name="end_point_nav">Select end point</string>
     <string name="calculate_routes">Calculate route(s)</string>
-    <string name="start_free_walk">Start free walk</string>
-    <string name="start_free_drive">Start free drive</string>
     <string name="settings_nav_ui">Settings</string>
     <string name="on_button"> On </string>
     <string name="off_button">Off</string>
@@ -173,13 +163,9 @@
     <!--Settings-->
     <string name="general_label">General</string>
     <!--Route type settings-->
-    <string name="route_type_car_fastest">Car fastest</string>
-    <string name="route_type_car_shortest">Car shortest</string>
-    <string name="route_type_car_efficient">Efficient route</string>
-    <string name="route_type_pedestrian">Pedestrian</string>
-    <string name="route_type_bicycle_fast">Bicycle fastest</string>
-    <string name="route_type_bicycle_short">Bicycle shortest</string>
-    <string name="route_type_bicycle_quiet">Bicycle quietest</string>
+    <string name="route_type_fastest">Car fastest</string>
+    <string name="route_type_shortest">Car shortest</string>
+    <string name="route_type_efficient">Efficient route</string>
     <!-- Distance format -->
     <string name="km_m">Kilometers/Meters</string>
     <string name="mi_feet">Miles/Feet</string>

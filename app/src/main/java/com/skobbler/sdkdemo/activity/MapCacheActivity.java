@@ -38,9 +38,9 @@ public class MapCacheActivity extends Activity implements SKMapSurfaceListener, 
 
     private SKMapViewHolder mapViewGroup;
 
-    private SKCoordinate currentPosition = new SKCoordinate(46.773716,23.593823);
+    private SKCoordinate currentPosition = new SKCoordinate(19.948295, 50.007004);
 
-    private SKCoordinate routeDestinationPoint = new SKCoordinate(46.770088,23.596824 );
+    private SKCoordinate routeDestinationPoint = new SKCoordinate(21.016957, 52.218425);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

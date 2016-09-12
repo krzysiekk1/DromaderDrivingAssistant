@@ -70,7 +70,7 @@ public class ReverseGeocodingActivity extends Activity {
             if (longitude > 180 || longitude < -180) {
                 return null;
             }
-            return new SKCoordinate(longitude, latitude);
+            return new SKCoordinate(latitude, longitude);
         } catch (NumberFormatException nfe) {
             return null;
         }

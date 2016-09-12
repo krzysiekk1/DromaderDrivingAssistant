@@ -16,6 +16,7 @@
     <string name="option_scale_view">Scale view</string>
     <string name="option_callout_view">Callout view</string>
     <string name="option_routing">Routing</string>
+    <string name="option_routing_with_points">Track with custom location</string>
     <string name="option_map_version_information">Version information</string>
     <string name="option_overlays">Overlays</string>
     <string name="option_poi_tracker">POI Tracker</string>
@@ -377,6 +378,8 @@
     <string name="fit_bounding_box_title">Fit bounding box</string>
     <string name="padding_width">Padding width</string>
     <string name="padding_height">Padding height</string>
+    <string name="padding_bottom">Padding bottom</string>
+    <string name="padding_top">Padding top</string>
     <string name="fit_bounding_box_button">Fit bounding box with padding</string>
 
     <!-- Map cache strings -->
@@ -418,4 +421,11 @@
     <string name="stop_poi_tracker">Stop POI Tracker</string>
     <string name="detected_pois">Detected POIs</string>
     <string name="detected_pois_list">Detected POIs</string>
+
+    <!-- Track with custom location -->
+    <string name="track_custom_location">Track with custom location</string>
+    <string name="route_1">Route 1</string>
+    <string name="route_2">Route 2</string>
+    <string name="route_3">Route 3</string>
+
 </resources>

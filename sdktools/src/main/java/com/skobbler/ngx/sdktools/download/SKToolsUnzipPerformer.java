@@ -13,7 +13,6 @@ import com.skobbler.ngx.util.SKLogging;
 
 /**
  * perform unzip for queued items
- * Created by CatalinM on 11/26/2014.
  */
 public class SKToolsUnzipPerformer extends Thread {
 

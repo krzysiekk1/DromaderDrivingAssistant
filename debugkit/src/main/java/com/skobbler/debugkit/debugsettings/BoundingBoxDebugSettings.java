@@ -59,6 +59,14 @@ public class BoundingBoxDebugSettings extends  DebugSettings {
      */
     private int paddingHeight = 480;
     /**
+     * paddingBottom padding in pixels, from bottom of the screen
+     */
+    private int paddingBottom = 320;
+    /**
+     * paddingTop padding in pixels, from top of the screen
+     */
+    private int paddingTop = 480;
+    /**
      * filePath path to the output file
      */
     private String filePath;
@@ -80,6 +88,8 @@ public class BoundingBoxDebugSettings extends  DebugSettings {
         keyValuePairs.add(new Pair<String, Object>(context.getResources().getString(R.string.fit_bounding_box_title), null));
         keyValuePairs.add(new Pair<String, Object>(context.getResources().getString(R.string.padding_width), paddingWidth));
         keyValuePairs.add(new Pair<String, Object>(context.getResources().getString(R.string.padding_height), paddingHeight));
+        keyValuePairs.add(new Pair<String, Object>(context.getResources().getString(R.string.padding_bottom), paddingBottom));
+        keyValuePairs.add(new Pair<String, Object>(context.getResources().getString(R.string.padding_top), paddingTop));
         keyValuePairs.add(new Pair<String, Object>(context.getResources().getString(R.string.fit_bounding_box_button), null));
         return keyValuePairs;
     }
@@ -167,6 +177,43 @@ public class BoundingBoxDebugSettings extends  DebugSettings {
             }
         });
 
+        SeekBar seekBarPaddingBottom = (SeekBar) specificLayout.findViewById(R.id.padding_bottom).findViewById(R.id.property_seekbar);
+        seekBarPaddingBottom.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int value, boolean b) {
+                ((TextView) specificLayout.findViewById(R.id.padding_bottom).findViewById(R.id.property_value)).setText( value + "");
+                paddingBottom = value;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        SeekBar seekBarPaddingTop = (SeekBar) specificLayout.findViewById(R.id.padding_top).findViewById(R.id.property_seekbar);
+        seekBarPaddingTop.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int value, boolean b) {
+                ((TextView) specificLayout.findViewById(R.id.padding_top).findViewById(R.id.property_value)).setText( value + "");
+                paddingTop = value;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
         final EditText topLeftLatitudeValue = (EditText) specificLayout.findViewById(R.id.top_left_latitude).findViewById(R.id.property_value);
         final EditText topLeftLongitudeValue = (EditText) specificLayout.findViewById(R.id.top_left_longitude).findViewById(R.id.property_value);
         final EditText bottomRightLatitudeValue = (EditText) specificLayout.findViewById(R.id.bottom_right_latitude).findViewById(R.id.property_value);
@@ -181,8 +228,8 @@ public class BoundingBoxDebugSettings extends  DebugSettings {
                 bottomRightLatitude = Double.parseDouble(bottomRightLatitudeValue.getText().toString());
                 bottomRightLongitude = Double.parseDouble(bottomRightLongitudeValue.getText().toString());
 
-                SKBoundingBox skBoundingBox = new SKBoundingBox(topLeftLatitude,topLeftLongitude,bottomRightLatitude,bottomRightLongitude);
-                activity.getMapView().fitBoundingBox(skBoundingBox,paddingWidth,paddingHeight);
+                SKBoundingBox skBoundingBox = new SKBoundingBox(new SKCoordinate(topLeftLatitude,topLeftLongitude),new SKCoordinate(bottomRightLatitude,bottomRightLongitude));
+                activity.getMapView().fitBoundingBox(skBoundingBox,paddingWidth,paddingHeight,paddingBottom,paddingTop);
             }
         });
         final View renderBoundingBox = specificLayout.findViewById(R.id.bounding_box_render_button);
@@ -194,7 +241,7 @@ public class BoundingBoxDebugSettings extends  DebugSettings {
                 bottomRightLatitude = Double.parseDouble(bottomRightLatitudeValue.getText().toString());
                 bottomRightLongitude = Double.parseDouble(bottomRightLongitudeValue.getText().toString());
 
-                SKBoundingBox skBoundingBox = new SKBoundingBox(topLeftLatitude,topLeftLongitude,bottomRightLatitude,bottomRightLongitude);
+                SKBoundingBox skBoundingBox = new SKBoundingBox(new SKCoordinate(topLeftLatitude,topLeftLongitude),new SKCoordinate(bottomRightLatitude,bottomRightLongitude));
                 Date date = new Date();
                 CharSequence dateTimeBoudingBox  = DateFormat.format("MM-dd-yy hh-mm-ss", date.getTime());
                 filePath = Environment.getExternalStorageDirectory() +"/"+Environment.DIRECTORY_DCIM + "/" + "Camera/" + dateTimeBoudingBox.toString() + ".jpg";
@@ -215,5 +262,7 @@ public class BoundingBoxDebugSettings extends  DebugSettings {
         ((SeekBar) specificLayout.findViewById(R.id.image_size_height).findViewById(R.id.property_seekbar)).setMax(480);
         ((SeekBar) specificLayout.findViewById(R.id.padding_width).findViewById(R.id.property_seekbar)).setMax(320);
         ((SeekBar) specificLayout.findViewById(R.id.padding_height).findViewById(R.id.property_seekbar)).setMax(480);
+        ((SeekBar) specificLayout.findViewById(R.id.padding_bottom).findViewById(R.id.property_seekbar)).setMax(320);
+        ((SeekBar) specificLayout.findViewById(R.id.padding_top).findViewById(R.id.property_seekbar)).setMax(480);
     }
 }

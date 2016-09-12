@@ -1,5 +1,6 @@
 package com.skobbler.sdkdemo.activity;
 
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,10 +9,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,14 +26,15 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
-import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -66,7 +69,8 @@ import com.skobbler.ngx.map.SKCircle;
 import com.skobbler.ngx.map.SKCoordinateRegion;
 import com.skobbler.ngx.map.SKMapCustomPOI;
 import com.skobbler.ngx.map.SKMapPOI;
-import com.skobbler.ngx.map.SKMapSettings.SKMapFollowerMode;
+import com.skobbler.ngx.map.SKMapSettings;
+import com.skobbler.ngx.map.SKMapSettings.SKHeadingMode;
 import com.skobbler.ngx.map.SKMapSurfaceListener;
 import com.skobbler.ngx.map.SKMapSurfaceView;
 import com.skobbler.ngx.map.SKMapViewHolder;
@@ -87,6 +91,7 @@ import com.skobbler.ngx.poitracker.SKDetectedPOI;
 import com.skobbler.ngx.poitracker.SKPOITrackerListener;
 import com.skobbler.ngx.poitracker.SKPOITrackerManager;
 import com.skobbler.ngx.poitracker.SKTrackablePOI;
+import com.skobbler.ngx.poitracker.SKTrackablePOIRule;
 import com.skobbler.ngx.poitracker.SKTrackablePOIType;
 import com.skobbler.ngx.positioner.SKCurrentPositionListener;
 import com.skobbler.ngx.positioner.SKCurrentPositionProvider;
@@ -108,29 +113,38 @@ import com.skobbler.ngx.sdktools.navigationui.SKToolsAdvicePlayer;
 import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationConfiguration;
 import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationListener;
 import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationManager;
+import com.skobbler.ngx.sdktools.onebox.SKToolsSearchServiceManager;
+import com.skobbler.ngx.sdktools.onebox.fragments.OneBoxFragment;
+import com.skobbler.ngx.sdktools.onebox.fragments.OneBoxManager;
+import com.skobbler.ngx.sdktools.navigationui.costs.tolls.TollsCostCalculator;
 import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.ngx.util.SKLogging;
-import com.skobbler.ngx.versioning.SKMapUpdateListener;
+import com.skobbler.ngx.versioning.SKMapVersioningListener;
 import com.skobbler.ngx.versioning.SKVersioningManager;
 import com.skobbler.sdkdemo.R;
-import com.skobbler.ngx.sdktools.navigationui.costs.tolls.TollsCostCalculator;
-import com.skobbler.sdkdemo.menuDrawer.MenuDrawerAdapter;
+import com.skobbler.sdkdemo.adapter.MenuDrawerAdapter;
 import com.skobbler.sdkdemo.application.ApplicationPreferences;
 import com.skobbler.sdkdemo.application.DDAApplication;
 import com.skobbler.sdkdemo.database.MapDownloadResource;
-import com.skobbler.sdkdemo.menuDrawer.MenuDrawerItem;
+import com.skobbler.sdkdemo.fragments.MapFragment;
+import com.skobbler.sdkdemo.model.MenuDrawerItem;
 import com.skobbler.sdkdemo.util.Utils;
 import com.skobbler.sdkdemo.util.PreferenceTypes;
+
+import android.support.v7.app.AppCompatActivity;
 
 /**
  * Activity displaying the map
  */
+
 public class MapActivity extends Activity implements SKMapSurfaceListener, SKRouteListener, SKNavigationListener,
         SKRealReachListener, SKPOITrackerListener, SKCurrentPositionListener, SensorEventListener,
-        SKMapUpdateListener, SKToolsNavigationListener {
+        SKMapVersioningListener, SKToolsNavigationListener {
 
     private static final byte GREEN_PIN_ICON_ID = 0;
+
     private static final byte RED_PIN_ICON_ID = 1;
+
     public static final byte VIA_POINT_ICON_ID = 4;
 
     private static final String TAG = "MapActivity";
@@ -138,31 +152,41 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     public ToggleButton toggleButton;
 
     public static boolean roundTrip;
+
     /**
      * true, if compass mode is available
      */
     public static boolean compassAvailable;
 
     /**
-     * time, in milliseconds, from the moment when the application receives new GPS values
+     * time, in milliseconds, from the moment when the application receives new
+     * GPS values
      */
     private static final int MINIMUM_TIME_UNTILL_MAP_CAN_BE_UPDATED = 30;
+
     /**
-     * defines how smooth the movement will be (1 is no smoothing and 0 is never updating).
+     * defines how smooth the movement will be (1 is no smoothing and 0 is never
+     * updating).
      */
     private static final float SMOOTH_FACTOR_COMPASS = 0.1f;
 
+    /**
+     * heat maps poi categories
+     */
     public static SKPOICategory[] heatMapCategories;
 
     public enum MapOption {
-        MAP_DISPLAY, MAP_STYLES, HEAT_MAP, MAP_CREATOR, MAP_OVERLAYS, ANNOTATIONS, MAP_DOWNLOADS, MAP_INTERACTION, ALTERNATIVE_ROUTES, REAL_REACH,
-        ROUTING_AND_NAVIGATION, POI_TRACKING, NAVI_UI, SETTINGS, ADDRESS_SEARCH, NEARBY_SEARCH, CATEGORY_SEARCH, REVERSE_GEOCODING, OTHER_SECTION
+        MAP_DISPLAY, MAP_STYLES, HEAT_MAP, MAP_CREATOR, MAP_OVERLAYS, ANNOTATIONS, MAP_DOWNLOADS,  MAP_INTERACTION, ALTERNATIVE_ROUTES, REAL_REACH, 
+        ROUTING_AND_NAVIGATION, POI_TRACKING, NAVI_UI, SETTINGS, ADDRESS_SEARCH, NEARBY_SEARCH, CATEGORY_SEARCH, REVERSE_GEOCODING, OTHER_SECTION, ONEBOX_SEARCH
     }
 
     private enum MapAdvices {
         TEXT_TO_SPEECH, AUDIO_FILES
     }
 
+    /**
+     * The cunsumption values
+     */
     private float[] energyConsumption = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (float) 3.7395504, (float) 4.4476889, (float) 5.4306439, (float) 6.722719,
             (float) 8.2830299, (float) 10.0275093, (float) 11.8820908, (float) 13.799201, (float) 15.751434, (float) 17.7231534, (float) 19.7051378, (float) 21.6916725,
             (float) 23.679014, (float) 25.6645696, (float) 27.6464437, (float) 29.6231796, (float) 31.5936073};
@@ -171,18 +195,26 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
      * the values returned by magnetic sensor
      */
     private float[] orientationValues;
-
+    /**
+     * last time when received GPS signal
+     */
     private long lastTimeWhenReceivedGpsSignal;
 
     /**
-     * the current value of the z axis; at each new step it is updated with the new value
+     * the current value of the z axis ; at each new step it is updated with the
+     * new value
      */
     private float currentCompassValue;
+
     /**
-     * (given by the getExactScreenOrientation method)
+     * the latest exact screen orientation (given by the
+     * getExactScreenOrientation method) that was recorded
      */
     private int lastExactScreenOrientation = -1;
 
+    /**
+     * Current option selected
+     */
     private MapOption currentMapOption = MapOption.MAP_DISPLAY;
 
     /**
@@ -190,27 +222,64 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
      */
     private DDAApplication app;
 
-    // Views and layouts
+    /**
+     * Surface view for displaying the map
+     */
     private SKMapSurfaceView mapView;
-    private View alternativeRoutesView;
+
+    /**
+     * View for selecting alternative routes
+     */
+    private View altRoutesView;
+
+    /**
+     * View for selecting the map style
+     */
     private LinearLayout mapStylesView;
+
+    /**
+     * View for real reach time profile
+     */
     private LinearLayout realReachLayout;
+
+    /**
+     * Buttons for selecting alternative routes
+     */
+    private Button[] altRoutesButtons;
+
+    /**
+     * Bottom button
+     */
+    private Button bottomButton;
+
+    /**
+     * The current position button
+     */
+    private Button positionMeButton;
+
     /**
      * Custom view for adding an annotation
      */
     private RelativeLayout customView;
-    private RelativeLayout navigationUI;
-    private DrawerLayout drawerLayout;
 
-    // Buttons
-    private Button[] alternativeRoutesButtons;
-    private Button bottomButton;
-    private Button positionMeButton;
+    /**
+     * The heading button
+     */
     private Button headingButton;
 
-    // Popup
+    /**
+     * The map popup view
+     */
     private SKCalloutView mapPopup;
+
+    /**
+     * Custom callout view title
+     */
     private TextView popupTitleView;
+
+    /**
+     * Custom callout view description
+     */
     private TextView popupDescriptionView;
 
     /**
@@ -218,13 +287,21 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
      */
     private List<Integer> routeIds = new ArrayList<Integer>();
 
+    /**
+     * Tells if a navigation is ongoing
+     */
     private boolean navigationInProgress;
+
+    /**
+     * Tells if a navigation is ongoing
+     */
     private boolean skToolsNavigationInProgress;
 
     /**
      * counts the consecutive received positions with an accuracy greater than 150
      */
     private byte numberOfConsecutiveBadPositionReceivedDuringNavi;
+
     /**
      * handler that checks during navigation after every 5 seconds whether a new gps position
      * was received or not
@@ -245,30 +322,80 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
      * Trackable POIs that are currently rendered on the map
      */
     private Map<Integer, SKTrackablePOI> drawnTrackablePOIs;
+
+    /**
+     * Tracker manager object
+     */
     private SKPOITrackerManager poiTrackingManager;
 
-    // Current position
+    /**
+     * Current position provider
+     */
     private SKCurrentPositionProvider currentPositionProvider;
+
+    /**
+     * Current position
+     */
     private SKPosition currentPosition;
+
+    /**
+     * timestamp for the last currentPosition
+     */
     private long currentPositionTime;
 
+    /**
+     * Tells if heading is currently active
+     */
     private boolean headingOn;
 
-    // Real reach settings
+    /**
+     * Real reach range
+     */
     private int realReachRange = 10;
+
+    /**
+     * Real reach default vehicle type
+     */
     private SKRealReachSettings.SKRealReachVehicleType realReachVehicleType = SKRealReachSettings.SKRealReachVehicleType.CAR;
+
+    /**
+     * Real reach default measurement type
+     */
     private SKRealReachSettings.SKRealReachMeasurementUnit realReachUnitType = SKRealReachSettings.SKRealReachMeasurementUnit.SECOND;
+
+    /**
+     * Real reach connection mode
+     */
     private SKRouteSettings.SKRouteConnectionMode skRouteConnectionMode = SKRouteSettings.SKRouteConnectionMode.OFFLINE;
 
-    // Vehicle buttons
+
     private ImageButton carButton;
 
-    // Start, destination and via points
+    /**
+     * Navigation UI layout
+     */
+    private RelativeLayout navigationUI;
+
     private boolean isStartPointBtnPressed = false, isEndPointBtnPressed = false, isViaPointSelected = false;
+
+    /**
+     * The start point(long/lat) for the route.
+     */
     private SKCoordinate startPoint;
+
+    /**
+     * The destination(long/lat) point for the route
+     */
     private SKCoordinate destinationPoint;
+
+    /**
+     * The via point(long/lat) for the route
+     */
     private SKViaPoint viaPoint;
 
+    /**
+     * Text to speech engine
+     */
     private TextToSpeech textToSpeechEngine;
 
     /**
@@ -277,77 +404,113 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     private SKToolsNavigationManager navigationManager;
 
     /**
+     * Drawer layout object
+     */
+    private DrawerLayout drawerLayout;
+
+    /**
      * The navigation drawer
      */
     private ListView drawerList;
 
-    private ActionBarDrawerToggle actionBarDrawerToggle;
+    /**
+     * menu items
+     */
     private LinkedHashMap<MapOption, MenuDrawerItem> menuItems;
     /**
      * menu items values
      */
     private ArrayList<MenuDrawerItem> list;
 
+    /**
+     * the view that holds the map view
+     */
     private SKMapViewHolder mapViewGroup;
 
     /**
      * Flag for knowing whether the next calculated route should be cached after is calculated
      */
     private boolean shouldCacheTheNextRoute;
+
     /**
      * The id of the current cached route (if any); null if no route is cached
      */
     private Integer cachedRouteId;
 
-    private ListView listView;
+    Toolbar toolbar;
+    /**
+     * Action bar toggle
+     */
+    private ActionBarDrawerToggle actionBarDrawerToggle;
 
-    private static final String[] INITIAL_PERMS={
-            Manifest.permission.ACCESS_FINE_LOCATION
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(INITIAL_PERMS, 1337);
-        }
-
-        Utils.initializeLibrary(this);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_map);
+
+        android.app.FragmentManager fragmentManager = getFragmentManager();
+        android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        MapFragment mapFragment = new MapFragment();
+        fragmentTransaction.add(R.id.onebox_fragment, mapFragment, null);
+        fragmentTransaction.commit();
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerList = (ListView) findViewById(R.id.left_drawer);
+        drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+
+        actionBarDrawerToggle = new ActionBarDrawerToggle(
+                this,
+                drawerLayout,
+                R.string.open_drawer,
+                R.string.close_drawer);
+
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+
+        drawerLayout.setDrawerListener(actionBarDrawerToggle);
+
+        initializeMenuItems();
+
+    }
+
+    View view;
+
+    public void initialize(View fragmentView) {
+        view = fragmentView;
         app = (DDAApplication) getApplication();
 
         currentPositionProvider = new SKCurrentPositionProvider(this);
         currentPositionProvider.setCurrentPositionListener(this);
         currentPositionProvider.requestLocationUpdates(Utils.hasGpsModule(this), Utils.hasNetworkModule(this), false);
 
-        mapViewGroup = (SKMapViewHolder) findViewById(R.id.view_group_map);
+        mapViewGroup = (SKMapViewHolder) view.findViewById(R.id.view_group_map);
+
         mapViewGroup.setMapSurfaceListener(MapActivity.this);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mapPopup = mapViewGroup.getCalloutView();
-        View view = inflater.inflate(R.layout.layout_popup, null);
-        popupTitleView = (TextView) view.findViewById(R.id.top_text);
-        popupDescriptionView = (TextView) view.findViewById(R.id.bottom_text);
-        mapPopup.setCustomView(view);
+        View layoutView = inflater.inflate(R.layout.layout_popup, null);
+        popupTitleView = (TextView) layoutView.findViewById(R.id.top_text);
+        popupDescriptionView = (TextView) layoutView.findViewById(R.id.bottom_text);
+        mapPopup.setCustomView(layoutView);
 
         poiTrackingManager = new SKPOITrackerManager(this);
-        alternativeRoutesView = findViewById(R.id.alt_routes);
-        alternativeRoutesButtons =
-                new Button[]{(Button) findViewById(R.id.alt_route_1), (Button) findViewById(R.id.alt_route_2),
-                        (Button) findViewById(R.id.alt_route_3)};
+        altRoutesView = view.findViewById(R.id.alt_routes);
+        altRoutesButtons =
+                new Button[]{(Button) view.findViewById(R.id.alt_route_1), (Button) view.findViewById(R.id.alt_route_2),
+                        (Button) view.findViewById(R.id.alt_route_3)};
 
-        mapStylesView = (LinearLayout) findViewById(R.id.map_styles);
-        bottomButton = (Button) findViewById(R.id.bottom_button);
-        positionMeButton = (Button) findViewById(R.id.position_me_button);
-        headingButton = (Button) findViewById(R.id.heading_button);
+        mapStylesView = (LinearLayout) view.findViewById(R.id.map_styles);
+        bottomButton = (Button) view.findViewById(R.id.bottom_button);
+        positionMeButton = (Button) view.findViewById(R.id.position_me_button);
+        headingButton = (Button) view.findViewById(R.id.heading_button);
 
-        // REAL REACH
-        carButton = (ImageButton) findViewById(R.id.real_reach_car_button);
+        carButton = (ImageButton) view.findViewById(R.id.real_reach_car_button);
 
         SKVersioningManager.getInstance().setMapUpdateListener(this);
 
-        toggleButton = (ToggleButton) findViewById(R.id.real_reach_round_trip);
+        toggleButton = (ToggleButton) view.findViewById(R.id.real_reach_round_trip);
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -358,9 +521,9 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 }
             }
         });
-        realReachLayout = (LinearLayout) findViewById(R.id.real_reach_time_layout);
-        final TextView realReachTimeText = (TextView) findViewById(R.id.real_reach_time);
-        final SeekBar realReachSeekBar = (SeekBar) findViewById(R.id.real_reach_seekbar);
+        realReachLayout = (LinearLayout) view.findViewById(R.id.real_reach_time_layout);
+        final TextView realReachTimeText = (TextView) view.findViewById(R.id.real_reach_time);
+        final SeekBar realReachSeekBar = (SeekBar) view.findViewById(R.id.real_reach_seekbar);
         realReachSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
             @Override
@@ -387,10 +550,12 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
                 realReachTimeText.setText(realReachRange + " " + unit);
                 showRealReach(realReachUnitType, realReachVehicleType, realReachRange, skRouteConnectionMode);
+
             }
         });
 
-        Spinner spinner = (Spinner) findViewById(R.id.real_reach_spinner);
+
+        Spinner spinner = (Spinner) view.findViewById(R.id.real_reach_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.real_reach_measurement_unit, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -417,6 +582,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                         realReachSeekBar.setMax(60);
                         showRealReach(realReachUnitType, realReachVehicleType, realReachRange, skRouteConnectionMode);
                     }
+
                 }
             }
 
@@ -431,7 +597,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             }
         });
 
-        Spinner spinnerOnOfHy = (Spinner) findViewById(R.id.real_reach_online_offline_hybrid);
+        Spinner spinnerOnOfHy = (Spinner) view.findViewById(R.id.real_reach_online_offline_hybrid);
         ArrayAdapter<CharSequence> adapterOnOfHy = ArrayAdapter.createFromResource(this, R.array.real_reach_online_offline_hybrid, android.R.layout.simple_spinner_item);
         adapterOnOfHy.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerOnOfHy.setAdapter(adapterOnOfHy);
@@ -467,38 +633,22 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 showRealReach(realReachUnitType, realReachVehicleType, realReachRange, skRouteConnectionMode);
             }
         });
-        // END REAL REACH
 
-        navigationUI = (RelativeLayout) findViewById(R.id.navigation_ui_layout);
+        navigationUI = (RelativeLayout) view.findViewById(R.id.navigation_ui_layout);
         initializeTrackablePOIs();
-
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawerList = (ListView) findViewById(R.id.left_drawer);
-        drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-
-        actionBarDrawerToggle = new ActionBarDrawerToggle(
-                this,
-                drawerLayout,
-                R.drawable.ic_launcher,
-                R.string.open_drawer,
-                R.string.close_drawer);
-
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-
-        drawerLayout.setDrawerListener(actionBarDrawerToggle);
-
-        initializeMenuItems();
     }
 
 
+    /**
+     * Initializes the navigation drawer list items
+     */
     public void initializeMenuItems() {
         menuItems = new LinkedHashMap<MapOption, MenuDrawerItem>();
-        menuItems.put(MapOption.NAVI_UI, create(MapOption.NAVI_UI, getResources().getString(R.string.option_map), MenuDrawerItem.ITEM_TYPE));
-        menuItems.put(MapOption.MAP_DOWNLOADS, create(MapOption.MAP_DOWNLOADS, getResources().getString(R.string.option_map_downloads), MenuDrawerItem.ITEM_TYPE));
-        menuItems.put(MapOption.SETTINGS, create(MapOption.SETTINGS, getResources().getString(R.string.option_settings), MenuDrawerItem.ITEM_TYPE));
+         menuItems.put(MapOption.NAVI_UI, create(MapOption.NAVI_UI, getResources().getString(R.string.option_map), MenuDrawerItem.ITEM_TYPE));
+         menuItems.put(MapOption.MAP_DOWNLOADS, create(MapOption.MAP_DOWNLOADS, getResources().getString(R.string.option_map_downloads), MenuDrawerItem.ITEM_TYPE));
+         menuItems.put(MapOption.SETTINGS, create(MapOption.SETTINGS, getResources().getString(R.string.option_settings), MenuDrawerItem.ITEM_TYPE));
+         menuItems.put(MapOption.OTHER_SECTION, create(MapOption.OTHER_SECTION, getResources().getString(R.string.other_section).toUpperCase(), MenuDrawerItem.SECTION_TYPE));
 
-        menuItems.put(MapOption.OTHER_SECTION, create(MapOption.OTHER_SECTION, getResources().getString(R.string.other_section).toUpperCase(), MenuDrawerItem.SECTION_TYPE));
         menuItems.put(MapOption.MAP_DISPLAY, create(MapOption.MAP_DISPLAY, getResources().getString(R.string.option_map_display), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.MAP_STYLES, create(MapOption.MAP_STYLES, getResources().getString(R.string.option_map_styles), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.HEAT_MAP, create(MapOption.HEAT_MAP, getResources().getString(R.string.option_heat_map), MenuDrawerItem.ITEM_TYPE));
@@ -508,12 +658,19 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         if (Utils.isMultipleMapSupportEnabled) {
             menuItems.put(MapOption.MAP_INTERACTION, create(MapOption.MAP_INTERACTION, getResources().getString(R.string.option_other_map), MenuDrawerItem.ITEM_TYPE));
         }
+
+//        menuItems.put(MapOption.NAVIGATION_SECTION, create(MapOption.NAVIGATION_SECTION, getResources().getString(R.string.options_group_navigation).toUpperCase(), MenuDrawerItem.SECTION_TYPE));
         menuItems.put(MapOption.ROUTING_AND_NAVIGATION, create(MapOption.ROUTING_AND_NAVIGATION, getResources().getString(R.string.option_routing_and_navigation), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.ALTERNATIVE_ROUTES, create(MapOption.ALTERNATIVE_ROUTES, getResources().getString(R.string.option_alternative_routes), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.REAL_REACH, create(MapOption.REAL_REACH, getResources().getString(R.string.option_real_reach), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.POI_TRACKING, create(MapOption.POI_TRACKING, getResources().getString(R.string.option_poi_tracking), MenuDrawerItem.ITEM_TYPE));
+//        menuItems.put(MapOption.NAVI_UI, create(MapOption.NAVI_UI, getResources().getString(R.string.option_car_navigation_ui), MenuDrawerItem.ITEM_TYPE));
+
+//        menuItems.put(MapOption.SEARCHES_SECTION, create(MapOption.SEARCHES_SECTION, getResources().getString(R.string.search).toUpperCase(), MenuDrawerItem.SECTION_TYPE));
         menuItems.put(MapOption.ADDRESS_SEARCH, create(MapOption.ADDRESS_SEARCH, getResources().getString(R.string.option_address_search), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.NEARBY_SEARCH, create(MapOption.NEARBY_SEARCH, getResources().getString(R.string.option_nearby_search), MenuDrawerItem.ITEM_TYPE));
+        menuItems.put(MapOption.ONEBOX_SEARCH, create(MapOption.ONEBOX_SEARCH, getResources().getString(R.string.option_onebox), MenuDrawerItem.ITEM_TYPE));
+
         menuItems.put(MapOption.CATEGORY_SEARCH, create(MapOption.CATEGORY_SEARCH, getResources().getString(R.string.option_category_search), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.REVERSE_GEOCODING, create(MapOption.REVERSE_GEOCODING, getResources().getString(R.string.option_reverse_geocoding), MenuDrawerItem.ITEM_TYPE));
 
@@ -521,15 +678,28 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
         drawerList.setAdapter(new MenuDrawerAdapter(this, R.layout.element_menu_drawer_item, list));
         drawerList.setOnItemClickListener(new DrawerItemClickListener());
+
     }
 
+    /**
+     * Creates menu drawer item(section item/list item)
+     *
+     * @param mapOption
+     * @param label
+     * @param itemType
+     * @return
+     */
     public static MenuDrawerItem create(MapOption mapOption, String label, int itemType) {
         MenuDrawerItem menuDrawerItem = new MenuDrawerItem(mapOption);
         menuDrawerItem.setLabel(label);
         menuDrawerItem.setItemType(itemType);
         return menuDrawerItem;
+
     }
 
+    /**
+     * Customize the map view
+     */
     private void applySettingsOnMapView() {
         mapView.getMapSettings().setMapRotationEnabled(true);
         mapView.getMapSettings().setMapZoomingEnabled(true);
@@ -540,18 +710,30 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         mapView.getMapSettings().setInertiaPanningEnabled(true);
     }
 
+
+    /**
+     * Populate the collection of trackable POIs
+     */
     private void initializeTrackablePOIs() {
 
         trackablePOIs = new HashMap<Integer, SKTrackablePOI>();
 
         trackablePOIs.put(64142, new SKTrackablePOI(64142, 0, 37.735610, -122.446434, -1, "Teresita Boulevard"));
-        trackablePOIs.put(64143, new SKTrackablePOI(64143, 1, 37.738090, -122.401470, -1, "Revere Avenue"));
-        trackablePOIs.put(64144, new SKTrackablePOI(64144, 0, 37.741128, -122.398562, -1, "McKinnon Ave"));
-        trackablePOIs.put(64145, new SKTrackablePOI(64145, 1, 37.762823, -122.392957, -1, "18th Street"));
-        trackablePOIs.put(64146, new SKTrackablePOI(64146, 0, 37.760242, -122.392495, 180, "20th Street"));
-        trackablePOIs.put(64147, new SKTrackablePOI(64147, 0, 37.773526, -122.452706, -1, "Shrader Street"));
-        trackablePOIs.put(64148, new SKTrackablePOI(64148, 1, 37.792242, -122.424426, -1, "Franklin Street"));
-        trackablePOIs.put(64149, new SKTrackablePOI(64149, 0, 37.719133, -122.388280, -1, "Fitzgerald Ave"));
+        trackablePOIs.put(64143, new SKTrackablePOI(64143, 0, 37.732367, -122.442033, -1, "Congo Street"));
+        trackablePOIs.put(64144, new SKTrackablePOI(64144, 0, 37.732237, -122.429190, -1, "John F Foran Freeway"));
+        trackablePOIs.put(64145, new SKTrackablePOI(64145, 1, 37.738090, -122.401470, -1, "Revere Avenue"));
+        trackablePOIs.put(64146, new SKTrackablePOI(64146, 0, 37.741128, -122.398562, -1, "McKinnon Ave"));
+        trackablePOIs.put(64147, new SKTrackablePOI(64147, 1, 37.746154, -122.394077, -1, "Evans Ave"));
+        trackablePOIs.put(64148, new SKTrackablePOI(64148, 0, 37.750057, -122.392287, -1, "Cesar Chavez Street"));
+        trackablePOIs.put(64149, new SKTrackablePOI(64149, 1, 37.762823, -122.392957, -1, "18th Street"));
+        trackablePOIs.put(64150, new SKTrackablePOI(64150, 0, 37.760242, -122.392495, 180, "20th Street"));
+        trackablePOIs.put(64151, new SKTrackablePOI(64151, 0, 37.755157, -122.392196, 180, "23rd Street"));
+
+        trackablePOIs.put(64152, new SKTrackablePOI(64152, 0, 37.773526, -122.452706, -1, "Shrader Street"));
+        trackablePOIs.put(64153, new SKTrackablePOI(64153, 0, 37.786535, -122.444528, -1, "Pine Street"));
+        trackablePOIs.put(64154, new SKTrackablePOI(64154, 1, 37.792242, -122.424426, -1, "Franklin Street"));
+        trackablePOIs.put(64155, new SKTrackablePOI(64155, 0, 37.716146, -122.409480, -1, "Campbell Ave"));
+        trackablePOIs.put(64156, new SKTrackablePOI(64156, 0, 37.719133, -122.388280, -1, "Fitzgerald Ave"));
 
         drawnTrackablePOIs = new HashMap<Integer, SKTrackablePOI>();
     }
@@ -567,7 +749,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
         if (currentMapOption == MapOption.NAVI_UI) {
             final ToggleButton selectStartPointBtn = (ToggleButton) findViewById(R.id.select_start_point_button);
-            selectStartPointBtn.setVisibility(View.GONE);   // real navi
+            selectStartPointBtn.setVisibility(View.GONE);
         }
 
         if (Utils.isMultipleMapSupportEnabled == false && currentMapOption == MapOption.HEAT_MAP && heatMapCategories != null) {
@@ -583,6 +765,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     protected void onPause() {
         super.onPause();
         mapViewGroup.onPause();
+
         if (headingOn) {
             stopOrientationSensor();
         }
@@ -604,17 +787,16 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
     @Override
     public void onSurfaceCreated(SKMapViewHolder mapHolder) {
-        View chessBackground = findViewById(R.id.chess_board_background);
+        View chessBackground = view.findViewById(R.id.chess_board_background);
         chessBackground.setVisibility(View.GONE);
-
-        mapView = mapHolder.getMapSurfaceView();
+        mapView = mapViewGroup.getMapSurfaceView();
         applySettingsOnMapView();
         if (SplashActivity.newMapVersionDetected != 0) {
             showUpdateDialog(SplashActivity.newMapVersionDetected);
         }
 
         if (!navigationInProgress) {
-            mapView.getMapSettings().setFollowerMode(SKMapFollowerMode.NONE);
+            mapView.getMapSettings().setHeadingMode(SKMapSettings.SKHeadingMode.NONE);
         }
 
         if (Utils.isMultipleMapSupportEnabled == true && currentMapOption == MapOption.HEAT_MAP && heatMapCategories != null) {
@@ -624,6 +806,8 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         if (currentPosition != null) {
             SKPositionerManager.getInstance().reportNewGPSPosition(currentPosition);
         }
+
+
     }
 
     @Override
@@ -637,6 +821,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
     @Override
     public void onScreenshotReady(Bitmap bitmap) {
+
     }
 
     @Override
@@ -649,6 +834,8 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                     break;
             }
         }
+
+
     }
 
     @Override
@@ -691,7 +878,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                         "grayscalestyle.json"));
                 break;
             case R.id.bottom_button:
-                if (currentMapOption == MapOption.ROUTING_AND_NAVIGATION) {
+                if (currentMapOption == MapOption.ROUTING_AND_NAVIGATION)  {
                     if (bottomButton.getText().equals(getResources().getString(R.string.calculate_route))) {
                         launchRouteCalculation(new SKCoordinate(19.948295, 50.007004), new SKCoordinate(21.016957, 52.218425));
                     } else if (bottomButton.getText().equals(getResources().getString(R.string.start_navigation))) {
@@ -755,16 +942,16 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                     setHeading(false);
                 }
                 if (mapView != null && currentPosition != null) {
-                    mapView.centerMapOnCurrentPositionSmooth(17, 500);
+                    mapView.centerOnCurrentPosition(17, true, 500);
                 } else {
                     Toast.makeText(this, getResources().getString(R.string.no_position_available), Toast.LENGTH_SHORT)
                             .show();
                 }
-
                 break;
             case R.id.heading_button:
                 if (currentPosition != null) {
                     setHeading(true);
+
                 } else {
                     Toast.makeText(this, getResources().getString(R.string.no_position_available), Toast.LENGTH_SHORT)
                             .show();
@@ -788,10 +975,12 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 break;
             case R.id.calculate_routes_button:
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-                getActionBar().setDisplayHomeAsUpEnabled(false);
                 getActionBar().setHomeButtonEnabled(false);
+                getActionBar().setDisplayHomeAsUpEnabled(false);
+
                 calculateRouteFromSKTools();
                 break;
+
             case R.id.clear_via_point_button:
                 viaPoint = null;
                 mapView.deleteAnnotation(VIA_POINT_ICON_ID);
@@ -799,11 +988,11 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 break;
             case R.id.position_me_navigation_ui_button:
                 if (currentPosition != null) {
-                    mapView.centerMapOnCurrentPositionSmooth(15, 1000);
+                    mapView.centerOnCurrentPosition(15, true, 1000);
                     mapView.getMapSettings().setOrientationIndicatorType(
                             SKMapSurfaceView.SKOrientationIndicatorType.DEFAULT);
                     mapView.getMapSettings()
-                            .setFollowerMode(SKMapFollowerMode.NONE);
+                            .setHeadingMode(SKMapSettings.SKHeadingMode.NONE);
                 } else {
                     Toast.makeText(MapActivity.this,
                             getString(R.string.no_position_available),
@@ -821,43 +1010,46 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         SKToolsNavigationConfiguration configuration = new SKToolsNavigationConfiguration();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        // set route type
-        String prefRouteType = sharedPreferences.getString(PreferenceTypes.K_ROUTE_TYPE, "2");
-        if (prefRouteType.equals("0")) {
-            configuration.setRouteType(SKRouteMode.CAR_SHORTEST);
-        } else if (prefRouteType.equals("1")) {
-            configuration.setRouteType(SKRouteMode.CAR_FASTEST);
-        } else if (prefRouteType.equals("2")) {
-            configuration.setRouteType(SKRouteMode.EFFICIENT);
-        }
 
-        // set avoiding tolls
+
+        //set route type
+        String prefRouteType = "0";
+            prefRouteType = sharedPreferences.getString(PreferenceTypes.K_ROUTE_TYPE,
+                    "2");
+            if (prefRouteType.equals("0")) {
+                configuration.setRouteType(SKRouteMode.CAR_SHORTEST);
+            } else if (prefRouteType.equals("1")) {
+                configuration.setRouteType(SKRouteMode.CAR_FASTEST);
+            } else if (prefRouteType.equals("2")) {
+                configuration.setRouteType(SKRouteMode.EFFICIENT);
+            }
+        
+   
         boolean tollRoads = sharedPreferences.getBoolean(PreferenceTypes.K_AVOID_TOLLS, false);
         if (tollRoads) {
             configuration.setTollRoadsAvoided(true);
         }
+       
 
-        // set navigation type
         configuration.setNavigationType(SKNavigationType.REAL);
-        if (currentPosition == null) {
-            showNoCurrentPosDialog();
-            return;
-        }
-        startPoint = currentPosition.getCoordinate();
-
-        // set distance format
-        configuration.setDistanceUnitType(SKMaps.SKDistanceUnitType.DISTANCE_UNIT_KILOMETER_METERS);
-
-        // set speed warnings
-        configuration.setSpeedWarningThresholdInCity(20.0);
-        configuration.setSpeedWarningThresholdOutsideCity(20.0);
-
-        // other settings
-        configuration.setAutomaticDayNight(true);
-        configuration.setFerriesAvoided(false);
-        configuration.setHighWaysAvoided(false);
-        configuration.setContinueFreeDriveAfterNavigationEnd(true);
-
+         if (currentPosition == null) {
+             showNoCurrentPosDialog();
+             return;
+          }
+         startPoint = currentPosition.getCoordinate();
+ 
+         // set distance format
+         configuration.setDistanceUnitType(SKMaps.SKDistanceUnitType.DISTANCE_UNIT_KILOMETER_METERS);
+ 
+         // set speed warnings
+         configuration.setSpeedWarningThresholdInCity(20.0);
+         configuration.setSpeedWarningThresholdOutsideCity(20.0);
+ 
+         // other settings
+         configuration.setAutomaticDayNight(true);
+         configuration.setFerriesAvoided(false);
+         configuration.setHighWaysAvoided(false);
+         configuration.setContinueFreeDriveAfterNavigationEnd(true);       
         navigationUI.setVisibility(View.GONE);
         configuration.setStartCoordinate(startPoint);
         configuration.setDestinationCoordinate(destinationPoint);
@@ -878,26 +1070,20 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         }
     }
 
-    private void startOrientationSensorInPedestrian() {
-        compassAvailable = getPackageManager().hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS);
-        if (compassAvailable) {
-            startOrientationSensor();
-        }
-        if (compassAvailable == false) {
-            stopOrientationSensor();
-        }
-    }
 
+    /**
+     * Initializes navigation UI menu
+     *
+     * @param showStartingAndDestinationAnnotations
+     */
     private void initializeNavigationUI(boolean showStartingAndDestinationAnnotations) {
+        final ToggleButton selectViaPointBtn = (ToggleButton) findViewById(R.id.select_via_point_button);
         final ToggleButton selectStartPointBtn = (ToggleButton) findViewById(R.id.select_start_point_button);
         final ToggleButton selectEndPointBtn = (ToggleButton) findViewById(R.id.select_end_point_button);
-        final ToggleButton selectViaPointBtn = (ToggleButton) findViewById(R.id.select_via_point_button);
-        startOrientationSensorInPedestrian();
 
-        selectStartPointBtn.setVisibility(View.GONE);   // real navi
-
+        selectStartPointBtn.setVisibility(View.GONE);
         if (showStartingAndDestinationAnnotations) {
-            startPoint = new SKCoordinate(19.948295, 50.007004);
+            startPoint = new SKCoordinate(50.007004, 19.948295);
             SKAnnotation annotation = new SKAnnotation(GREEN_PIN_ICON_ID);
             annotation
                     .setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_GREEN);
@@ -915,7 +1101,8 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
         }
         mapView.setZoom(11);
-        mapView.centerMapOnPosition(startPoint);
+        mapView.animateToLocation(startPoint, 0);
+
 
         selectStartPointBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -970,6 +1157,22 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         navigationUI.setVisibility(View.VISIBLE);
     }
 
+
+    private void initializeOneBox() {
+        if(currentPosition != null){
+            OneBoxManager.setCurrentPosition(currentPosition.getCoordinate());
+        }
+        getActionBar().hide();
+
+        android.app.FragmentManager fragmentManager = getFragmentManager();
+        android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        OneBoxFragment oneboxFragment = new OneBoxFragment();
+        fragmentTransaction.add(R.id.onebox_fragment, oneboxFragment, OneBoxManager.ONEBOX_FRAGMENT_ID);
+        fragmentTransaction.addToBackStack(OneBoxManager.ONEBOX_FRAGMENT_ID);
+        fragmentTransaction.commit();
+        ((OneBoxFragment)getFragmentManager().findFragmentByTag(OneBoxManager.ONEBOX_FRAGMENT_ID)).ONEBOX_ACTIVATED = true;
+    }
+
     private void showNoCurrentPosDialog() {
         AlertDialog.Builder alert = new AlertDialog.Builder(MapActivity.this);
         alert.setMessage("There is no current position available");
@@ -980,121 +1183,145 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         alert.show();
     }
 
+    /**
+     * Launches a single route calculation
+     */
+    /**
+     * Launches a single route calculation
+     */
     private void launchRouteCalculation(SKCoordinate startPoint, SKCoordinate destinationPoint) {
         clearRouteFromCache();
-
+        // get a route object and populate it with the desired properties
         SKRouteSettings route = new SKRouteSettings();
-
+        // set start and destination points
         route.setStartCoordinate(startPoint);
         route.setDestinationCoordinate(destinationPoint);
-
         // set the number of routes to be calculated
-        route.setNoOfRoutes(1);
-
+        route.setMaximumReturnedRoutes(1);
         // set the route mode
         route.setRouteMode(SKRouteMode.CAR_FASTEST);
         // set whether the route should be shown on the map after it's computed
         route.setRouteExposed(true);
-        route.setExtendedPointsReturned(true);
-        route.setCountryCodesReturned(true);
-
-        // set the route listener to be notified of route calculation events
+//        route.setExtendedPointsReturned(true);
+//         route.setCountryCodesReturned(true);
+        // set the route listener to be notified of route calculation
+        // events
         SKRouteManager.getInstance().setRouteListener(this);
-
+        // pass the route to the calculation routine
         SKRouteManager.getInstance().calculateRoute(route);
     }
 
+    /**
+     * Launches the calculation of three alternative routes
+     */
     private void launchAlternativeRouteCalculation() {
         SKRouteSettings route = new SKRouteSettings();
-        route.setStartCoordinate(new SKCoordinate(-122.392284, 37.787189));
-        route.setDestinationCoordinate(new SKCoordinate(-122.484378, 37.856300));
-        route.setNoOfRoutes(3);
+        route.setStartCoordinate(new SKCoordinate(37.787189, -122.392284));
+        route.setDestinationCoordinate(new SKCoordinate(37.856300, -122.484378));
+        // number of alternative routes specified here
+        route.setMaximumReturnedRoutes(3);
         route.setRouteMode(SKRouteMode.CAR_FASTEST);
         route.setRouteExposed(true);
-        route.setExtendedPointsReturned(true);
-        route.setCountryCodesReturned(true);
+//        route.setExtendedPointsReturned(true);
+//        route.setCountryCodesReturned(true);
         SKRouteManager.getInstance().setRouteListener(this);
         SKRouteManager.getInstance().calculateRoute(route);
     }
 
+    /**
+     * Draws annotations on map
+     */
     private void prepareAnnotations() {
 
         // Add annotation using texture ID - from the json files.
         // get the annotation object
         SKAnnotation annotationWithTextureId = new SKAnnotation(10);
         // set annotation location
-        annotationWithTextureId.setLocation(new SKCoordinate(-122.4200, 37.7765));
+        annotationWithTextureId.setLocation(new SKCoordinate(37.7765, -122.4200));
         // set minimum zoom level at which the annotation should be visible
         annotationWithTextureId.setMininumZoomLevel(5);
-        annotationWithTextureId.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_RED);
+        // set the annotation's type
+        annotationWithTextureId.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_BLUE);
+        // render annotation on map
         mapView.addAnnotation(annotationWithTextureId, SKAnimationSettings.ANIMATION_NONE);
 
         // // add an annotation with a view
         SKAnnotation annotationFromView = new SKAnnotation(11);
-        annotationFromView.setLocation(new SKCoordinate(-122.423573, 37.761349));
+        annotationFromView.setLocation(new SKCoordinate(37.761349, -122.423573));
         annotationFromView.setMininumZoomLevel(5);
         SKAnnotationView annotationView = new SKAnnotationView();
-        customView = (RelativeLayout) ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE))
-                .inflate(R.layout.layout_custom_view, null, false);
+        customView =
+                (RelativeLayout) ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
+                        R.layout.layout_custom_view, null, false);
         //  If width and height of the view  are not power of 2 the actual size of the image will be the next power of 2 of max(width,height).
-        annotationView.setView(customView);
+        annotationView.setView(findViewById(R.id.customView));
         annotationFromView.setAnnotationView(annotationView);
         mapView.addAnnotation(annotationFromView, SKAnimationSettings.ANIMATION_NONE);
 
+        // set map zoom level
         mapView.setZoom(13);
-        mapView.centerMapOnPosition(new SKCoordinate(-122.4200, 37.7765));
+        // center map on a position
+        mapView.animateToLocation(new SKCoordinate(37.7765, -122.4200), 1000);
     }
 
+    /**
+     * Draws shapes on map
+     */
     private void drawShapes() {
 
+        // get a polygon shape object
         SKPolygon polygon = new SKPolygon();
-
+        // set the polygon's nodes
         List<SKCoordinate> nodes = new ArrayList<SKCoordinate>();
-        nodes.add(new SKCoordinate(-122.4342, 37.7765));
-        nodes.add(new SKCoordinate(-122.4141, 37.7765));
-        nodes.add(new SKCoordinate(-122.4342, 37.7620));
+        nodes.add(new SKCoordinate(37.7765, -122.4342));
+        nodes.add(new SKCoordinate(37.7765, -122.4141));
+        nodes.add(new SKCoordinate(37.7620, -122.4342));
         polygon.setNodes(nodes);
-
+        // set the outline size
         polygon.setOutlineSize(3);
+        // set colors used to render the polygon
         polygon.setOutlineColor(new float[]{1f, 0f, 0f, 1f});
         polygon.setColor(new float[]{1f, 0f, 0f, 0.2f});
         polygon.setIdentifier(10);
-
+        // render the polygon on the map
         mapView.addPolygon(polygon);
 
+        // get a circle mask shape object
         SKCircle circleMask = new SKCircle();
+        // set the shape's mask scale
         circleMask.setMaskedObjectScale(1.3f);
-
+        // set the colors
         circleMask.setColor(new float[]{1f, 1f, 0.5f, 0.67f});
         circleMask.setOutlineColor(new float[]{0f, 0f, 0f, 1f});
         circleMask.setOutlineSize(3);
-
-        circleMask.setCircleCenter(new SKCoordinate(-122.4200, 37.7665));
+        // set circle center and radius
+        circleMask.setCircleCenter(new SKCoordinate(37.7665,-122.4200));
         circleMask.setRadius(300);
-
+        // set outline properties
         circleMask.setOutlineDottedPixelsSkip(6);
         circleMask.setOutlineDottedPixelsSolid(10);
+        // set the number of points for rendering the circle
         circleMask.setNumberOfPoints(150);
         circleMask.setIdentifier(11);
-
+        // render the circle mask
         mapView.addCircle(circleMask);
 
-
+        // get a polyline object
         SKPolyline polyline = new SKPolyline();
-
+        // set the nodes on the polyline
         nodes = new ArrayList<SKCoordinate>();
-        nodes.add(new SKCoordinate(-122.4342, 37.7898));
-        nodes.add(new SKCoordinate(-122.4141, 37.7898));
-        nodes.add(new SKCoordinate(-122.4342, 37.7753));
+        nodes.add(new SKCoordinate(37.7898, -122.4342));
+        nodes.add(new SKCoordinate(37.7898, -122.4141));
+        nodes.add(new SKCoordinate(37.7753, -122.4342));
         polyline.setNodes(nodes);
-
+        // set polyline color
         polyline.setColor(new float[]{0f, 0f, 1f, 1f});
+        // set properties for the outline
         polyline.setOutlineColor(new float[]{0f, 0f, 1f, 1f});
         polyline.setOutlineSize(4);
         polyline.setOutlineDottedPixelsSolid(3);
         polyline.setOutlineDottedPixelsSkip(3);
         polyline.setIdentifier(12);
-
         mapView.addPolyline(polyline);
     }
 
@@ -1103,6 +1330,9 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         selectStyleButton();
     }
 
+    /**
+     * Selects the style button for the current map style
+     */
     private void selectStyleButton() {
         for (int i = 0; i < mapStylesView.getChildCount(); i++) {
             mapStylesView.getChildAt(i).setSelected(false);
@@ -1119,6 +1349,9 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         }
     }
 
+    /**
+     * Clears the map
+     */
     private void clearMap() {
         setHeading(false);
         switch (currentMapOption) {
@@ -1130,7 +1363,9 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 break;
             case ALTERNATIVE_ROUTES:
                 hideAlternativeRoutesButtons();
+                // clear the alternative routes
                 SKRouteManager.getInstance().clearRouteAlternatives();
+                // clear the selected route
                 SKRouteManager.getInstance().clearCurrentRoute();
                 routeIds.clear();
                 break;
@@ -1138,6 +1373,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 mapStylesView.setVisibility(View.GONE);
                 break;
             case REAL_REACH:
+                // removes real reach from the map
                 mapView.clearRealReachDisplay();
                 realReachLayout.setVisibility(View.GONE);
                 Spinner spinner = (Spinner) findViewById(R.id.real_reach_spinner);
@@ -1145,21 +1381,26 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 break;
             case ANNOTATIONS:
                 mapPopup.setVisibility(View.GONE);
+                // removes the annotations and custom POIs currently rendered
                 mapView.deleteAllAnnotationsAndCustomPOIs();
             case ROUTING_AND_NAVIGATION:
                 bottomButton.setVisibility(View.GONE);
                 SKRouteManager.getInstance().clearCurrentRoute();
                 mapView.deleteAllAnnotationsAndCustomPOIs();
                 if (navigationInProgress) {
+                    // stop navigation if ongoing
                     stopNavigation();
                 }
                 break;
             case POI_TRACKING:
                 if (navigationInProgress) {
+                    // stop the navigation
                     stopNavigation();
                 }
                 SKRouteManager.getInstance().clearCurrentRoute();
+                // remove the detected POIs from the map
                 mapView.deleteAllAnnotationsAndCustomPOIs();
+                // stop the POI tracker
                 poiTrackingManager.stopPOITracker();
                 break;
             case HEAT_MAP:
@@ -1182,15 +1423,15 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     }
 
     private void deselectAlternativeRoutesButtons() {
-        for (Button b : alternativeRoutesButtons) {
+        for (Button b : altRoutesButtons) {
             b.setSelected(false);
         }
     }
 
     private void hideAlternativeRoutesButtons() {
         deselectAlternativeRoutesButtons();
-        alternativeRoutesView.setVisibility(View.GONE);
-        for (Button b : alternativeRoutesButtons) {
+        altRoutesView.setVisibility(View.GONE);
+        for (Button b : altRoutesButtons) {
             b.setText("distance\ntime");
         }
     }
@@ -1198,22 +1439,30 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     private void selectAlternativeRoute(int routeIndex) {
         if (routeIds.size() > routeIndex) {
             deselectAlternativeRoutesButtons();
-            alternativeRoutesButtons[routeIndex].setSelected(true);
-            SKRouteManager.getInstance().zoomToRoute(1, 1, 110, 8, 8, 8);
+            altRoutesButtons[routeIndex].setSelected(true);
+            SKRouteManager.getInstance().zoomToRoute(1, 1, 110, 8, 8, 8, 0);
             SKRouteManager.getInstance().setCurrentRouteByUniqueId(routeIds.get(routeIndex));
         }
+
     }
 
+    /**
+     * Launches a navigation on the current route
+     */
     private void launchNavigation() {
+        // get navigation settings object
         SKNavigationSettings navigationSettings = new SKNavigationSettings();
+        // set the desired navigation settings
         navigationSettings.setNavigationType(SKNavigationType.SIMULATION);
         navigationSettings.setPositionerVerticalAlignment(-0.25f);
         navigationSettings.setShowRealGPSPositions(false);
-
+        // get the navigation manager object
         SKNavigationManager navigationManager = SKNavigationManager.getInstance();
         navigationManager.setMapView(mapView);
+        // set listener for navigation events
         navigationManager.setNavigationListener(this);
 
+        // start navigating using the settings
         navigationManager.startNavigation(navigationSettings);
         navigationInProgress = true;
     }
@@ -1235,33 +1484,54 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 advisorSettings.setAdvisorType(SKAdvisorSettings.SKAdvisorType.TEXT_TO_SPEECH);
                 break;
         }
-        SKRouteManager.getInstance().setAudioAdvisorSettings(advisorSettings);
+        SKRouteManager.getInstance().setAdvisorSettings(advisorSettings);
         launchNavigation();
+
     }
 
+
+    /**
+     * Stops the navigation
+     */
     private void stopNavigation() {
         navigationInProgress = false;
         routeIds.clear();
         if (textToSpeechEngine != null && !textToSpeechEngine.isSpeaking()) {
             textToSpeechEngine.stop();
         }
+
         SKNavigationManager.getInstance().stopNavigation();
+
     }
 
-    // route computation callbacks...
+    // route computation callbacks ...
     @Override
     public void onAllRoutesCompleted() {
         if (shouldCacheTheNextRoute) {
             shouldCacheTheNextRoute = false;
             SKRouteManager.getInstance().saveRouteToCache(cachedRouteId);
         }
-        SKRouteManager.getInstance().zoomToRoute(1, 1, 8, 8, 8, 8);
+        //SKRouteManager.getInstance().zoomToRoute(1, 1, 8, 8, 8, 8, 0);
         if (currentMapOption == MapOption.POI_TRACKING) {
+
+            // set warning rules for trackable POIs
+            // SKTrackablePOIType myType =SKTrackablePOIType.forInt(1000);
+            SKTrackablePOIRule rule = new SKTrackablePOIRule();
+            rule.setAerialDistance(5000); // this would be our main constraint, stating that all the POIs with 5000m, aerial distance should be detected
+            rule.setNumberOfTurns(100); // this has to be increased - otherwise some points will be disconsidered
+            rule.setRouteDistance(10000);//this has to be increased as the real road route will be longer than the aerial distance
+            rule.setMinSpeedIgnoreDistanceAfterTurn(20); //decrease this to evaluate all candidates
+            rule.setMaxDistanceAfterTurn(10000); //increase this to make sure we don't exclude any candidates
+            rule.setEliminateIfUTurn(false); // setting this to true (default) excludes points that require us to make an U-turn to get to them
+            rule.setPlayAudioWarning(false);
+            poiTrackingManager.setRuleForPOIType(SKTrackablePOIType.SPEEDCAM.getValue(), rule);
+            // start the POI tracker
             poiTrackingManager.startPOITrackerWithRadius(10000, 0.5);
-            poiTrackingManager.addWarningRulesforPoiType(SKTrackablePOIType.SPEEDCAM);
+            // launch navigation
             launchNavigation();
         }
     }
+
 
     @Override
     public void onReceivedPOIs(SKTrackablePOIType type, List<SKDetectedPOI> detectedPois) {
@@ -1271,6 +1541,8 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     /**
      * Updates the map when trackable POIs are detected such that only the
      * currently detected POIs are rendered on the map
+     *
+     * @param detectedPois
      */
     private void updateMapWithLatestDetectedPOIs(List<SKDetectedPOI> detectedPois) {
 
@@ -1295,18 +1567,26 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         }
     }
 
+    /**
+     * Draws a detected trackable POI as an annotation on the map
+     *
+     * @param poiId
+     */
     private void drawDetectedPOI(int poiId) {
         SKAnnotation annotation = new SKAnnotation(poiId);
         SKTrackablePOI poi = trackablePOIs.get(poiId);
         annotation.setLocation(poi.getCoordinate());
         annotation.setMininumZoomLevel(5);
-        annotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_MARKER);
+        annotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_PURPLE);
         mapView.addAnnotation(annotation, SKAnimationSettings.ANIMATION_NONE);
+
     }
 
     @Override
     public void onUpdatePOIsInRadius(double latitude, double longitude, int radius) {
-        poiTrackingManager.setTrackedPOIs(SKTrackablePOIType.SPEEDCAM,
+
+        // set the POIs to be tracked by the POI tracker
+        poiTrackingManager.setTrackedPOIs(SKTrackablePOIType.SPEEDCAM.getValue(),
                 new ArrayList<SKTrackablePOI>(trackablePOIs.values()));
     }
 
@@ -1329,13 +1609,14 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-
+        //mapView.reportNewHeading(t.values[0]);
         switch (event.sensor.getType()) {
 
             case Sensor.TYPE_ORIENTATION:
                 if (orientationValues != null) {
                     for (int i = 0; i < orientationValues.length; i++) {
                         orientationValues[i] = event.values[i];
+
                     }
                     if (orientationValues[0] != 0) {
                         if ((System.currentTimeMillis() - lastTimeWhenReceivedGpsSignal) > MINIMUM_TIME_UNTILL_MAP_CAN_BE_UPDATED) {
@@ -1374,18 +1655,27 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         }
     }
 
+
+    /**
+     * Enables/disables heading mode
+     *
+     * @param enabled
+     */
     private void setHeading(boolean enabled) {
         if (enabled) {
             headingOn = true;
-            mapView.getMapSettings().setFollowerMode(SKMapFollowerMode.POSITION_PLUS_HEADING);
+            mapView.getMapSettings().setHeadingMode(SKHeadingMode.ROTATING_MAP);
             startOrientationSensor();
         } else {
             headingOn = false;
-            mapView.getMapSettings().setFollowerMode(SKMapFollowerMode.NONE);
+            mapView.getMapSettings().setHeadingMode(SKMapSettings.SKHeadingMode.NONE);
             stopOrientationSensor();
         }
     }
 
+    /**
+     * Activates the orientation sensor
+     */
     private void startOrientationSensor() {
         orientationValues = new float[3];
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -1393,6 +1683,9 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         sensorManager.registerListener(this, orientationSensor, SensorManager.SENSOR_DELAY_UI);
     }
 
+    /**
+     * Deactivates the orientation sensor
+     */
     private void stopOrientationSensor() {
         orientationValues = null;
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -1418,17 +1711,25 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         }
     }
 
+    /**
+     * Called when the gps signal was lost
+     */
     private void onGPSSignalLost() {
         navigationManager.showSearchingForGPSPanel();
     }
 
+    /**
+     * Called when the gps signal was recovered after a loss
+     */
     private void onGPSSignalRecovered() {
         navigationManager.hideSearchingForGPSPanel();
     }
 
     @Override
     public void onOnlineRouteComputationHanging(int status) {
+
     }
+
 
     // map interaction callbacks ...
     @Override
@@ -1440,7 +1741,9 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
     @Override
     public void onActionZoom() {
+
     }
+
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -1455,7 +1758,8 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         if (navigationUI.getVisibility() == View.VISIBLE) {
             return;
         }
-        // show the popup at the proper position when selecting an annotation
+        // show the popup at the proper position when selecting an
+        // annotation
         int annotationHeight = 0;
         float annotationOffset = annotation.getOffset().getY();
         switch (annotation.getUniqueID()) {
@@ -1474,16 +1778,21 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         mapPopup.showAtLocation(annotation.getLocation(), true);
     }
 
+
     @Override
     public void onCustomPOISelected(SKMapCustomPOI customPoi) {
+
     }
+
 
     @Override
     public void onDoubleTap(SKScreenPoint point) {
+
     }
 
     @Override
     public void onInternetConnectionNeeded() {
+
     }
 
     @Override
@@ -1498,15 +1807,17 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             SKAnnotation annotation = new SKAnnotation(GREEN_PIN_ICON_ID);
             if (isStartPointBtnPressed) {
                 annotation.setUniqueID(GREEN_PIN_ICON_ID);
-                annotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_GREEN);
+                annotation
+                        .setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_GREEN);
                 startPoint = place.getLocation();
             } else if (isEndPointBtnPressed) {
                 annotation.setUniqueID(RED_PIN_ICON_ID);
-                annotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_RED);
+                annotation
+                        .setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_RED);
                 destinationPoint = place.getLocation();
             } else if (isViaPointSelected) {
                 annotation.setUniqueID(VIA_POINT_ICON_ID);
-                annotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_MARKER);
+                annotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_PURPLE);
                 viaPoint = new SKViaPoint(VIA_POINT_ICON_ID, place.getLocation());
                 findViewById(R.id.clear_via_point_button).setVisibility(View.VISIBLE);
             }
@@ -1516,18 +1827,22 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             mapView.addAnnotation(annotation,
                     SKAnimationSettings.ANIMATION_NONE);
         }
+
     }
 
     @Override
     public void onMapActionDown(SKScreenPoint point) {
+
     }
 
     @Override
     public void onMapActionUp(SKScreenPoint point) {
+
     }
 
     @Override
     public void onMapPOISelected(SKMapPOI mapPOI) {
+
     }
 
     @Override
@@ -1536,6 +1851,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
     @Override
     public void onRotateMap() {
+
     }
 
     @Override
@@ -1543,75 +1859,97 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         mapPopup.setVisibility(View.GONE);
     }
 
+
     @Override
     public void onCompassSelected() {
+
     }
 
     @Override
     public void onInternationalisationCalled(int result) {
+
     }
+
+
 
     @Override
     public void onDestinationReached() {
         Toast.makeText(MapActivity.this, "Destination reached", Toast.LENGTH_SHORT).show();
+        // clear the map when reaching destination
         clearMap();
     }
 
+
     @Override
     public void onReRoutingStarted() {
+
     }
 
     @Override
-    public void onFreeDriveUpdated(String countryCode, String streetName, String referenceName,
-                                   SKNavigationState.SKStreetType streetType, double currentSpeed, double speedLimit) {
+    public void onFreeDriveUpdated(String countryCode, String streetName, String referenceName, SKNavigationState.SKStreetType streetType,
+                                   double currentSpeed, double speedLimit) {
+
     }
 
     @Override
     public void onSpeedExceededWithAudioFiles(String[] adviceList, boolean speedExceeded) {
+
     }
 
     @Override
     public void onUpdateNavigationState(SKNavigationState navigationState) {
     }
 
+
     @Override
     public void onVisualAdviceChanged(boolean firstVisualAdviceChanged, boolean secondVisualAdviceChanged,
                                       SKNavigationState navigationState) {
     }
 
+
     @Override
     public void onRealReachCalculationCompleted(SKBoundingBox bbox) {
+        // fit the reachable area on the screen when real reach calculataion
+        // ends
         mapView.fitRealReachInView(bbox, false, 0);
     }
+
 
     @Override
     public void onPOIClusterSelected(SKPOICluster poiCluster) {
         // TODO Auto-generated method stub
+
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // TODO Auto-generated method stub
+
     }
 
     @Override
     public void onTunnelEvent(boolean tunnelEntered) {
         // TODO Auto-generated method stub
+
     }
+
 
     @Override
     public void onMapRegionChangeEnded(SKCoordinateRegion mapRegion) {
         // TODO Auto-generated method stub
+
     }
 
     @Override
     public void onMapRegionChangeStarted(SKCoordinateRegion mapRegion) {
         // TODO Auto-generated method stub
+
     }
 
     @Override
     public void onMapVersionSet(int newVersion) {
         // TODO Auto-generated method stub
+
     }
 
     private void showUpdateDialog(final int newVersion) {
@@ -1659,20 +1997,29 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     @Override
     public void onVersionFileDownloadTimeout() {
         // TODO Auto-generated method stub
+
     }
 
     @Override
     public void onCurrentPositionSelected() {
         // TODO Auto-generated method stub
+
     }
 
     @Override
     public void onObjectSelected(int id) {
     }
 
+
     @Override
     public void onBackPressed() {
         // TODO Auto-generated method stub
+        if (((OneBoxFragment)getFragmentManager().findFragmentByTag(OneBoxManager.ONEBOX_FRAGMENT_ID)).ONEBOX_ACTIVATED) {
+
+            if(getFragmentManager().findFragmentByTag(OneBoxManager.ONEBOX_FRAGMENT_ID) != null)
+                ((OneBoxFragment)getFragmentManager().findFragmentByTag(OneBoxManager.ONEBOX_FRAGMENT_ID)).handleBackButtonPressed();
+            return;
+        }
 
         if (skToolsNavigationInProgress || skToolsRouteCalculated) {
             AlertDialog.Builder alert = new AlertDialog.Builder(MapActivity.this);
@@ -1707,10 +2054,12 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                         SKToolsDownloadManager downloadManager = SKToolsDownloadManager.getInstance(new SKToolsDownloadListener() {
                             @Override
                             public void onDownloadProgress(SKToolsDownloadItem currentDownloadItem) {
+
                             }
 
                             @Override
                             public void onDownloadCancelled(String currentDownloadItemCode) {
+
                             }
 
                             @Override
@@ -1727,25 +2076,31 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                             @Override
                             public void onInternetConnectionFailed(SKToolsDownloadItem currentDownloadItem,
                                                                    boolean responseReceivedFromServer) {
+
                             }
 
                             @Override
                             public void onAllDownloadsCancelled() {
+
                             }
 
                             @Override
                             public void onNotEnoughMemoryOnCurrentStorage(SKToolsDownloadItem currentDownloadItem) {
+
                             }
 
                             @Override
                             public void onInstallStarted(SKToolsDownloadItem currentInstallingItem) {
+
                             }
 
                             @Override
                             public void onInstallFinished(SKToolsDownloadItem currentInstallingItem) {
+
                             }
                         });
                         if (downloadManager.isDownloadProcessRunning()) {
+                            // pause downloads when exiting app if one is currently in progress
                             downloadManager.pauseDownloadThread();
                             return;
                         }
@@ -1756,7 +2111,9 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             });
             alert.setNegativeButton("Cancel", null);
             alert.show();
+
         }
+
     }
 
     @Override
@@ -1766,9 +2123,9 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             int routeIndex = routeIds.size();
             routeIds.add(routeInfo.getRouteID());
             double tollsCost = TollsCostCalculator.getTollsCost(routeInfo);
-            alternativeRoutesButtons[routeIndex].setText(Utils.formatDistance(routeInfo.getDistance()) + "\n"
-                                        + Utils.formatTime(routeInfo.getEstimatedTime()) + "\n" + tollsCost + " EUR");
-            if (routeIndex == 0) {
+            altRoutesButtons[routeIndex].setText(Utils.formatDistance(routeInfo.getDistance()) + "\n");
+//            Utils.formatTime(routeInfo.getEstimatedTime() + "\n" + tollsCost + " EUR");
+              if (routeIndex == 0) {
                 // select 1st alternative by default
                 selectAlternativeRoute(0);
             }
@@ -1776,18 +2133,19 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 || currentMapOption == MapOption.NAVI_UI) {
             // select the current route (on which navigation will run)
             SKRouteManager.getInstance().setCurrentRouteByUniqueId(routeInfo.getRouteID());
-            SKRouteManager.getInstance().zoomToRoute(1, 1, 8, 8, 8, 8);
+            // zoom to the current route
+            SKRouteManager.getInstance().zoomToRoute(1, 1, 8, 8, 8, 8, 0);
 
             if (currentMapOption == MapOption.ROUTING_AND_NAVIGATION) {
                 bottomButton.setText(getResources().getString(R.string.start_navigation));
             }
-        } else if (currentMapOption == MapOption.MAP_INTERACTION) {
+        }  else if (currentMapOption == MapOption.MAP_INTERACTION) {
             if (shouldCacheTheNextRoute) {
                 cachedRouteId = routeInfo.getRouteID();
             }
         }
 
-        final List<SKRouteAdvice> advices = SKRouteManager.getInstance().getAdviceList(routeInfo.getRouteID(), SKMaps.SKDistanceUnitType.DISTANCE_UNIT_KILOMETER_METERS);
+        final List<SKRouteAdvice> advices = SKRouteManager.getInstance().getAdviceListForRouteByUniqueId(routeInfo.getRouteID(), SKMaps.SKDistanceUnitType.DISTANCE_UNIT_KILOMETER_METERS);
         if (advices != null) {
             for (SKRouteAdvice advice : advices) {
                 SKLogging.writeLog(TAG, " Route advice is " + advice.toString(), SKLogging.LOG_DEBUG);
@@ -1813,6 +2171,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
     @Override
     public void onSignalNewAdviceWithAudioFiles(String[] audioFiles, boolean specialSoundFile) {
+        // a new navigation advice was received
         SKLogging.writeLog(TAG, " onSignalNewAdviceWithAudioFiles " + Arrays.asList(audioFiles), Log.DEBUG);
         SKToolsAdvicePlayer.getInstance().playAdvice(audioFiles, SKToolsAdvicePlayer.PRIORITY_NAVIGATION);
     }
@@ -1830,6 +2189,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     @Override
     public void onServerLikeRouteCalculationCompleted(SKRouteJsonAnswer arg0) {
         // TODO Auto-generated method stub
+
     }
 
     @Override
@@ -1889,7 +2249,9 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
     @Override
     public void onRouteCalculationCompleted() {
+
     }
+
 
     @Override
     public void onRouteCalculationCanceled() {
@@ -1903,16 +2265,22 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Pass the event to ActionBarDrawerToggle, if it returns
-        // true, then it has handled the app icon touch event
+
+        if(!((OneBoxFragment)getFragmentManager().findFragmentByTag(OneBoxManager.ONEBOX_FRAGMENT_ID)).ONEBOX_ACTIVATED){
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        }
         if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-        // Handle  other action bar items...
         return super.onOptionsItemSelected(item);
+
     }
 
+    /**
+     * list view click listener
+     */
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
+
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             selectItem(position);
@@ -1921,6 +2289,8 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
     /**
      * handles the click on menu items
+     *
+     * @param position
      */
     public void selectItem(int position) {
         drawerList.setItemChecked(position, true);
@@ -1938,12 +2308,12 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 initializeNavigationUI(true);
                 findViewById(R.id.clear_via_point_button).setVisibility(View.GONE);
                 break;
-            case MAP_DOWNLOADS:
+             case MAP_DOWNLOADS:
                 if (Utils.isInternetAvailable(this)) {
                     startActivity(new Intent(MapActivity.this, ResourceDownloadsListActivity.class));
                 } else {
                     Toast.makeText(this, getResources().getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
-                            .show();
+                    .show();
                 }
                 break;
             case SETTINGS:
@@ -1963,11 +2333,11 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 currentMapOption = MapOption.MAP_OVERLAYS;
                 drawShapes();
                 mapView.setZoom(14);
-                mapView.centerMapOnPosition(new SKCoordinate(-122.4200, 37.7765));
+                mapView.animateToLocation(new SKCoordinate(37.7765, -122.4200), 10);
                 break;
             case ALTERNATIVE_ROUTES:
                 currentMapOption = MapOption.ALTERNATIVE_ROUTES;
-                alternativeRoutesView.setVisibility(View.VISIBLE);
+                altRoutesView.setVisibility(View.VISIBLE);
                 launchAlternativeRouteCalculation();
                 break;
             case MAP_STYLES:
@@ -1981,7 +2351,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 break;
             case REAL_REACH:
                 currentMapOption = MapOption.REAL_REACH;
-                mapView.centerMapOnPosition(new SKCoordinate(13.4127, 52.5233));
+                mapView.animateToLocation(new SKCoordinate(52.5233, 13.4127), 10);
                 realReachLayout.setVisibility(View.VISIBLE);
                 break;
             case REVERSE_GEOCODING:
@@ -1992,6 +2362,11 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 break;
             case NEARBY_SEARCH:
                 startActivity(new Intent(this, NearbySearchActivity.class));
+                break;
+            case ONEBOX_SEARCH:
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                initializeOneBox();
+                currentMapOption = MapOption.ONEBOX_SEARCH;
                 break;
             case ANNOTATIONS:
                 currentMapOption = MapOption.ANNOTATIONS;
@@ -2010,7 +2385,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 if (trackablePOIs == null) {
                     initializeTrackablePOIs();
                 }
-                launchRouteCalculation(new SKCoordinate(-122.397674, 37.761278), new SKCoordinate(-122.448270, 37.738761));
+                launchRouteCalculation(new SKCoordinate(37.761278, -122.397674), new SKCoordinate(37.738761, -122.448270));
                 break;
             case HEAT_MAP:
                 currentMapOption = MapOption.HEAT_MAP;
@@ -2023,8 +2398,13 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             positionMeButton.setVisibility(View.GONE);
             headingButton.setVisibility(View.GONE);
         }
+
     }
 
+
+    /**
+     * Initiate real reach time profile
+     */
     private void showRealReach(SKRealReachSettings.SKRealReachMeasurementUnit unitType, SKRealReachSettings.SKRealReachVehicleType vehicleType, int range, SKRouteSettings.SKRouteConnectionMode skRouteConnectionMode) {
 
         if (mapView == null) {
@@ -2034,9 +2414,12 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
         // set listener for real reach calculation events
         mapView.setRealReachListener(this);
+        // get object that can be used to specify real reach calculation
+        // properties
         SKRealReachSettings realReachSettings = new SKRealReachSettings();
         // set center position for real reach
-        realReachSettings.setLocation(new SKCoordinate(13.4127, 52.5233));
+        realReachSettings.setLocation(new SKCoordinate(52.5233, 13.4127));
+        // set measurement unit for real reach;
         realReachSettings.setMeasurementUnit(unitType);
 
         if (unitType == SKRealReachSettings.SKRealReachMeasurementUnit.MILIWATT_HOURS) {
@@ -2053,25 +2436,30 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             realReachSettings.setRoundTrip(false);
         }
         realReachSettings.setConnectionMode(skRouteConnectionMode);
+        // set the transport mode
         realReachSettings.setTransportMode(vehicleType);
-
+        // initiate real reach
         mapView.displayRealReachWithSettings(realReachSettings);
     }
 
     private void handleMapInteractionOption() {
 
-        mapView.centerMapOnPosition(new SKCoordinate(-122.4200, 37.7765));
+        mapView.animateToLocation(new SKCoordinate(37.7765, -122.4200), 10);
 
+        // get the annotation object
         SKAnnotation annotation1 = new SKAnnotation(10);
-
-        SKCoordinate annotation1Coordinate = new SKCoordinate(-122.4200, 37.7765);
+        // set annotation location
+        SKCoordinate annotation1Coordinate = new SKCoordinate(37.7765, -122.4200);
         annotation1.setLocation(annotation1Coordinate);
+        // set minimum zoom level at which the annotation should be visible
         annotation1.setMininumZoomLevel(5);
+        // set the annotation's type
         annotation1.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_RED);
+        // render annotation on map
         mapView.addAnnotation(annotation1, SKAnimationSettings.ANIMATION_NONE);
 
         SKAnnotation annotation2 = new SKAnnotation(11);
-        SKCoordinate annotation2Coordinate = new SKCoordinate(-122.412753, 37.777142);
+        SKCoordinate annotation2Coordinate = new SKCoordinate(37.777142, -122.412753);
         annotation2.setLocation(annotation2Coordinate);
         annotation2.setMininumZoomLevel(5);
         annotation2.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_GREEN);
@@ -2094,6 +2482,9 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         return cachedRouteId != null;
     }
 
+    /**
+     * Loads a route from the route cache
+     */
     public void loadRouteFromCache() {
         SKRouteManager.getInstance().loadRouteFromCache(cachedRouteId);
     }

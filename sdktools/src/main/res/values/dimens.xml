@@ -32,6 +32,14 @@
     <dimen name="navigation_panel_width_height">70dp</dimen>
     <dimen name="navigation_bottom_panel_height">50dp</dimen>
 
+    <dimen name="onebox_media_item_height">272dp</dimen>
+    <dimen name="onebox_simple_item_height">56dp</dimen>
+    <dimen name="onebox_two_line_item_height">72dp</dimen>
+    <dimen name="onebox_list_divider_height">1dp</dimen>
+    <dimen name="onebox_avatar_padding">72dp</dimen>
+    <dimen name="onebox_default_padding">16dp</dimen>
+    <dimen name="onebox_elevation">3dp</dimen>
+
 
 
 </resources>

@@ -21,14 +21,6 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Surface;
 
-import com.google.common.io.ByteStreams;
-import com.skobbler.ngx.SKDeveloperKeyException;
-import com.skobbler.ngx.SKMaps;
-import com.skobbler.ngx.SKMapsInitSettings;
-import com.skobbler.ngx.map.SKMapViewStyle;
-import com.skobbler.ngx.navigation.SKAdvisorSettings;
-import com.skobbler.ngx.util.SKLogging;
-import com.skobbler.sdkdemo.application.DDAApplication;
 
 
 public class Utils {
@@ -57,7 +49,7 @@ public class Utils {
         }
         return builder.toString();
     }
-    
+
     /**
      * Formats a given distance value (given in meters)
      * @param distInMeters
@@ -70,7 +62,7 @@ public class Utils {
             return ((float) distInMeters / 1000) + "km";
         }
     }
-    
+
     /**
      * Copies files from assets to destination folder
      * @param assetManager
@@ -80,14 +72,14 @@ public class Utils {
     public static void copyAssetsToFolder(AssetManager assetManager, String sourceFolder, String destinationFolder)
             throws IOException {
         final String[] assets = assetManager.list(sourceFolder);
-        
+
         final File destFolderFile = new File(destinationFolder);
         if (!destFolderFile.exists()) {
             destFolderFile.mkdirs();
         }
         copyAsset(assetManager, sourceFolder, destinationFolder, assets);
     }
-    
+
     /**
      * Copies files from assets to destination folder
      * @param assetManager
@@ -96,16 +88,20 @@ public class Utils {
      * @throws IOException
      */
     public static void copyAsset(AssetManager assetManager, String sourceFolder, String destinationFolder,
-            String... assetsNames) throws IOException {
-        
+                                 String... assetsNames) throws IOException {
+
         for (String assetName : assetsNames) {
             OutputStream destinationStream = new FileOutputStream(new File(destinationFolder + "/" + assetName));
             String[] files = assetManager.list(sourceFolder + "/" + assetName);
             if (files == null || files.length == 0) {
-                
+
                 InputStream asset = assetManager.open(sourceFolder + "/" + assetName);
                 try {
-                    ByteStreams.copy(asset, destinationStream);
+                    byte[] buffer = new byte[0x1000];
+                    int read;
+                    while ((read = asset.read(buffer)) != -1) {
+                        destinationStream.write(buffer, 0, read);
+                    }
                 } finally {
                     asset.close();
                     destinationStream.close();
@@ -113,7 +109,7 @@ public class Utils {
             }
         }
     }
-    
+
     /**
      * Tells if internet is currently available on the device
      * @param currentContext
@@ -136,7 +132,7 @@ public class Utils {
         }
         return false;
     }
-    
+
     /**
      * Checks if the current device has a GPS module (hardware)
      * @return true if the current device has GPS
@@ -163,48 +159,6 @@ public class Utils {
         }
         return false;
     }
-
-
-    /**
-     * Initializes the SKMaps framework
-     */
-    public static boolean initializeLibrary(final Activity context) {
-        SKLogging.enableLogs(true);
-
-        // get object holding map initialization settings
-        SKMapsInitSettings initMapSettings = new SKMapsInitSettings();
-
-        final String  mapResourcesPath = ((DDAApplication)context.getApplicationContext()).getAppPrefs().getStringPreference("mapResourcesPath");
-        // set path to map resources and initial map style
-        initMapSettings.setMapResourcesPaths(mapResourcesPath,
-                new SKMapViewStyle(mapResourcesPath + "daystyle/", "daystyle.json"));
-
-        final SKAdvisorSettings advisorSettings = initMapSettings.getAdvisorSettings();
-        advisorSettings.setAdvisorConfigPath(mapResourcesPath +"/Advisor");
-        advisorSettings.setResourcePath(mapResourcesPath +"/Advisor/Languages");
-        advisorSettings.setLanguage(SKAdvisorSettings.SKAdvisorLanguage.LANGUAGE_EN);
-        advisorSettings.setAdvisorVoice("en");
-        initMapSettings.setAdvisorSettings(advisorSettings);
-
-        // EXAMPLE OF ADDING PREINSTALLED MAPS
-//         initMapSettings.setPreinstalledMapsPath(((DDAApplication)context.getApplicationContext()).getMapResourcesDirPath()
-//         + "/PreinstalledMaps");
-        // initMapSettings.setConnectivityMode(SKMaps.CONNECTIVITY_MODE_OFFLINE);
-
-        // Example of setting light maps
-        // initMapSettings.setMapDetailLevel(SKMapsInitSettings.SK_MAP_DETAIL_LIGHT);
-        // initialize map using the settings object
-
-        try {
-            SKMaps.getInstance().initializeSKMaps(context, initMapSettings);
-            return true;
-        }catch (SKDeveloperKeyException exception){
-            exception.printStackTrace();
-            showApiKeyErrorDialog(context);
-            return false;
-        }
-    }
-
 
     /**
      * Shows the api key not set dialog.
@@ -252,7 +206,7 @@ public class Utils {
                     orientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
                     break;
                 default:
-                   // Logging.writeLog(TAG, "Unknown screen orientation. Defaulting to " + "portrait.", Logging.LOG_DEBUG);
+                    // Logging.writeLog(TAG, "Unknown screen orientation. Defaulting to " + "portrait.", Logging.LOG_DEBUG);
                     orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
                     break;
             }
@@ -290,10 +244,10 @@ public class Utils {
         if (file.isDirectory()) {
             String[] children = file.list();
             for (int i = 0; i < children.length; i++) {
-                if(new File(file,children[i]).isDirectory() &&!children[i].equals("PreinstalledMaps") &&!children[i].equals("Maps")){
+                if(new File(file, children[i]).isDirectory() &&!children[i].equals("PreinstalledMaps") &&!children[i].equals("Maps")){
                     deleteFileOrDirectory(new File(file,children[i]));
                 }else{
-                    new File(file,children[i]).delete();
+                    new File(file, children[i]).delete();
                 }
             }
         }

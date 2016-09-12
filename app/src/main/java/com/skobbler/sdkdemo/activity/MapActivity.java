@@ -1355,21 +1355,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     private void clearMap() {
         setHeading(false);
         switch (currentMapOption) {
-            case NAVI_UI:
-                currentMapOption = MapOption.NAVI_UI;
-                initializeNavigationUI(true);
-                findViewById(R.id.clear_via_point_button).setVisibility(View.GONE);
-                break;
-                case MAP_DOWNLOADS:
-                    if (Utils.isInternetAvailable(this)) {
-                        startActivity(new Intent(MapActivity.this, ResourceDownloadsListActivity.class));
-                        }
-                    else {Toast.makeText(this, getResources().getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
-                        }
-                 break;
-            case SETTINGS:
-                    startActivity(new Intent(MapActivity.this, SettingsActivity.class));
-                    break;
             case MAP_DISPLAY:
                 break;
             case MAP_OVERLAYS:
@@ -1422,6 +1407,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 heatMapCategories = null;
                 mapView.clearHeatMapsDisplay();
                 break;
+            case NAVI_UI:
             case MAP_INTERACTION:
                 mapView.deleteAllAnnotationsAndCustomPOIs();
                 bottomButton.setVisibility(View.GONE);
@@ -2317,6 +2303,22 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     protected void handleMenuItemClick(MapOption mapOption) {
         clearMap();
         switch (mapOption) {
+            case NAVI_UI:
+                currentMapOption = MapOption.NAVI_UI;
+                initializeNavigationUI(true);
+                findViewById(R.id.clear_via_point_button).setVisibility(View.GONE);
+                break;
+             case MAP_DOWNLOADS:
+                if (Utils.isInternetAvailable(this)) {
+                    startActivity(new Intent(MapActivity.this, ResourceDownloadsListActivity.class));
+                } else {
+                    Toast.makeText(this, getResources().getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
+                    .show();
+                }
+                break;
+            case SETTINGS:
+                startActivity(new Intent(MapActivity.this, SettingsActivity.class));
+                break;
             case MAP_DISPLAY:
                 mapView.clearHeatMapsDisplay();
                 currentMapOption = MapOption.MAP_DISPLAY;

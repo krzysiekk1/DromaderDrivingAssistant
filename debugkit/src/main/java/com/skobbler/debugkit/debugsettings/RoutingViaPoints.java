@@ -118,7 +118,7 @@ public class RoutingViaPoints extends DebugSettings implements SKMapSurfaceListe
                 identifier = Integer.parseInt(identifierPoint.getText().toString());
                 latitude = Double.parseDouble(startLatitude.getText().toString());
                 longitude = Double.parseDouble(startLongitude.getText().toString());
-                launchViaPointAdd(new SKCoordinate(longitude, latitude));
+                launchViaPointAdd(new SKCoordinate(latitude,longitude));
                 isViaPointSelected = false;
             }
         });
@@ -210,9 +210,9 @@ public class RoutingViaPoints extends DebugSettings implements SKMapSurfaceListe
     }
 
     private void launchViaPointAdd(SKCoordinate skCoordinate) {
-        SKAnnotation annotation = new SKAnnotation(SKAnnotation.SK_ANNOTATION_TYPE_MARKER);
+        SKAnnotation annotation = new SKAnnotation(SKAnnotation.SK_ANNOTATION_TYPE_PURPLE);
         annotation.setUniqueID(identifier);
-        annotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_MARKER);
+        annotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_PURPLE);
         viaPoint = new SKViaPoint(identifier, skCoordinate);
         viaPoint.setUniqueId(identifier);
         viaPointList.add(viaPoint);
@@ -224,7 +224,7 @@ public class RoutingViaPoints extends DebugSettings implements SKMapSurfaceListe
                 SKAnimationSettings.ANIMATION_NONE);
         // center map on a position
         activity.getMapView().setZoom(15);
-        activity.getMapView().centerMapOnPosition(skCoordinate);
+        activity.getMapView().animateToLocation(skCoordinate,0);
     }
 
     @Override
@@ -281,6 +281,7 @@ public class RoutingViaPoints extends DebugSettings implements SKMapSurfaceListe
     public void onInternationalisationCalled(int i) {
 
     }
+
 
     @Override
     public void onBoundingBoxImageRendered(int i) {

@@ -1,7 +1,6 @@
 package com.skobbler.ngx.sdktools.download;
 
 /**
- * Created by Tudor on 11/13/2014.
  * Defines a download step for an item (e.g for maps download, there are three steps: SKM, ZIP, TXG, fo)
  */
 public class SKToolsFileDownloadStep {

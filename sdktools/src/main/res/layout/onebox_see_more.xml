@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/see_more"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/onebox_list"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/ripple_transparent_bounded"
+        android:padding="@dimen/onebox_default_padding"
+        android:text="@string/see_all_label"
+        android:textAllCaps="true"
+        android:textColor="@color/navigate_blue_button"
+        android:textSize="14dp"
+        android:textStyle="bold"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+</LinearLayout>

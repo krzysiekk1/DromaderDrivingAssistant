@@ -49,7 +49,7 @@ public class DebugMapOperationsManager {
         mapSettings.setMapRotationEnabled(true);
         mapView.getMapSettings().setCompassPosition(new SKScreenPoint(5, 5));
         mapView.getMapSettings().setCompassShown(true);
-        mapView.getMapSettings().setFollowerMode(SKMapSettings.SKMapFollowerMode.NONE_WITH_HEADING);
+        mapView.getMapSettings().setHeadingMode(SKMapSettings.SKHeadingMode.ROUTE);
         mapView.getMapSettings().setMapDisplayMode(SKMapSettings.SKMapDisplayMode.MODE_2D);
     }
 
@@ -59,7 +59,7 @@ public class DebugMapOperationsManager {
      */
     public void centerMapOnCurrentPosition(SKPosition currentPosition){
         if (mapView != null && currentPosition != null) {
-            mapView.centerMapOnCurrentPositionSmooth(17, 500);
+            mapView.centerOnCurrentPosition(17,true, 500);
         }
     }
 }

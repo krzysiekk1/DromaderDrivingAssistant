@@ -42,6 +42,7 @@ import com.skobbler.ngx.SKMaps;
 import com.skobbler.ngx.map.SKMapSettings;
 import com.skobbler.ngx.navigation.SKNavigationManager;
 import com.skobbler.ngx.navigation.SKNavigationState;
+import com.skobbler.ngx.navigation.SKVisualAdviceColor;
 import com.skobbler.ngx.routing.SKRouteListener;
 import com.skobbler.ngx.routing.SKRouteSettings;
 
@@ -473,7 +474,7 @@ class SKToolsNavigationUIManager {
     /**
      * current follower mode
      */
-    public SKMapSettings.SKMapFollowerMode currentFollowerMode = SKMapSettings.SKMapFollowerMode.HISTORIC_POSITION;
+    public SKMapSettings.SKHeadingMode currentFollowerMode = SKMapSettings.SKHeadingMode.NONE;
     /**
      * Click listener for settings menu views
      */
@@ -694,23 +695,23 @@ class SKToolsNavigationUIManager {
                 case HISTORICAL_POSITIONS:
                     compassStates = CompassStates.PEDESTRIAN_COMPASS;
                     Toast.makeText(this.currentActivity, "The map will turn based on the device compass. It will point in your movement direction.", Toast.LENGTH_SHORT).show();
-                    mapSettings.setFollowerMode(SKMapSettings.SKMapFollowerMode.POSITION_PLUS_HEADING);
-                    currentFollowerMode = SKMapSettings.SKMapFollowerMode.POSITION_PLUS_HEADING;
+                    mapSettings.setHeadingMode(SKMapSettings.SKHeadingMode.ROTATING_MAP);
+                    currentFollowerMode = SKMapSettings.SKHeadingMode.ROTATING_MAP;
                     compassPanelImageView.setBackgroundResource(R.drawable.icon_compass);
                     SKToolsLogicManager.getInstance().startPedestrian = false;
                     break;
                 case PEDESTRIAN_COMPASS:
                     compassStates = CompassStates.NORTH_ORIENTED;
                     Toast.makeText(this.currentActivity, "The map will not turn. It will always stay northbound.", Toast.LENGTH_SHORT).show();
-                    mapSettings.setFollowerMode(SKMapSettings.SKMapFollowerMode.POSITION);
-                    currentFollowerMode = SKMapSettings.SKMapFollowerMode.POSITION;
+                    mapSettings.setHeadingMode(SKMapSettings.SKHeadingMode.ROTATING_HEADING);
+                    currentFollowerMode = SKMapSettings.SKHeadingMode.ROTATING_HEADING;
                     compassPanelImageView.setBackgroundResource(R.drawable.icon_north_oriented);
                     break;
                 case NORTH_ORIENTED:
                     compassStates = CompassStates.HISTORICAL_POSITIONS;
                     Toast.makeText(this.currentActivity, "The map will turn based on your recent positions.", Toast.LENGTH_SHORT).show();
-                    mapSettings.setFollowerMode(SKMapSettings.SKMapFollowerMode.HISTORIC_POSITION);
-                    currentFollowerMode = SKMapSettings.SKMapFollowerMode.HISTORIC_POSITION;
+                    mapSettings.setHeadingMode(SKMapSettings.SKHeadingMode.HISTORIC_POSITIONS);
+                    currentFollowerMode = SKMapSettings.SKHeadingMode.HISTORIC_POSITIONS;
                     compassPanelImageView.setBackgroundResource(R.drawable.icon_historical_positions);
                     break;
             }
@@ -896,7 +897,6 @@ class SKToolsNavigationUIManager {
      * @param id
      * @param time
      * @param distance
-     * @param cost
      */
     public void sePreNavigationButtons(final int id, final String time, final String distance, final String cost) {
         if (preNavigationPanel != null) {
@@ -1150,7 +1150,6 @@ class SKToolsNavigationUIManager {
 
     /**
      * Checks if the navigation is in panning mode
-     *
      * @return
      */
     public boolean isPanningMode() {
@@ -1177,7 +1176,7 @@ class SKToolsNavigationUIManager {
         hideViewIfVisible(backButtonPanel);
         hideViewIfVisible(routeOverviewPanel);
 
-        showViewIfNotVisible(speedPanel);
+            showViewIfNotVisible(speedPanel);
 
         if (!isFreeDrive) {
             showViewIfNotVisible(routeDistancePanel);
@@ -1479,7 +1478,7 @@ class SKToolsNavigationUIManager {
                     if (currentNavigationMode == NavigationMode.FOLLOWER) {
                         showViewIfNotVisible(topCurrentNavigationPanel);
                         showViewIfNotVisible(routeDistancePanel);
-                        showViewIfNotVisible(speedPanel);
+                            showViewIfNotVisible(speedPanel);
 
                     }
 
@@ -1799,6 +1798,35 @@ class SKToolsNavigationUIManager {
                         R.color.gray, forCurrent);
             }
         }
+    }
+
+    /**
+     * get the color for the advice image
+     * @param forCurrent true - current advice image, false - next advice image
+     * @return SKVisualAdviceColor
+     */
+    public SKVisualAdviceColor getVisualAdviceColorAccordingToBackgroundsDrawableColor(boolean forCurrent) {
+        final SKVisualAdviceColor color = new SKVisualAdviceColor();
+        int currentColor = forCurrent ? currentAdviceBackgroundDrawableId : nextAdviceBackgroundDrawableId;
+        if (currentColor == R.color.white) {
+            color.setAllowedStreetColor(new float[]{0.2f, 0.2f, 0.2f, 0.4f});
+            color.setForbiddenStreetColor(new float[]{0.2f, 0.2f, 0.2f, 0.7f});
+            color.setRouteStreetColor(new float[]{0.2f, 0.2f, 0.2f, 1});
+
+        } else if (currentColor == R.color.blue_panel_day_background || currentColor == R.color.blue_panel_night_background || currentColor == R.color.green_panel_day_background || currentColor == R.color.green_panel_night_background  || currentColor == R.color.yellow_panel_night_background) {
+            color.setAllowedStreetColor(new float[]{1, 1, 1, 0.4f});
+            color.setForbiddenStreetColor(new float[]{1, 1, 1, 0.7f});
+            color.setRouteStreetColor(new float[]{1, 1, 1, 1});
+
+        } else {
+            color.setAllowedStreetColor(new float[]{0.2f, 0.2f, 0.2f, 0.4f});
+            color.setForbiddenStreetColor(new float[]{0.2f, 0.2f, 0.2f, 0.7f});
+            color.setRouteStreetColor(new float[]{0.2f, 0.2f, 0.2f, 1});
+
+        }
+
+        color.setBackgroundColor(new float[]{0, 0, 0, 0});
+        return color;
     }
 
     /**
@@ -2127,7 +2155,7 @@ class SKToolsNavigationUIManager {
                     }
                     if (currentNavigationMode == NavigationMode.FOLLOWER && currentStreetNameFreeDriveString != null) {
                         freeDriveCurrentStreetPanel.setVisibility(View.VISIBLE);
-                        showViewIfNotVisible(speedPanel);
+                            showViewIfNotVisible(speedPanel);
                     }
                 }
 
@@ -2414,7 +2442,7 @@ class SKToolsNavigationUIManager {
             audioText.setTag(R.drawable.ic_audio_on);
             audioText.setText(res.getString(R.string.navigate_settings_audio_on));
         }
-
+        
     }
 
     /**

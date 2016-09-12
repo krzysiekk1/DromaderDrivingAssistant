@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/onebox_simple_item_height">
+
+    <ImageView
+        android:id="@+id/list_item_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
+        android:src="@drawable/onebox_cat_food_list_icon" />
+
+    <TextView
+        android:id="@+id/list_item_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/onebox_avatar_padding"
+        android:layout_marginRight="@dimen/onebox_default_padding"
+        android:fontFamily="sans-serif"
+        android:singleLine="true"
+        android:textColor="@color/dark_gray"
+        android:textSize="16dp"
+        tools:text="Boiler Club" />
+</RelativeLayout>

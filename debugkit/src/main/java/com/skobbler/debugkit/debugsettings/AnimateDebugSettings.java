@@ -81,7 +81,7 @@ public class AnimateDebugSettings extends DebugSettings {
                 longitude = Double.parseDouble(longitudeValue.getText().toString());
                 duration = Integer.parseInt(durationValue.getText().toString());
 
-                activity.getMapView().centerMapOnPositionSmooth(new SKCoordinate(longitude, latitude), duration);
+                activity.getMapView().setPositionAsCurrent(new SKCoordinate(latitude,longitude), duration,true);
             }
         });
 
@@ -92,7 +92,7 @@ public class AnimateDebugSettings extends DebugSettings {
             @Override
             public void onClick(View view) {
                 bearing = Float.parseFloat(bearingValue.getText().toString());
-                activity.getMapView().rotateMapWithAngle(bearing);
+                activity.getMapView().animateToBearing(bearing,true,0);
 
             }
         });

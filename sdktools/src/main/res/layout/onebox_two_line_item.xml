@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/onebox_two_line_item_height"
+    android:background="@drawable/ripple_transparent_bounded">
+
+    <ImageView
+        android:id="@+id/list_item_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/onebox_default_padding"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/onebox_avatar_padding"
+            android:layout_marginRight="@dimen/onebox_default_padding"
+            android:gravity="left">
+
+            <TextView
+                android:id="@+id/list_item_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/onebox_default_padding"
+                android:layout_toLeftOf="@+id/list_item_distance"
+                android:fontFamily="sans-serif"
+                android:singleLine="true"
+                android:textColor="@color/dark_gray"
+                android:textSize="16dp"
+               />
+
+            <TextView
+                android:id="@+id/list_item_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/list_item_text"
+                android:layout_alignParentRight="true"
+                android:fontFamily="sans-serif"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:textColor="@color/navigate_blue_button"
+                android:textSize="12dp"
+                />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/list_item_subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="@dimen/onebox_avatar_padding"
+            android:layout_marginRight="@dimen/onebox_default_padding"
+            android:fontFamily="sans-serif"
+            android:gravity="left"
+            android:paddingTop="4dp"
+            android:singleLine="true"
+            android:textColor="@color/light_gray"
+            android:textSize="14dp"
+           />
+    </LinearLayout>
+</RelativeLayout>

@@ -8,7 +8,6 @@ import com.skobbler.ngx.util.SKLogging;
 
 /**
  * Class responsible for creating and upgrading the application's database.
- * Created by CatalinM on 11/10/2014.
  */
 public class ResourcesDAO extends SQLiteOpenHelper {
 
@@ -63,7 +62,7 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         String createMapResourcesTable =
                 new StringBuilder("CREATE TABLE IF NOT EXISTS ").append(MapsDAO.MAPS_TABLE).append(" (")
                         .append(MapsDAO.KEY).append(" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "").append(MapsDAO.CODE).append(" TEXT UNIQUE, ").append(MapsDAO.PARENT_CODE)
+                        "").append(MapsDAO.CODE).append(" TEXT, ").append(MapsDAO.PARENT_CODE)
                         .append(" TEXT, ").append(MapsDAO.REGION).append(" TEXT, ").append(MapsDAO.NAMES).append(" TEXT, " +
                         "").append(MapsDAO.SKM_FILE_PATH).append(" TEXT, ").append(MapsDAO.ZIP_FILE_PATH)
                         .append(" TEXT, ").append(MapsDAO.TXG_FILE_PATH).append(" TEXT, ")

@@ -452,7 +452,7 @@ public class PoiTrackerDebugSettings extends DebugSettings implements SKMapSurfa
         route.setStartCoordinate(startPoint);
         route.setDestinationCoordinate(destinationPoint);
         // set the number of routes to be calculated
-        route.setNoOfRoutes(1);
+        route.setMaximumReturnedRoutes(1);
         // set the route mode
         route.setRouteMode(SKRouteSettings.SKRouteMode.CAR_FASTEST);
         // set whether the route should be shown on the map after it's computed
@@ -531,7 +531,7 @@ public class PoiTrackerDebugSettings extends DebugSettings implements SKMapSurfa
                 destinationPoint = place.getLocation();
             } else if (isPOILocationPressed) {
                 annotation.setUniqueID(TRACKABLE_POI_POINT_ICON_ID++);
-                annotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_MARKER);
+                annotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_PURPLE);
                 SKTrackablePOI skTrackablePOI = new SKTrackablePOI(TRACKABLE_POI_POINT_ICON_ID, 0, place.getLocation(), -1, place.getName());
                 trackablePOIs.put(TRACKABLE_POI_POINT_ICON_ID, skTrackablePOI);
             }
@@ -672,6 +672,7 @@ public class PoiTrackerDebugSettings extends DebugSettings implements SKMapSurfa
 
     }
 
+
     @Override
     public void onTunnelEvent(boolean b) {
 
@@ -680,7 +681,7 @@ public class PoiTrackerDebugSettings extends DebugSettings implements SKMapSurfa
     @Override
     public void onUpdatePOIsInRadius(double v, double v1, int i) {
         // set the POIs to be tracked by the POI tracker
-        poiTrackingManager.setTrackedPOIs(SKTrackablePOIType.SPEEDCAM,
+        poiTrackingManager.setTrackedPOIs(SKTrackablePOIType.SPEEDCAM.getValue(),
                 new ArrayList<SKTrackablePOI>(trackablePOIs.values()));
     }
 
@@ -704,7 +705,7 @@ public class PoiTrackerDebugSettings extends DebugSettings implements SKMapSurfa
         // select the current route (on which navigation will run)
         SKRouteManager.getInstance().setCurrentRouteByUniqueId(skRouteInfo.getRouteID());
         // zoom to the current route
-        SKRouteManager.getInstance().zoomToRoute(1, 1, 8, 8, 8, 8);
+        SKRouteManager.getInstance().zoomToRoute(1, 1, 8, 8, 8, 8, 0);
     }
 
     @Override
@@ -717,11 +718,11 @@ public class PoiTrackerDebugSettings extends DebugSettings implements SKMapSurfa
         //set the rule on detecting POIs
         SKTrackablePOIRule skTrackablePOIRule = new SKTrackablePOIRule(routeDistance,aerialDistance,numberOfTurns,maxGPSAccuracy,minSpeedIgnoreDistanceAfterTurn,
                 maxDistanceAfterTurn,eliminateIfUTurn,playAudioWarning);
-        poiTrackingManager.setRuleForPOIType(SKTrackablePOIType.SPEEDCAM, skTrackablePOIRule);
+        poiTrackingManager.setRuleForPOIType(SKTrackablePOIType.SPEEDCAM.getValue(), skTrackablePOIRule);
         // start the POI tracker
         poiTrackingManager.startPOITrackerWithRadius(radiusInMeters,refreshMargin);
         // set warning rules for trackable POIs
-        poiTrackingManager.addWarningRulesforPoiType(SKTrackablePOIType.SPEEDCAM);
+        poiTrackingManager.addWarningRulesforPoiType(SKTrackablePOIType.SPEEDCAM.getValue());
         // launch navigation
         launchNavigation();
 

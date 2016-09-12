@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class MapDebugSettings extends DebugSettings implements SKMapSurfaceListener {
 
-    private SKMapSettings.SKMapFollowerMode currentFollowerMode = SKMapSettings.SKMapFollowerMode.NONE;
+    private SKMapSettings.SKHeadingMode currentFollowerMode = SKMapSettings.SKHeadingMode.NONE;
 
     private SKAnnotation testAnnotation;
 
@@ -164,7 +164,7 @@ public class MapDebugSettings extends DebugSettings implements SKMapSurfaceListe
         specificLayout.findViewById(R.id.center_on_current_position).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                activity.getMapView().centerMapOnCurrentPosition();
+                activity.getMapView().centerOnCurrentPosition(17,true,1000);
             }
         });
 
@@ -337,9 +337,9 @@ public class MapDebugSettings extends DebugSettings implements SKMapSurfaceListe
     void onChildChanged(DebugSettings changedChild) {
         super.onChildChanged(changedChild);
         if (changedChild instanceof FollowerModeDebugSettings) {
-            currentFollowerMode = SKMapSettings.SKMapFollowerMode.values()[((FollowerModeDebugSettings) changedChild).getCurrentSelectedIndex()];
+            currentFollowerMode = SKMapSettings.SKHeadingMode.values()[((FollowerModeDebugSettings) changedChild).getCurrentSelectedIndex()];
             ((TextView) specificLayout.findViewById(R.id.heading_mode).findViewById(R.id.property_value)).setText(currentFollowerMode.toString());
-            activity.getMapView().getMapSettings().setFollowerMode(currentFollowerMode);
+            activity.getMapView().getMapSettings().setHeadingMode(currentFollowerMode);
         } else if (changedChild instanceof DrawingOrderDebugSettings) {
             List<SKMapSettings.SKDrawingOrderType> drawingOrder = new ArrayList<SKMapSettings.SKDrawingOrderType>();
             if (((DrawingOrderDebugSettings) changedChild).getCurrentSelectedIndex() == 0) {
@@ -472,6 +472,7 @@ public class MapDebugSettings extends DebugSettings implements SKMapSurfaceListe
     public void onInternationalisationCalled(int i) {
 
     }
+
 
     @Override
     public void onBoundingBoxImageRendered(int i) {

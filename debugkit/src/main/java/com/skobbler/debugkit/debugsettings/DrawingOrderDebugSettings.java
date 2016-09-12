@@ -7,7 +7,6 @@ import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.map.SKAnimationSettings;
 import com.skobbler.ngx.map.SKAnnotation;
 import com.skobbler.ngx.map.SKCircle;
-import com.skobbler.ngx.map.SKMapSurfaceView;
 import com.skobbler.ngx.map.SKScreenPoint;
 
 import java.util.ArrayList;

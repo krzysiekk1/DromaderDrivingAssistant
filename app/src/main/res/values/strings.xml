@@ -11,6 +11,7 @@
     <string name="option_map_creator">Map Creator</string>
     <string name="option_overlays">Overlays</string>
     <string name="option_other_map">Interaction between maps</string>
+    <string name="options_group_navigation">Navigation</string>
     <string name="option_alternative_routes">Alternative routes</string>
     <string name="option_real_reach">Real reach</string>
     <string name="option_address_search">Address search - offline</string>
@@ -22,6 +23,7 @@
     <string name="option_poi_tracking">POI tracking</string>
     <string name="option_heat_map">Heat Map</string>
     <string name="check_map_updates">Check for map updates</string>
+    <string name="option_onebox">One Box Search</string>
     <string name="map_style_day">Day</string>
     <string name="map_style_night">Night</string>
     <string name="map_style_outdoor">Outdoor</string>
@@ -51,6 +53,7 @@
     <string name="no_position_available">Current position is not available</string>
     <string name="route_calculation_failed">Route calculation failed</string>
     <string name="show_heat_map">SHOW HEAT MAP FOR\nTHE SELECTED CATEGORIES</string>
+    <string name="bicycle_license_notification_text">Bike routing is available for commercial use with a enterprise license. Usage without such a license will lead to your API KEY being suspended.</string>
     <string name="ok_text">OK</string>
     <string name="update_label">Update</string>
     <string name="cancel_label">Cancel</string>
@@ -64,11 +67,12 @@
     <string name="select_via_point">Select via point</string>
     <string name="clear_via_point">Clear via point</string>
     <string name="no_position_message">No current position</string>
-    <string name="cancel_all_downloads">Cancel all downloads</string>
+    <string name="cancel_all_downloads">Cancel all downloads </string>
     <string name="text_to_speech_engine_not_initialized">Text-to-speech could not be initialized</string>
     <string name="no_offline_packages">No offline map packages are available</string>
     <string name="test">Test</string>
     <string name="testing">Testing</string>
+
 
     <string name="real_reach_choose_type">Choose the real reach profile</string>
     <string name="real_reach_profile_time">Time</string>
@@ -104,5 +108,11 @@
 
     <string name="open_drawer">OPEN</string>
     <string name="close_drawer">CLOSE</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="drawer_open">open</string>
+    <string name="drawer_close">close</string>
+
 
 </resources>

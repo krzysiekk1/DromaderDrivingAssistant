@@ -108,9 +108,9 @@ final class SKToolsUtils {
     public static String getMapStyleFilesFolderPath(SKToolsNavigationConfiguration configuration, int mapStyle) {
         switch (mapStyle) {
             case SKToolsMapOperationsManager.DAY_STYLE:
-                return configuration.getDayStyle().getResourceFolderPath();
+                return SKMaps.getInstance().getMapInitSettings().getMapResourcesPath()+ "daystyle/";
             case SKToolsMapOperationsManager.NIGHT_STYLE:
-                return configuration.getNightStyle().getResourceFolderPath();
+                return SKMaps.getInstance().getMapInitSettings().getMapResourcesPath()+ "nightstyle/";
             default:
                 break;
         }

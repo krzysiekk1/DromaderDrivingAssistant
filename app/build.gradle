@@ -12,9 +12,10 @@ apply plugin: 'com.android.application'
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
     compile fileTree(dir: "$buildDir", include: 'native-libs.jar')
-    compile 'com.android.support:support-v4:22.1.1'
-    compile project (':sdktools')
+    compile project(':sdktools')
     compile project(':debugkit')
+    compile 'com.android.support:support-v4:23.2.1'
+    compile 'com.android.support:appcompat-v7:23.2.1'
 }
 
 android {
@@ -38,5 +39,6 @@ android {
         }
     }
 }
+
 
 

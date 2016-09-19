@@ -1025,7 +1025,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                         finish();
                     } });
 
-        dm.show();
+        dm.showWithTimeout(5000);
 
     }
 

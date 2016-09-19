@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -55,9 +56,24 @@ public class DialogMessage {
         this.alertDialogBuilder.setNegativeButton(seq3, listener3);
     }
 
+
+
+
     public void show(){
         AlertDialog alertDialog = this.alertDialogBuilder.create();
         alertDialog.show();
+    }
+
+    public void showWithTimeout(int timeout) {
+        final AlertDialog alertDialog = this.alertDialogBuilder.create();
+        alertDialog.show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            public void run() {
+                alertDialog.dismiss();
+            }
+        }, timeout);
     }
 
 }

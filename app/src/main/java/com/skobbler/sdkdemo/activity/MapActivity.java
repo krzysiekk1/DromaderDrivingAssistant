@@ -39,6 +39,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -130,6 +131,7 @@ import com.skobbler.sdkdemo.fragments.MapFragment;
 import com.skobbler.sdkdemo.model.MenuDrawerItem;
 import com.skobbler.sdkdemo.util.Utils;
 import com.skobbler.sdkdemo.util.PreferenceTypes;
+import com.skobbler.sdkdemo.activity.DialogMessage;
 
 import android.support.v7.app.AppCompatActivity;
 
@@ -472,6 +474,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
 
         initializeMenuItems();
+
 
     }
 
@@ -877,6 +880,9 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 selectMapStyle(new SKMapViewStyle(app.getMapResourcesDirPath() + "grayscalestyle/",
                         "grayscalestyle.json"));
                 break;
+//            case R.id.custom_toast:
+//                showMessage(getString(R.string.something), R.drawable.toast_icon_refresh, "RETRY", null);
+//                break;
             case R.id.bottom_button:
                 if (currentMapOption == MapOption.ROUTING_AND_NAVIGATION)  {
                     if (bottomButton.getText().equals(getResources().getString(R.string.calculate_route))) {
@@ -1004,6 +1010,25 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 break;
         }
     }
+
+
+    private void testingAlertDialog(){
+        DialogMessage dm = new DialogMessage(this, view);
+        dm.setMessage("cokolwiek", R.string.mes1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                Toast.makeText(MapActivity.this,"You clicked yes button",Toast.LENGTH_LONG).show();
+            }
+        }, R.string.mes2, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    } });
+
+        dm.show();
+
+    }
+
 
     private void calculateRouteFromSKTools() {
 

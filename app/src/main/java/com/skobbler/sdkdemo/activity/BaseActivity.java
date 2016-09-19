@@ -24,17 +24,13 @@ public class BaseActivity extends Activity implements OnClickListener, OnToastAc
     @Override
     protected void onResume() {
 
-        super.onResume();
-        mCustomToast = new CustomToast(findViewById(R.id.custom_toast), this);
+//        super.onResume();
+//        mCustomToast = new CustomToast(findViewById(R.id.custom_toast), this);
 
-        /*
-        * lub
-        * super.onResume();
-        * if(mCustomToast != null){
-        * mCustomToast = new CustomToast(findViewById(R.id.custom_toast), this);
-        * }
-        *
-        * */
+         super.onResume();
+         if(mCustomToast != null){
+         mCustomToast = new CustomToast(findViewById(R.id.custom_toast), this);
+         }
     }
 
     @Override

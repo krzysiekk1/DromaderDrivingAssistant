@@ -114,5 +114,13 @@
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
 
+    <!--Messages for our clickable toasts -->
+    <string name="retry">Retry</string>
+    <string name="show_simple_toast">Show Simple Toast</string>
+    <string name="show_awesome_toast">Show Awesome Toast</string>
+    <string name="something"> Something</string>
+
+    <string name="mes1">mes1</string>
+    <string name="mes2">mes2</string>
 
 </resources>

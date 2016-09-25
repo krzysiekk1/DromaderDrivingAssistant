@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Activity;
@@ -26,6 +27,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -445,10 +447,17 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
      */
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
+    private static final String[] INITIAL_PERMS={Manifest.permission.ACCESS_FINE_LOCATION};
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(INITIAL_PERMS, 1337);
+        }
 
         setContentView(R.layout.activity_map);
 

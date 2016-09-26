@@ -2,7 +2,7 @@ package com.skobbler.ngx.sdktools.navigationui.costs.utils;
 
 public enum Country {
 
-    ALBANIA ("Albania", "AL", 0.00),
+    ALBANIA ("Albania", "AL", 1.00),
     ANDORA ("Andora", "AD", 0.00),
     AUSTRIA ("Austria", "AT", 8.80),
     BELARUS ("Belarus", "BY", 0.00),
@@ -47,7 +47,7 @@ public enum Country {
     SWEDEN ("Sweden", "SE", 0.00),
     SWITZERLAND ("Switzerland", "CH", 36.51),
     TURKEY ("Turkey", "TR", 0.00),
-    UKRAINE ("Ukraine", "UA", 0.00),
+    UKRAINE ("Ukraine", "UA", 17.00),
     VATICAN ("Vatican", "VA", 0.00);
 
     private final String name;

@@ -71,8 +71,6 @@ import com.skobbler.ngx.positioner.SKPositionerManager;
 import com.skobbler.ngx.routing.SKRouteInfo;
 import com.skobbler.ngx.routing.SKRouteJsonAnswer;
 import com.skobbler.ngx.routing.SKRouteListener;
-import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationListener;
-import com.skobbler.ngx.versioning.SKMapVersioningListener;
 import com.skobbler.ngx.versioning.SKMapVersioningListener;
 import com.skobbler.ngx.versioning.SKVersioningManager;
 
@@ -85,7 +83,7 @@ import java.util.List;
  */
 public class DebugMapActivity extends Activity implements SKMapSurfaceListener, SKRouteListener, SKNavigationListener,
         SKRealReachListener, SKPOITrackerListener, SKCurrentPositionListener, SensorEventListener,
-        SKMapVersioningListener, SKToolsNavigationListener {
+        SKMapVersioningListener {
 
     /**
      * time, in milliseconds, from the moment when the application receives new
@@ -566,31 +564,6 @@ public class DebugMapActivity extends Activity implements SKMapSurfaceListener, 
 
     @Override
     public void onOnlineRouteComputationHanging(int i) {
-
-    }
-
-    @Override
-    public void onNavigationEnded() {
-
-    }
-
-    @Override
-    public void onRouteCalculationStarted() {
-
-    }
-
-    @Override
-    public void onRouteCalculationCompleted() {
-
-    }
-
-    @Override
-    public void onRouteCalculationCanceled() {
-
-    }
-
-    @Override
-    public void onNavigationStarted() {
 
     }
 

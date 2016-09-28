@@ -1,4 +1,4 @@
-package com.skobbler.ngx.sdktools.navigationui;
+package com.skobbler.sdkdemo.navigationui;
 
 
 import android.app.Activity;
@@ -9,11 +9,10 @@ import com.skobbler.ngx.map.SKAnnotation;
 import com.skobbler.ngx.map.SKMapSettings;
 import com.skobbler.ngx.map.SKMapSurfaceView;
 import com.skobbler.ngx.map.SKMapViewStyle;
-import com.skobbler.ngx.map.SKScreenPoint;
 import com.skobbler.ngx.positioner.SKPosition;
 import com.skobbler.ngx.positioner.SKPositionerManager;
 import com.skobbler.ngx.routing.SKRouteManager;
-import com.skobbler.ngx.sdktools.navigationui.autonight.SKToolsAutoNightManager;
+import com.skobbler.sdkdemo.navigationui.autonight.SKToolsAutoNightManager;
 
 
 /**

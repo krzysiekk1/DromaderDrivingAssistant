@@ -1,4 +1,4 @@
-package com.skobbler.ngx.sdktools.navigationui.autonight;
+package com.skobbler.sdkdemo.navigationui.autonight;
 
 import java.util.Calendar;
 import java.util.TimeZone;

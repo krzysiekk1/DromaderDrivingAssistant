@@ -13,14 +13,11 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.hardware.Sensor;
@@ -32,7 +29,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -41,7 +37,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -112,14 +107,13 @@ import com.skobbler.ngx.routing.SKViaPoint;
 import com.skobbler.ngx.sdktools.download.SKToolsDownloadItem;
 import com.skobbler.ngx.sdktools.download.SKToolsDownloadListener;
 import com.skobbler.ngx.sdktools.download.SKToolsDownloadManager;
-import com.skobbler.ngx.sdktools.navigationui.SKToolsAdvicePlayer;
-import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationConfiguration;
-import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationListener;
-import com.skobbler.ngx.sdktools.navigationui.SKToolsNavigationManager;
-import com.skobbler.ngx.sdktools.onebox.SKToolsSearchServiceManager;
+import com.skobbler.sdkdemo.navigationui.SKToolsAdvicePlayer;
+import com.skobbler.sdkdemo.navigationui.SKToolsNavigationConfiguration;
+import com.skobbler.sdkdemo.navigationui.SKToolsNavigationListener;
+import com.skobbler.sdkdemo.navigationui.SKToolsNavigationManager;
 import com.skobbler.ngx.sdktools.onebox.fragments.OneBoxFragment;
 import com.skobbler.ngx.sdktools.onebox.fragments.OneBoxManager;
-import com.skobbler.ngx.sdktools.navigationui.costs.tolls.TollsCostCalculator;
+import com.skobbler.sdkdemo.costs.tolls.TollsCostCalculator;
 import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.ngx.util.SKLogging;
 import com.skobbler.ngx.versioning.SKMapVersioningListener;
@@ -133,9 +127,6 @@ import com.skobbler.sdkdemo.fragments.MapFragment;
 import com.skobbler.sdkdemo.model.MenuDrawerItem;
 import com.skobbler.sdkdemo.util.Utils;
 import com.skobbler.sdkdemo.util.PreferenceTypes;
-import com.skobbler.sdkdemo.activity.DialogMessage;
-
-import android.support.v7.app.AppCompatActivity;
 
 /**
  * Activity displaying the map
@@ -1236,8 +1227,8 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         route.setRouteMode(SKRouteMode.CAR_FASTEST);
         // set whether the route should be shown on the map after it's computed
         route.setRouteExposed(true);
-//        route.setExtendedPointsReturned(true);
-//         route.setCountryCodesReturned(true);
+        route.setRequestCountryCodes(true);
+        route.setRequestExtendedPoints(true);
         // set the route listener to be notified of route calculation
         // events
         SKRouteManager.getInstance().setRouteListener(this);
@@ -1256,8 +1247,8 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         route.setMaximumReturnedRoutes(3);
         route.setRouteMode(SKRouteMode.CAR_FASTEST);
         route.setRouteExposed(true);
-//        route.setExtendedPointsReturned(true);
-//        route.setCountryCodesReturned(true);
+        route.setRequestCountryCodes(true);
+        route.setRequestExtendedPoints(true);
         SKRouteManager.getInstance().setRouteListener(this);
         SKRouteManager.getInstance().calculateRoute(route);
     }
@@ -2156,7 +2147,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         if (currentMapOption == MapOption.ALTERNATIVE_ROUTES) {
             int routeIndex = routeIds.size();
             routeIds.add(routeInfo.getRouteID());
-            double tollsCost = TollsCostCalculator.getTollsCost(routeInfo);
+            double tollsCost = TollsCostCalculator.getTollsCost(routeInfo, app);
             altRoutesButtons[routeIndex].setText(Utils.formatDistance(routeInfo.getDistance()) + "\n");
 //            Utils.formatTime(routeInfo.getEstimatedTime() + "\n" + tollsCost + " EUR");
               if (routeIndex == 0) {

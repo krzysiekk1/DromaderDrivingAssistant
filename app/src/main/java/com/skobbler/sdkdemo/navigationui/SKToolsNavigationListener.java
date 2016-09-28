@@ -1,4 +1,4 @@
-package com.skobbler.ngx.sdktools.navigationui;
+package com.skobbler.sdkdemo.navigationui;
 
 /**
  * Listener for navigation ui callbacks related to route / navigation.

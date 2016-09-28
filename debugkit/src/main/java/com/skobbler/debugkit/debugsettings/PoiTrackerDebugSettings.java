@@ -11,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.skobbler.debugkit.R;
-import com.skobbler.debugkit.activity.DebugMapActivity;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.map.SKAnimationSettings;
 import com.skobbler.ngx.map.SKAnnotation;
@@ -34,13 +33,11 @@ import com.skobbler.ngx.poitracker.SKTrackablePOI;
 import com.skobbler.ngx.poitracker.SKTrackablePOIRule;
 import com.skobbler.ngx.poitracker.SKTrackablePOIType;
 import com.skobbler.ngx.reversegeocode.SKReverseGeocoderManager;
-import com.skobbler.ngx.routing.SKRouteAdvice;
 import com.skobbler.ngx.routing.SKRouteInfo;
 import com.skobbler.ngx.routing.SKRouteJsonAnswer;
 import com.skobbler.ngx.routing.SKRouteListener;
 import com.skobbler.ngx.routing.SKRouteManager;
 import com.skobbler.ngx.routing.SKRouteSettings;
-import com.skobbler.ngx.sdktools.navigationui.SKToolsAdvicePlayer;
 import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.ngx.util.SKLogging;
 import java.util.ArrayList;
@@ -633,9 +630,6 @@ public class PoiTrackerDebugSettings extends DebugSettings implements SKMapSurfa
     @Override
     public void onSignalNewAdviceWithAudioFiles(String[] strings, boolean b) {
         SKLogging.writeLog(TAG, " onSignalNewAdviceWithAudioFiles " + Arrays.asList(strings), Log.DEBUG);
-        if(playAudioWarning){
-            SKToolsAdvicePlayer.getInstance().playAdvice(strings, SKToolsAdvicePlayer.PRIORITY_NAVIGATION);
-        }
     }
 
     @Override

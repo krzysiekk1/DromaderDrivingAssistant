@@ -1,4 +1,4 @@
-package com.skobbler.ngx.sdktools.navigationui.autonight;
+package com.skobbler.sdkdemo.navigationui.autonight;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

@@ -76,8 +76,8 @@
             android:configChanges="orientation|screenSize"></activity>
         <activity android:name=".activity.MapCacheActivity" android:configChanges="orientation"  >
         </activity>
-        <receiver android:name="com.skobbler.ngx.sdktools.navigationui.autonight.SKToolsCalculateSunriseSunsetTimeAutoReceiver" />
-        <receiver android:name="com.skobbler.ngx.sdktools.navigationui.autonight.SKToolsChangeMapStyleAutoReceiver" />
+        <receiver android:name=".navigationui.autonight.SKToolsCalculateSunriseSunsetTimeAutoReceiver" />
+        <receiver android:name=".navigationui.autonight.SKToolsChangeMapStyleAutoReceiver" />
         <meta-data android:name="provideMultipleMapSupport" android:value="false" />
 
         <!--manifest config for the debug kit-->

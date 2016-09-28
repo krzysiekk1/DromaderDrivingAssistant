@@ -1,4 +1,4 @@
-package com.skobbler.ngx.sdktools.navigationui;
+package com.skobbler.sdkdemo.navigationui;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,7 +15,6 @@ import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.view.LayoutInflater;

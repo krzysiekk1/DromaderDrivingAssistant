@@ -10,14 +10,14 @@
  * 
  * Created on May 2, 2013 by Filip Tudic
  */
-package com.skobbler.ngx.sdktools.navigationui.autonight;
+package com.skobbler.sdkdemo.navigationui.autonight;
 
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import com.skobbler.ngx.sdktools.navigationui.SKToolsLogicManager;
+import com.skobbler.sdkdemo.navigationui.SKToolsLogicManager;
 
 
 /**

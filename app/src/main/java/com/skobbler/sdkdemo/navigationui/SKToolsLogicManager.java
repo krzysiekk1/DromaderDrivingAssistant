@@ -1,24 +1,14 @@
-package com.skobbler.ngx.sdktools.navigationui;
+package com.skobbler.sdkdemo.navigationui;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import android.app.Activity;
-import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.hardware.Sensor;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Build;
-import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.Toast;
 import com.skobbler.ngx.R;
 import com.skobbler.ngx.SKMaps;
@@ -51,11 +41,11 @@ import com.skobbler.ngx.routing.SKRouteListener;
 import com.skobbler.ngx.routing.SKRouteManager;
 import com.skobbler.ngx.routing.SKRouteSettings;
 import com.skobbler.ngx.routing.SKViaPoint;
-import com.skobbler.ngx.sdktools.navigationui.autonight.SKToolsAutoNightManager;
+import com.skobbler.sdkdemo.navigationui.autonight.SKToolsAutoNightManager;
 import com.skobbler.ngx.search.SKSearchResult;
-import com.skobbler.ngx.trail.SKTrailSettings;
 import com.skobbler.ngx.util.SKLogging;
-import com.skobbler.ngx.sdktools.navigationui.costs.tolls.TollsCostCalculator;
+import com.skobbler.sdkdemo.costs.tolls.TollsCostCalculator;
+
 /**
  * This class handles the logic related to the navigation and route calculation.
  */
@@ -249,8 +239,8 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         route.getRouteRestrictions().setTollRoadsAvoided(configuration.isTollRoadsAvoided());
         route.getRouteRestrictions().setFerriesAvoided(configuration.isFerriesAvoided());
         route.getRouteRestrictions().setHighWaysAvoided(configuration.isHighWaysAvoided());
-//        route.setExtendedPointsReturned(true);
-//        route.setCountryCodesReturned(true);
+        route.setRequestCountryCodes(true);
+        route.setRequestExtendedPoints(true);
         SKRouteManager.getInstance().setRouteListener(this);
 
         SKRouteManager.getInstance().calculateRoute(route);
@@ -1020,7 +1010,8 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                         final String distance = SKToolsUtils.convertAndFormatDistance(skRouteInfoList.get(i)
                                         .getDistance(),
                                 configuration.getDistanceUnitType(), currentActivity);
-                        final String cost = String.valueOf(TollsCostCalculator.getTollsCost(skRouteInfoList.get(i)));
+                        final String cost = String.valueOf(TollsCostCalculator.getTollsCost(
+                                skRouteInfoList.get(i), getCurrentActivity().getApplicationContext()));
                         SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, cost);
                     }
 

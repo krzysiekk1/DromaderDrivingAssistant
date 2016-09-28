@@ -1,4 +1,4 @@
-package com.skobbler.ngx.sdktools.navigationui;
+package com.skobbler.sdkdemo.navigationui;
 
 
 import java.util.ArrayList;

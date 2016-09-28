@@ -1,4 +1,4 @@
-package com.skobbler.ngx.sdktools.navigationui.costs.utils;
+package com.skobbler.sdkdemo.costs.utils;
 
 public enum Country {
 

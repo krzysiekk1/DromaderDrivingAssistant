@@ -2,11 +2,14 @@ package com.skobbler.sdkdemo.application;
 
 
 import android.app.Application;
+import android.content.Context;
 
 /**
  * Class that stores global application state
  */
 public class DDAApplication extends Application {
+
+    private static Context context;
 
     /**
      * Path to the map resources directory on the device
@@ -27,6 +30,11 @@ public class DDAApplication extends Application {
     public void onCreate() {
         super.onCreate();
         appPrefs = new ApplicationPreferences(this);
+        DDAApplication.context = getApplicationContext();
+    }
+
+    public static Context getAppContext() {
+        return DDAApplication.context;
     }
 
     public void setMapResourcesDirPath(String mapResourcesDirPath) {

@@ -23,27 +23,22 @@ public class TollsCostCalculator {
 
     public static double getTollsCost (SKRouteInfo routeInfo, Context app) {
         double sum = 0.00;
+        int routeID = routeInfo.getRouteID();
+        List<String> countries = SKRouteManager.getInstance().getCountriesTraversedByRouteByUniqueId(routeID);
+        //Map<String, String> roads = getRoadsTraversedByRoute(routeID);
 
-        // sum += getRoadCost(routeInfo);
+        // sum += getRoadCost(routeID, countries, roads, app);
 
-        if (!routeInfo.isContainsHighWays()) {
-            return sum;
-        }
-
-        sum += getVignettesCost(routeInfo, app);
+        //sum += getVignettesCost(countries, roads, app);
 
         return sum;
     }
 
-    private static double getVignettesCost (SKRouteInfo routeInfo, Context app) {
-        double sum = 0.00;
+    private static Map<String, String> getRoadsTraversedByRoute (int routeID) {
         String country = "";
 
-        int routeID = routeInfo.getRouteID();
-        List<String> countries = SKRouteManager.getInstance().getCountriesTraversedByRouteByUniqueId(routeID);
-
         // all roads to log // TODO shorten list of positions to geocode (too much time)
-        /*List<SKExtendedRoutePosition> positions = SKRouteManager.getInstance().getExtendedRoutePointsForRouteByUniqueId(routeID);
+        List<SKExtendedRoutePosition> positions = SKRouteManager.getInstance().getExtendedRoutePointsForRouteByUniqueId(routeID);
         Map<String, String> roads = new HashMap<String, String>();
         for (SKExtendedRoutePosition position : positions) {
             SKCoordinate coordinate = new SKCoordinate(position.getCoordinate().getLongitude(), position.getCoordinate().getLatitude());
@@ -58,25 +53,61 @@ public class TollsCostCalculator {
                 roads.put(newRoad, country);
             }
         }
+
         for (Map.Entry<String, String> road : roads.entrySet()) {
             SKLogging.writeLog("TollsCostCalculator", road.getKey() + ", " + road.getValue(), 0);
-        }*/
+        }
+
+        return roads;
+    }
+
+    private static double getVignettesCost (List<String> countries, Map<String, String> roads, Context app) {
+        double sum = 0.00;
 
         for (String countryCode : countries) {
-            //if (areTollRoadsTraversed(roads, countryCode, app)) {
-                sum += getVignetteCostByCode(countryCode);
+            //if (areVignetteHighwaysTraversed(roads, countryCode, app)) {
+            sum += getVignetteCostByCode(countryCode);
             //}
         }
 
         return sum;
     }
 
-    private static boolean areTollRoadsTraversed(Map<String, String> roads, String code, Context app){
+    private static Map<String, String> getTollRoadsTraversed (Map<String, String> roadsTraversed, Context app) {
+        Map<String, String> tollRoadsTraversed = new HashMap<String, String>();
+        ResourcesDAO resourcesDAO = ResourcesDAO.getInstance(app);
+        resourcesDAO.openDatabase();
+
+        for (Map.Entry<String, String> road : roadsTraversed.entrySet()) {
+            String[] roadArray = new String[] {road.getKey(), road.getValue()};
+            final StringBuilder query = new StringBuilder("SELECT DISTINCT ").append("RoadNr").append(", ").append("CountryCode")
+                    .append(" FROM ").append("Tolls")
+                    .append(" WHERE ").append("RoadNr").append("=?")
+                    .append(" AND ").append("CountryCode").append("=?");
+            Cursor resultCursor = resourcesDAO.getDatabase().rawQuery(query.toString(), roadArray);
+            if ((resultCursor != null) && (resultCursor.getCount() > 0)) {
+                try {
+                    resultCursor.moveToFirst();
+                    tollRoadsTraversed.put(resultCursor.getString(0), resultCursor.getString(1));
+                } finally {
+                    resultCursor.close();
+                }
+            } else {
+                if (resultCursor != null) {
+                    resultCursor.close();
+                }
+            }
+        }
+
+        return tollRoadsTraversed;
+    }
+
+    private static boolean areVignetteHighwaysTraversed (Map<String, String> roads, String code, Context app) {
         if (getVignetteCostByCode(code) == 0.00) {
             return false;
         }
-        ArrayList<String> tollRoads = getTollRoadsByCode(code, app);
-        if (tollRoads.get(0).equals("all")) {
+        ArrayList<String> vignetteHighways = getVignetteHighwaysByCode(code, app);
+        if (vignetteHighways.get(0).equals("all")) {
             return true;
         }
         ArrayList<String> roadsInCountry = new ArrayList<String>();
@@ -86,8 +117,8 @@ public class TollsCostCalculator {
             }
         }
         for (String road : roadsInCountry) {
-            for (String tollRoad : tollRoads) {
-                if (road.equals(tollRoad)) {
+            for (String highway : vignetteHighways) {
+                if (road.equals(highway)) {
                     return true;
                 }
             }
@@ -95,7 +126,7 @@ public class TollsCostCalculator {
         return false;
     }
 
-    private synchronized static ArrayList<String> getTollRoadsByCode(String code, Context app){
+    private synchronized static ArrayList<String> getVignetteHighwaysByCode (String code, Context app) {
         String[] codeArray = new String[] {code};
         ResourcesDAO resourcesDAO = ResourcesDAO.getInstance(app);
         resourcesDAO.openDatabase();
@@ -105,17 +136,17 @@ public class TollsCostCalculator {
                 .append(" WHERE ").append("CountryCode").append("=?");
         Cursor resultCursor = resourcesDAO.getDatabase().rawQuery(query.toString(), codeArray);
         if ((resultCursor != null) && (resultCursor.getCount() > 0)) {
-            ArrayList<String> tollRoads = new ArrayList<String>();
+            ArrayList<String> vignetteHighways = new ArrayList<String>();
             try {
                 resultCursor.moveToFirst();
                 while (!resultCursor.isAfterLast()) {
-                    tollRoads.add(resultCursor.getString(0));
+                    vignetteHighways.add(resultCursor.getString(0));
                     resultCursor.moveToNext();
                 }
             } finally {
                 resultCursor.close();
             }
-            return tollRoads;
+            return vignetteHighways;
         } else {
             if (resultCursor != null) {
                 resultCursor.close();
@@ -124,7 +155,7 @@ public class TollsCostCalculator {
         }
     }
 
-    private static double getVignetteCostByCode(String code){
+    private static double getVignetteCostByCode (String code) {
         for (Country e : Country.values()){
             if (code.equals(e.getCode())) {
                 return e.getVignetteCost();

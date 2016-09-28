@@ -67,7 +67,6 @@ public class ResourcesDAO extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(final SQLiteDatabase db) {
-        SKLogging.writeLog("TollsCostCalculator", "jest git", 0);
         SKLogging.writeLog(TAG, "On create resources database !!!", SKLogging.LOG_DEBUG);
 
         db.beginTransaction();
@@ -76,11 +75,16 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         db.endTransaction();
 
         db.beginTransaction();
+        db.execSQL(createTollsTable());
+        db.setTransactionSuccessful();
+        db.endTransaction();
+
+        db.beginTransaction();
         db.execSQL(createVignetteHighwaysTable());
         db.setTransactionSuccessful();
         db.endTransaction();
 
-        InputStream is = context.getResources().openRawResource(com.skobbler.ngx.R.raw.vignette_highways);
+        InputStream is = context.getResources().openRawResource(com.skobbler.ngx.R.raw.tolls);
         InputStreamReader r = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(r);
         String line = null;
@@ -89,13 +93,33 @@ public class ResourcesDAO extends SQLiteOpenHelper {
             db.beginTransaction();
             line = br.readLine();
             while (line != null) {
-                String[] values = line.split(",");
-                db.execSQL(fillVignetteHighwaysTable(values));
+                String[] tollsValues = line.split(",");
+                db.execSQL(fillTollsTable(tollsValues));
                 line = br.readLine();
             }
             db.setTransactionSuccessful();
             db.endTransaction();
             br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        InputStream is2 = context.getResources().openRawResource(com.skobbler.ngx.R.raw.vignette_highways);
+        InputStreamReader r2 = new InputStreamReader(is2);
+        BufferedReader br2 = new BufferedReader(r2);
+        String line2 = null;
+        try {
+            line2 = br2.readLine();
+            db.beginTransaction();
+            line2 = br2.readLine();
+            while (line2 != null) {
+                String[] vignetteHighwaysValues = line2.split(",");
+                db.execSQL(fillVignetteHighwaysTable(vignetteHighwaysValues));
+                line2 = br2.readLine();
+            }
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            br2.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -124,11 +148,35 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         return createMapResourcesTable;
     }
 
+    public String createTollsTable() {
+        String create = new StringBuilder("CREATE TABLE IF NOT EXISTS ").append("Tolls").append(" (")
+                .append("Id").append(" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ").append("Name")
+                .append(" TEXT, ").append("RoadNr").append(" TEXT, ").append("Latitude").append(" TEXT, ")
+                .append("Longitude").append(" TEXT, ").append("CountryCode").append(" TEXT, ")
+                .append("Cost").append(" REAL)").toString();
+        return create;
+    }
+
     public String createVignetteHighwaysTable() {
         String create = new StringBuilder("CREATE TABLE IF NOT EXISTS ").append("VignetteHighways").append(" (")
                 .append("Id").append(" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ").append("RoadNr")
                 .append(" TEXT, ").append("CountryCode").append(" TEXT)").toString();
         return create;
+    }
+
+    public String fillTollsTable(String[] values) {
+        int id = Integer.parseInt(values[0].substring(1, values[0].length()-1));
+        String name = values[1];
+        String road_nr = values[2];
+        String latitude = values[3];
+        String longitude = values[4];
+        String country_code = values[5];
+        Double cost = Double.parseDouble(values[6].substring(1, values[6].length()-1));
+        String fill = new StringBuilder("INSERT INTO ").append("Tolls").append(" VALUES(")
+                .append(id).append(", ").append(name).append(", ").append(road_nr).append(", ")
+                .append(latitude).append(", ").append(longitude).append(", ").append(country_code).append(", ")
+                .append(cost).append(")").toString();
+        return fill;
     }
 
     public String fillVignetteHighwaysTable(String[] values) {

@@ -5,6 +5,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import com.skobbler.ngx.util.SKLogging;
+import com.skobbler.sdkdemo.R;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -84,7 +85,7 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         db.setTransactionSuccessful();
         db.endTransaction();
 
-        InputStream is = context.getResources().openRawResource(com.skobbler.ngx.R.raw.tolls);
+        InputStream is = context.getResources().openRawResource(R.raw.tolls);
         InputStreamReader r = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(r);
         String line = null;
@@ -104,7 +105,7 @@ public class ResourcesDAO extends SQLiteOpenHelper {
             e.printStackTrace();
         }
 
-        InputStream is2 = context.getResources().openRawResource(com.skobbler.ngx.R.raw.vignette_highways);
+        InputStream is2 = context.getResources().openRawResource(R.raw.vignette_highways);
         InputStreamReader r2 = new InputStreamReader(is2);
         BufferedReader br2 = new BufferedReader(r2);
         String line2 = null;

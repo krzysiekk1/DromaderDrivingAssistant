@@ -1227,6 +1227,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         route.setRouteMode(SKRouteMode.CAR_FASTEST);
         // set whether the route should be shown on the map after it's computed
         route.setRouteExposed(true);
+        route.setRequestAdvices(true);
         route.setRequestCountryCodes(true);
         route.setRequestExtendedPoints(true);
         // set the route listener to be notified of route calculation
@@ -1247,6 +1248,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         route.setMaximumReturnedRoutes(3);
         route.setRouteMode(SKRouteMode.CAR_FASTEST);
         route.setRouteExposed(true);
+        route.setRequestAdvices(true);
         route.setRequestCountryCodes(true);
         route.setRequestExtendedPoints(true);
         SKRouteManager.getInstance().setRouteListener(this);

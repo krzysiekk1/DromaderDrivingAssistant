@@ -110,11 +110,5 @@
     <orderEntry type="library" exported="" name="support-annotations-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-23.1.1" level="project" />
     <orderEntry type="module" module-name="sdktools" exported="" />
-    <orderEntry type="library" exported="" name="gson-2.2.4" level="project" />
-    <orderEntry type="library" exported="" name="joda-time-2.4" level="project" />
-    <orderEntry type="library" exported="" name="guava-18.0" level="project" />
-    <orderEntry type="library" exported="" name="recyclerview-v7-21.0.3" level="project" />
-    <orderEntry type="library" exported="" name="SKMaps-docs" level="project" />
-    <orderEntry type="library" exported="" name="SKMaps" level="project" />
   </component>
 </module>

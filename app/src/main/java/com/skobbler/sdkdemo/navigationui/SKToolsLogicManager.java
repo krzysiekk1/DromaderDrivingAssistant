@@ -239,6 +239,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         route.getRouteRestrictions().setTollRoadsAvoided(configuration.isTollRoadsAvoided());
         route.getRouteRestrictions().setFerriesAvoided(configuration.isFerriesAvoided());
         route.getRouteRestrictions().setHighWaysAvoided(configuration.isHighWaysAvoided());
+        route.setRequestAdvices(true);
         route.setRequestCountryCodes(true);
         route.setRequestExtendedPoints(true);
         SKRouteManager.getInstance().setRouteListener(this);

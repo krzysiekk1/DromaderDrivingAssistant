@@ -1011,7 +1011,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                         final String distance = SKToolsUtils.convertAndFormatDistance(skRouteInfoList.get(i)
                                         .getDistance(),
                                 configuration.getDistanceUnitType(), currentActivity);
-                        final String cost = String.valueOf(TollsCostCalculator.getTollsCost(
+                        final String cost = String.format("%.2f", TollsCostCalculator.getTollsCost(
                                 skRouteInfoList.get(i), getCurrentActivity().getApplicationContext()));
                         SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, cost);
                     }

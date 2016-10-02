@@ -16,10 +16,10 @@ import com.skobbler.ngx.search.SKSearchResultParent;
 import com.skobbler.ngx.util.SKLogging;
 import com.skobbler.sdkdemo.costs.utils.Country;
 import com.skobbler.sdkdemo.costs.utils.Road;
+import com.skobbler.sdkdemo.costs.utils.TollPoint;
 import com.skobbler.sdkdemo.database.ResourcesDAO;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class TollsCostCalculator {
@@ -28,16 +28,16 @@ public class TollsCostCalculator {
         double sum = 0.00;
         int routeID = routeInfo.getRouteID();
         List<String> countries = SKRouteManager.getInstance().getCountriesTraversedByRouteByUniqueId(routeID);
-        List<Road> roads = getRoadsTraversedByRoute(routeID, countries);
+        List<Road> roads = getRoadsTraversedByRoute(routeID);
 
-        //sum += getRoadCost(routeID, countries, roads, app);
+        sum += getTollRoadsCost(routeID, roads, app);
 
         sum += getVignettesCost(countries, roads, app);
 
         return sum;
     }
 
-    private static List<Road> getRoadsTraversedByRoute (int routeID, List<String> countriesTraversed) {
+    private static List<Road> getRoadsTraversedByRoute (int routeID) {
         List<Road> roads = new ArrayList<Road>();
         SKCoordinate newAdviceCoordinate;
         List<SKCoordinate> coordinates = new ArrayList<SKCoordinate>();
@@ -127,6 +127,7 @@ public class TollsCostCalculator {
         List<SKCoordinate> coordinatesToReverseGeocode;
         List<Road> roadsToAdd = new ArrayList<Road>();
         final int density = 67;
+
         if (endCoordinateNr - startCoordinateNr > density) {
             coordinatesToReverseGeocode = getListOfCoordinatesBetweenAdvices(coordinates, density,
                     startCoordinateNr, endCoordinateNr);
@@ -145,6 +146,7 @@ public class TollsCostCalculator {
                 }
             }
         }
+
         return roadsToAdd;
     }
 
@@ -153,6 +155,7 @@ public class TollsCostCalculator {
         List<Road> roadsToAdd = new ArrayList<Road>();
         List<Road> roadsToAdd1 = new ArrayList<Road>();
         List<Road> roadsToAdd2 = new ArrayList<Road>();
+
         if (endCoordinateNr - startCoordinateNr > 1) {
             String centerCountry = "";
             int centerCoordinateNr = (endCoordinateNr + startCoordinateNr) / 2;
@@ -196,7 +199,28 @@ public class TollsCostCalculator {
                 roadsToAdd.add(roadToAdd2);
             }
         }
+
         return roadsToAdd;
+    }
+
+    private static double getTollRoadsCost (int routeID, List<Road> roads, Context app) {
+        double sum = 0.00;
+        List<SKCoordinate> coordinates = new ArrayList<SKCoordinate>();
+        List<SKExtendedRoutePosition> positions = SKRouteManager.getInstance().getExtendedRoutePointsForRouteByUniqueId(routeID);
+        for (SKExtendedRoutePosition pos : positions) {
+            coordinates.add(new SKCoordinate(pos.getCoordinate().getLongitude(), pos.getCoordinate().getLatitude()));
+        }
+        List<Road> tollRoadsTraversed = getTollRoadsTraversed(roads, app);
+        List<TollPoint> tollPointsOnTraversedRoads = getTollPointsOnRoads(tollRoadsTraversed, app);
+
+        for (TollPoint tollPoint : tollPointsOnTraversedRoads) {
+            SKCoordinate tollCoordinate = new SKCoordinate(tollPoint.getLongitude(), tollPoint.getLatitude());
+            if (isCoordinateTraversed(tollCoordinate, coordinates)) {
+                sum += tollPoint.getCost();
+            }
+        }
+
+        return sum;
     }
 
     private static double getVignettesCost (List<String> countries, List<Road> roads, Context app) {
@@ -224,7 +248,10 @@ public class TollsCostCalculator {
             if ((resultCursor != null) && (resultCursor.getCount() > 0)) {
                 try {
                     resultCursor.moveToFirst();
-                    tollRoadsTraversed.add(new Road(resultCursor.getString(0), resultCursor.getString(1)));
+                    Road newTollRoad = new Road(resultCursor.getString(0), resultCursor.getString(1));
+                    if (!isRoadIn(newTollRoad, tollRoadsTraversed)) {
+                        tollRoadsTraversed.add(newTollRoad);
+                    }
                 } finally {
                     resultCursor.close();
                 }
@@ -236,6 +263,96 @@ public class TollsCostCalculator {
         }
 
         return tollRoadsTraversed;
+    }
+
+    private static List<TollPoint> getTollPointsOnRoads (List<Road> roads, Context app) {
+        List<TollPoint> points = new ArrayList<TollPoint>();
+        ResourcesDAO resourcesDAO = ResourcesDAO.getInstance(app);
+        resourcesDAO.openDatabase();
+
+        for (Road road : roads) {
+            String[] roadArray = new String[] {road.getNr(), road.getCountryCode()};
+            String query = "SELECT " + "Id" + ", " + "Name" + ", " + "RoadNr" + ", " + "Longitude" + ", " + "Latitude" + ", " +
+                    "CountryCode" + ", " + "Cost" + " FROM " + "Tolls" +
+                    " WHERE " + "RoadNr" + "=?" + " AND " + "CountryCode" + "=?";
+            Cursor resultCursor = resourcesDAO.getDatabase().rawQuery(query, roadArray);
+            if ((resultCursor != null) && (resultCursor.getCount() > 0)) {
+                try {
+                    resultCursor.moveToFirst();
+                    while (!resultCursor.isAfterLast()) {
+                        TollPoint newTollPoint = new TollPoint(resultCursor.getInt(0), resultCursor.getString(1),
+                                resultCursor.getString(2), resultCursor.getString(3), resultCursor.getString(4),
+                                resultCursor.getString(5), resultCursor.getDouble(6));
+                        if (!isPointIn(newTollPoint, points)) {
+                            points.add(newTollPoint);
+                        }
+                        resultCursor.moveToNext();
+                    }
+                } finally {
+                    resultCursor.close();
+                }
+            } else {
+                if (resultCursor != null) {
+                    resultCursor.close();
+                }
+            }
+        }
+
+        return points;
+    }
+
+    private static boolean isCoordinateTraversed(SKCoordinate tollCoordinate, List<SKCoordinate> coordinates) {
+        int nearestCoordinateNr = getNearestCoordinateNr(tollCoordinate, coordinates);
+        double nearestDistance = SKToolsUtils.distanceBetween(tollCoordinate, coordinates.get(nearestCoordinateNr));
+        double distanceBefore = 10000;
+        double distanceNext = 10000;
+        double nearestDistance2;
+        int nearestCoordinateNr2 = -1;
+        final int newPointsNr = 7;  // new coordinates to check
+        List<SKCoordinate> newCoordinatesToCheck = new ArrayList<SKCoordinate>();
+
+        if (nearestDistance > 150) {
+            return false;
+        }
+        if (nearestDistance <= 100) {
+            return true;
+        }
+        if (nearestCoordinateNr > 0) {
+            distanceBefore = SKToolsUtils.distanceBetween(tollCoordinate, coordinates.get(nearestCoordinateNr - 1));
+        }
+        if (nearestCoordinateNr < coordinates.size() - 1) {
+            distanceNext = SKToolsUtils.distanceBetween(tollCoordinate, coordinates.get(nearestCoordinateNr + 1));
+        }
+        nearestDistance2 = Math.min(distanceBefore, distanceNext);
+        if (nearestDistance2 < 10000) {
+            if (nearestDistance2 == distanceBefore) {
+                nearestCoordinateNr2 = nearestCoordinateNr - 1;
+            } else {
+                nearestCoordinateNr2 = nearestCoordinateNr + 1;
+            }
+            if (nearestCoordinateNr2 >= 0) {
+                for (int pointNr = 1; pointNr <= newPointsNr; pointNr++) {
+                    SKCoordinate newCoordinate = getNewCoordinateToCheck(coordinates, nearestCoordinateNr, nearestCoordinateNr2,
+                            pointNr, newPointsNr);
+                    newCoordinatesToCheck.add(newCoordinate);
+                }
+            }
+            for (SKCoordinate coordinateToCheck : newCoordinatesToCheck) {
+                if (SKToolsUtils.distanceBetween(tollCoordinate, coordinateToCheck) <= 100) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static SKCoordinate getNewCoordinateToCheck (List<SKCoordinate> coordinates, int coord1Nr, int coord2Nr,
+                                                         int pointNr, int newPointsNr) {
+        double longDistance = coordinates.get(coord2Nr).getLongitude() - coordinates.get(coord1Nr).getLongitude();
+        double latDistance = coordinates.get(coord2Nr).getLatitude() - coordinates.get(coord1Nr).getLatitude();
+        double newLongitude = coordinates.get(coord1Nr).getLongitude() + ((longDistance / (newPointsNr + 1)) * pointNr);
+        double newLatitude = coordinates.get(coord1Nr).getLatitude() + ((latDistance / (newPointsNr + 1)) * pointNr);
+        return new SKCoordinate(newLongitude, newLatitude);
     }
 
     private static boolean areVignetteHighwaysTraversed (List<Road> roads, String code, Context app) {
@@ -322,15 +439,26 @@ public class TollsCostCalculator {
     private static List<SKCoordinate> getListOfCoordinatesBetweenAdvices (List<SKCoordinate> coordinatesList, int density,
                                                                           int startCoordinateNr, int endCoordinateNr) {
         List<SKCoordinate> finalList = new ArrayList<SKCoordinate>();
+
         for (int coordinateNr = startCoordinateNr+1; coordinateNr < endCoordinateNr; coordinateNr += density) {
             finalList.add(coordinatesList.get(coordinateNr));
         }
+
         return finalList;
     }
 
     private static boolean isRoadIn (Road road, List<Road> list) {
         for (Road roadFromList : list) {
             if (roadFromList.getNr().equals(road.getNr()) && roadFromList.getCountryCode().equals(road.getCountryCode())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isPointIn (TollPoint point, List<TollPoint> list) {
+        for (TollPoint pointFromList : list) {
+            if (pointFromList.getId() == point.getId()) {
                 return true;
             }
         }

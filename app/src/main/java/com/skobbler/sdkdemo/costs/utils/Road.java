@@ -18,8 +18,8 @@ public class Road {
         return countryCode;
     }
 
-    public void setNr(String name) {
-        this.nr = name;
+    public void setNr(String nr) {
+        this.nr = nr;
     }
 
     public void setCountryCode(String countryCode) {

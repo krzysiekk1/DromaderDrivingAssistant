@@ -1,6 +1,5 @@
 package com.skobbler.sdkdemo.activity;
 
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -13,13 +12,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.skobbler.ngx.SKCategories;
 import com.skobbler.ngx.SKCategories.SKPOIMainCategory;
 import com.skobbler.ngx.SKCoordinate;
+import com.skobbler.ngx.positioner.SKPosition;
+import com.skobbler.ngx.positioner.SKPositionerManager;
 import com.skobbler.ngx.search.SKNearbySearchSettings;
 import com.skobbler.ngx.search.SKSearchListener;
 import com.skobbler.ngx.search.SKSearchManager;
 import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.ngx.search.SKSearchStatus;
+import com.skobbler.ngx.util.SKLogging;
 import com.skobbler.sdkdemo.R;
 
 import java.util.ArrayList;
@@ -27,37 +30,43 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-
-/**
- * Activity in which a nearby search for some main categories is performed
- */
+// activity in which a nearby search for some main categories is performed
 public class CategorySearchResultsActivity extends Activity implements SKSearchListener {
 
-    /**
-     * The main categories for which the nearby search will be executed
-     */
-    private static final int[] mainCategories = new int[]{
-            SKPOIMainCategory.SKPOI_MAIN_CATEGORY_ACCOMODATION.getValue(),
-            SKPOIMainCategory.SKPOI_MAIN_CATEGORY_SERVICES.getValue(),
-            SKPOIMainCategory.SKPOI_MAIN_CATEGORY_SHOPPING.getValue(),
-            SKPOIMainCategory.SKPOI_MAIN_CATEGORY_LEISURE.getValue()};
+    // the main categories for which the nearby search will be executed
+    private static final int[] searchCategories = new int[]{
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_AMUSEMENT_PARK.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_WATER_PARK.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_STADIUM.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_ATTRACTION.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_GARDEN.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_CEMETERY.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_NATURE_RESERVE.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_PARK.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_STADIUM2.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_TOWNHALL.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_ZOO.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_CONCERT_HALL.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_FOUNTAIN.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_MUSEUM.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_PLACE_OF_WORSHIP.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_THEATRE.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_TOWN_SQUARE.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_ARTS_CENTRE.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_CASINO.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_CHURCH2.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_GALLERY.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_PEAK.getValue()
+    };
 
-    /**
-     * The main category selected
-     */
-    private SKPOIMainCategory selectedMainCategory;
-
+    private SKCategories.SKPOICategory selectedCategory;
     private ListView listView;
-
     private TextView operationInProgressLabel;
-
     private ResultsListAdapter adapter;
 
-    /**
-     * Search results grouped by their main category field
-     */
-    private Map<SKPOIMainCategory, List<SKSearchResult>> results =
-            new LinkedHashMap<SKPOIMainCategory, List<SKSearchResult>>();
+    // search results grouped by their main category field
+    private Map<SKCategories.SKPOICategory, List<SKSearchResult>> results =
+            new LinkedHashMap<SKCategories.SKPOICategory, List<SKSearchResult>>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,42 +80,34 @@ public class CategorySearchResultsActivity extends Activity implements SKSearchL
         startSearch();
     }
 
-    /**
-     * Initiates a nearby search with the specified categories
-     */
+    // initiates a nearby search with the specified categories
     private void startSearch() {
         // get a search manager object on which the search listener is specified
         SKSearchManager searchManager = new SKSearchManager(this);
-        // get a search object
+
         SKNearbySearchSettings searchObject = new SKNearbySearchSettings();
-        // set nearby search center and radius
-        searchObject.setLocation(new SKCoordinate(19.948295, 50.007004));
-        short radius = 1500;
+        SKPosition currentPosition = SKPositionerManager.getInstance().getCurrentGPSPosition(true);
+        SKCoordinate currentCoordinate = currentPosition.getCoordinate();
+        searchObject.setLocation(currentCoordinate);
+        short radius = 20000;   // 20 km
         searchObject.setRadius(radius);
-        // set the maximum number of search results to be returned
-        searchObject.setSearchResultsNumber(300);
-        // set the main categories for which to search
-        searchObject.setSearchCategories(mainCategories);
-        // set the search term
-        searchObject.setSearchTerm("");
-        // launch nearby search
+        searchObject.setSearchResultsNumber(100);
+        searchObject.setSearchCategories(searchCategories);
+        searchObject.setSearchTerm(""); // all
+        searchObject.setSearchMode(SKSearchManager.SKSearchMode.OFFLINE);
         SKSearchStatus status = searchManager.nearbySearch(searchObject);
         if (status != SKSearchStatus.SK_SEARCH_NO_ERROR) {
+            SKLogging.writeLog("SKSearchStatus: ", status.toString(), 0);
             Toast.makeText(this, "An error occurred", Toast.LENGTH_SHORT).show();
         }
     }
 
-    /**
-     * Build the search results map from the results of the search
-     *
-     * @param searchResults
-     */
     private void buildResultsMap(List<SKSearchResult> searchResults) {
-        for (int mainCategory : mainCategories) {
-            results.put(SKPOIMainCategory.forInt(mainCategory), new ArrayList<SKSearchResult>());
+        for (int searchCategory : searchCategories) {
+            results.put(SKCategories.SKPOICategory.forInt(searchCategory), new ArrayList<SKSearchResult>());
         }
         for (SKSearchResult result : searchResults) {
-            results.get(result.getMainCategory()).add(result);
+            results.get(result.getCategory()).add(result);
         }
     }
 
@@ -122,8 +123,8 @@ public class CategorySearchResultsActivity extends Activity implements SKSearchL
 
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, final int position, long id) {
-                if (selectedMainCategory == null) {
-                    selectedMainCategory = SKPOIMainCategory.forInt(mainCategories[position]);
+                if (selectedCategory == null) {
+                    selectedCategory = SKCategories.SKPOICategory.forInt(searchCategories[position]);
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -132,10 +133,10 @@ public class CategorySearchResultsActivity extends Activity implements SKSearchL
 
     @Override
     public void onBackPressed() {
-        if (selectedMainCategory == null) {
+        if (selectedCategory == null) {
             super.onBackPressed();
         } else {
-            selectedMainCategory = null;
+            selectedCategory = null;
             adapter.notifyDataSetChanged();
         }
     }
@@ -144,19 +145,19 @@ public class CategorySearchResultsActivity extends Activity implements SKSearchL
 
         @Override
         public int getCount() {
-            if (selectedMainCategory == null) {
+            if (selectedCategory == null) {
                 return results.size();
             } else {
-                return results.get(selectedMainCategory).size();
+                return results.get(selectedCategory).size();
             }
         }
 
         @Override
         public Object getItem(int position) {
-            if (selectedMainCategory == null) {
-                return results.get(mainCategories[position]);
+            if (selectedCategory == null) {
+                return results.get(searchCategories[position]);
             } else {
-                return results.get(selectedMainCategory).get(position);
+                return results.get(selectedCategory).get(position);
             }
         }
 
@@ -167,20 +168,20 @@ public class CategorySearchResultsActivity extends Activity implements SKSearchL
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View view = null;
+            View view;
             if (convertView == null) {
                 LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 view = inflater.inflate(R.layout.layout_search_list_item, null);
             } else {
                 view = convertView;
             }
-            if (selectedMainCategory == null) {
-                ((TextView) view.findViewById(R.id.title)).setText(SKPOIMainCategory.forInt(mainCategories[position])
+            if (selectedCategory == null) {
+                ((TextView) view.findViewById(R.id.title)).setText(SKCategories.SKPOICategory.forInt(searchCategories[position])
                         .toString().replaceFirst(".*_", ""));
                 ((TextView) view.findViewById(R.id.subtitle)).setText("number of POIs: "
-                        + results.get(SKPOIMainCategory.forInt(mainCategories[position])).size());
+                        + results.get(SKCategories.SKPOICategory.forInt(searchCategories[position])).size());
             } else {
-                SKSearchResult result = results.get(selectedMainCategory).get(position);
+                SKSearchResult result = results.get(selectedCategory).get(position);
                 ((TextView) view.findViewById(R.id.title)).setText(!result.getName().equals("") ? result.getName()
                         : result.getMainCategory().toString().replaceAll(".*_", ""));
                 ((TextView) view.findViewById(R.id.subtitle)).setText("type: "

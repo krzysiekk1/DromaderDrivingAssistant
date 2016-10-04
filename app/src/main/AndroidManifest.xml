@@ -54,7 +54,7 @@
             android:name=".activity.NearbySearchResultsActivity"
             android:configChanges="orientation|screenSize"></activity>
         <activity
-            android:name=".activity.CategorySearchResultsActivity"
+            android:name=".activity.TouristAttractionsActivity"
             android:configChanges="orientation|screenSize"></activity>
         <activity
             android:name=".activity.OfflineAddressSearchActivity"

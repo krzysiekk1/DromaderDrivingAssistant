@@ -13,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.skobbler.ngx.SKCategories;
-import com.skobbler.ngx.SKCategories.SKPOIMainCategory;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.positioner.SKPosition;
 import com.skobbler.ngx.positioner.SKPositionerManager;
@@ -31,38 +30,31 @@ import java.util.List;
 import java.util.Map;
 
 // activity in which a nearby search for some main categories is performed
-public class CategorySearchResultsActivity extends Activity implements SKSearchListener {
+public class TouristAttractionsActivity extends Activity implements SKSearchListener {
 
     // the main categories for which the nearby search will be executed
-    private static final int[] searchCategories = new int[]{
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_AMUSEMENT_PARK.getValue(),
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_WATER_PARK.getValue(),
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_STADIUM.getValue(),
+    private static final int[] searchCategories = new int[] {
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_AMUSEMENT_PARK.getValue(),  // TODO name
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_WATER_PARK.getValue(),  // TODO name
             SKCategories.SKPOICategory.SKPOI_CATEGORY_ATTRACTION.getValue(),
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_GARDEN.getValue(),
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_CEMETERY.getValue(),
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_NATURE_RESERVE.getValue(),
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_PARK.getValue(),
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_STADIUM2.getValue(),
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_TOWNHALL.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_STADIUM2.getValue(),    // TODO name
             SKCategories.SKPOICategory.SKPOI_CATEGORY_ZOO.getValue(),
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_CONCERT_HALL.getValue(),
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_FOUNTAIN.getValue(),
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_MUSEUM.getValue(),
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_PLACE_OF_WORSHIP.getValue(),
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_THEATRE.getValue(),
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_TOWN_SQUARE.getValue(),
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_ARTS_CENTRE.getValue(),
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_CASINO.getValue(),
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_CHURCH2.getValue(),
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_GALLERY.getValue(),
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_PEAK.getValue()
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_MUSEUM.getValue()
+            // TODO replace LEISURE in specific name by category name
     };
+
+    short radius = 20000;   // 20 km
 
     private SKCategories.SKPOICategory selectedCategory;
     private ListView listView;
     private TextView operationInProgressLabel;
     private ResultsListAdapter adapter;
+
+    SKSearchManager searchManager;
+    SKNearbySearchSettings searchObject;
+    SKPosition currentPosition;
+    SKCoordinate currentCoordinate;
+    SKSearchStatus status;
 
     // search results grouped by their main category field
     private Map<SKCategories.SKPOICategory, List<SKSearchResult>> results =
@@ -77,25 +69,25 @@ public class CategorySearchResultsActivity extends Activity implements SKSearchL
         listView = (ListView) findViewById(R.id.list_view);
         operationInProgressLabel.setText(getResources().getString(R.string.searching));
 
+        for (int searchCategory : searchCategories) {
+            results.put(SKCategories.SKPOICategory.forInt(searchCategory), new ArrayList<SKSearchResult>());
+        }
         startSearch();
     }
 
     // initiates a nearby search with the specified categories
     private void startSearch() {
-        // get a search manager object on which the search listener is specified
-        SKSearchManager searchManager = new SKSearchManager(this);
-
-        SKNearbySearchSettings searchObject = new SKNearbySearchSettings();
-        SKPosition currentPosition = SKPositionerManager.getInstance().getCurrentGPSPosition(true);
-        SKCoordinate currentCoordinate = currentPosition.getCoordinate();
+        searchManager = new SKSearchManager(this);
+        searchObject = new SKNearbySearchSettings();
+        currentPosition = SKPositionerManager.getInstance().getCurrentGPSPosition(true);
+        currentCoordinate = currentPosition.getCoordinate();
         searchObject.setLocation(currentCoordinate);
-        short radius = 20000;   // 20 km
         searchObject.setRadius(radius);
-        searchObject.setSearchResultsNumber(100);
+        searchObject.setSearchResultsNumber(300);
         searchObject.setSearchCategories(searchCategories);
         searchObject.setSearchTerm(""); // all
         searchObject.setSearchMode(SKSearchManager.SKSearchMode.OFFLINE);
-        SKSearchStatus status = searchManager.nearbySearch(searchObject);
+        status = searchManager.nearbySearch(searchObject);
         if (status != SKSearchStatus.SK_SEARCH_NO_ERROR) {
             SKLogging.writeLog("SKSearchStatus: ", status.toString(), 0);
             Toast.makeText(this, "An error occurred", Toast.LENGTH_SHORT).show();
@@ -103,17 +95,14 @@ public class CategorySearchResultsActivity extends Activity implements SKSearchL
     }
 
     private void buildResultsMap(List<SKSearchResult> searchResults) {
-        for (int searchCategory : searchCategories) {
-            results.put(SKCategories.SKPOICategory.forInt(searchCategory), new ArrayList<SKSearchResult>());
-        }
         for (SKSearchResult result : searchResults) {
             results.get(result.getCategory()).add(result);
         }
     }
 
     @Override
-    public void onReceivedSearchResults(final List<SKSearchResult> results) {
-        buildResultsMap(results);
+    public void onReceivedSearchResults(final List<SKSearchResult> searchResults) {
+        buildResultsMap(searchResults);
         operationInProgressLabel.setVisibility(View.GONE);
         listView.setVisibility(View.VISIBLE);
         adapter = new ResultsListAdapter();

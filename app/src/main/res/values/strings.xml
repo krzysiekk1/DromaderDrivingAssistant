@@ -15,7 +15,7 @@
     <string name="option_alternative_routes">Alternative routes</string>
     <string name="option_real_reach">Real reach</string>
     <string name="option_address_search">Address search - offline</string>
-    <string name="option_category_search">Category search</string>
+    <string name="option_tourist_attractions_search">Tourist attractions search</string>
     <string name="option_nearby_search">Nearby search</string>
     <string name="option_reverse_geocoding">Offline reverse geocoding</string>
     <string name="option_annotations">Annotations</string>

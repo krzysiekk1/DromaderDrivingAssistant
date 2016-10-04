@@ -172,7 +172,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
     public enum MapOption {
         MAP_DISPLAY, MAP_STYLES, HEAT_MAP, MAP_CREATOR, MAP_OVERLAYS, ANNOTATIONS, MAP_DOWNLOADS,  MAP_INTERACTION, ALTERNATIVE_ROUTES, REAL_REACH, 
-        ROUTING_AND_NAVIGATION, POI_TRACKING, NAVI_UI, SETTINGS, ADDRESS_SEARCH, NEARBY_SEARCH, CATEGORY_SEARCH, REVERSE_GEOCODING, OTHER_SECTION, ONEBOX_SEARCH
+        ROUTING_AND_NAVIGATION, POI_TRACKING, NAVI_UI, SETTINGS, ADDRESS_SEARCH, NEARBY_SEARCH, TOURIST_ATTRACTIONS_SEARCH, REVERSE_GEOCODING, OTHER_SECTION, ONEBOX_SEARCH
     }
 
     private enum MapAdvices {
@@ -647,10 +647,13 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
      */
     public void initializeMenuItems() {
         menuItems = new LinkedHashMap<MapOption, MenuDrawerItem>();
-         menuItems.put(MapOption.NAVI_UI, create(MapOption.NAVI_UI, getResources().getString(R.string.option_map), MenuDrawerItem.ITEM_TYPE));
-         menuItems.put(MapOption.MAP_DOWNLOADS, create(MapOption.MAP_DOWNLOADS, getResources().getString(R.string.option_map_downloads), MenuDrawerItem.ITEM_TYPE));
-         menuItems.put(MapOption.SETTINGS, create(MapOption.SETTINGS, getResources().getString(R.string.option_settings), MenuDrawerItem.ITEM_TYPE));
-         menuItems.put(MapOption.OTHER_SECTION, create(MapOption.OTHER_SECTION, getResources().getString(R.string.other_section).toUpperCase(), MenuDrawerItem.SECTION_TYPE));
+
+        menuItems.put(MapOption.NAVI_UI, create(MapOption.NAVI_UI, getResources().getString(R.string.option_map), MenuDrawerItem.ITEM_TYPE));
+        menuItems.put(MapOption.TOURIST_ATTRACTIONS_SEARCH, create(MapOption.TOURIST_ATTRACTIONS_SEARCH, getResources().getString(R.string.option_tourist_attractions_search), MenuDrawerItem.ITEM_TYPE));
+        menuItems.put(MapOption.MAP_DOWNLOADS, create(MapOption.MAP_DOWNLOADS, getResources().getString(R.string.option_map_downloads), MenuDrawerItem.ITEM_TYPE));
+        menuItems.put(MapOption.SETTINGS, create(MapOption.SETTINGS, getResources().getString(R.string.option_settings), MenuDrawerItem.ITEM_TYPE));
+
+        menuItems.put(MapOption.OTHER_SECTION, create(MapOption.OTHER_SECTION, getResources().getString(R.string.other_section).toUpperCase(), MenuDrawerItem.SECTION_TYPE));
 
         menuItems.put(MapOption.MAP_DISPLAY, create(MapOption.MAP_DISPLAY, getResources().getString(R.string.option_map_display), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.MAP_STYLES, create(MapOption.MAP_STYLES, getResources().getString(R.string.option_map_styles), MenuDrawerItem.ITEM_TYPE));
@@ -674,7 +677,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         menuItems.put(MapOption.NEARBY_SEARCH, create(MapOption.NEARBY_SEARCH, getResources().getString(R.string.option_nearby_search), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.ONEBOX_SEARCH, create(MapOption.ONEBOX_SEARCH, getResources().getString(R.string.option_onebox), MenuDrawerItem.ITEM_TYPE));
 
-        menuItems.put(MapOption.CATEGORY_SEARCH, create(MapOption.CATEGORY_SEARCH, getResources().getString(R.string.option_category_search), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.REVERSE_GEOCODING, create(MapOption.REVERSE_GEOCODING, getResources().getString(R.string.option_reverse_geocoding), MenuDrawerItem.ITEM_TYPE));
 
         list = new ArrayList<MenuDrawerItem>(menuItems.values());
@@ -1107,8 +1109,12 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         final ToggleButton selectEndPointBtn = (ToggleButton) findViewById(R.id.select_end_point_button);
 
         selectStartPointBtn.setVisibility(View.GONE);
+        /*SKPosition currentPosition = SKPositionerManager.getInstance().getCurrentGPSPosition(true);
+        SKCoordinate currentCoordinate = currentPosition.getCoordinate();
+        startPoint = currentCoordinate;*/
+        startPoint = new SKCoordinate(50.007004, 19.948295);
+        destinationPoint = new SKCoordinate(21.016957, 52.218425);
         if (showStartingAndDestinationAnnotations) {
-            startPoint = new SKCoordinate(50.007004, 19.948295);
             SKAnnotation annotation = new SKAnnotation(GREEN_PIN_ICON_ID);
             annotation
                     .setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_GREEN);
@@ -1116,7 +1122,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             mapView.addAnnotation(annotation,
                     SKAnimationSettings.ANIMATION_NONE);
 
-            destinationPoint = new SKCoordinate(21.016957, 52.218425);
             annotation = new SKAnnotation(RED_PIN_ICON_ID);
             annotation
                     .setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_RED);
@@ -2332,8 +2337,11 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         switch (mapOption) {
             case NAVI_UI:
                 currentMapOption = MapOption.NAVI_UI;
-                initializeNavigationUI(true);
+                initializeNavigationUI(false);
                 findViewById(R.id.clear_via_point_button).setVisibility(View.GONE);
+                break;
+            case TOURIST_ATTRACTIONS_SEARCH:
+                startActivity(new Intent(this, TouristAttractionsActivity.class));
                 break;
              case MAP_DOWNLOADS:
                 if (Utils.isInternetAvailable(this)) {
@@ -2398,9 +2406,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             case ANNOTATIONS:
                 currentMapOption = MapOption.ANNOTATIONS;
                 prepareAnnotations();
-                break;
-            case CATEGORY_SEARCH:
-                startActivity(new Intent(this, CategorySearchResultsActivity.class));
                 break;
             case ROUTING_AND_NAVIGATION:
                 currentMapOption = MapOption.ROUTING_AND_NAVIGATION;

@@ -16,6 +16,7 @@ import com.skobbler.ngx.SKCategories;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.positioner.SKPosition;
 import com.skobbler.ngx.positioner.SKPositionerManager;
+import com.skobbler.ngx.sdktools.onebox.utils.SKToolsUtils;
 import com.skobbler.ngx.search.SKNearbySearchSettings;
 import com.skobbler.ngx.search.SKSearchListener;
 import com.skobbler.ngx.search.SKSearchManager;
@@ -34,13 +35,12 @@ public class TouristAttractionsActivity extends Activity implements SKSearchList
 
     // the main categories for which the nearby search will be executed
     private static final int[] searchCategories = new int[] {
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_AMUSEMENT_PARK.getValue(),  // TODO name
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_WATER_PARK.getValue(),  // TODO name
             SKCategories.SKPOICategory.SKPOI_CATEGORY_ATTRACTION.getValue(),
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_STADIUM2.getValue(),    // TODO name
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_MUSEUM.getValue(),
             SKCategories.SKPOICategory.SKPOI_CATEGORY_ZOO.getValue(),
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_MUSEUM.getValue()
-            // TODO replace LEISURE in specific name by category name
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_AMUSEMENT_PARK.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_WATER_PARK.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_STADIUM2.getValue()
     };
 
     short radius = 20000;   // 20 km
@@ -79,11 +79,12 @@ public class TouristAttractionsActivity extends Activity implements SKSearchList
     private void startSearch() {
         searchManager = new SKSearchManager(this);
         searchObject = new SKNearbySearchSettings();
-        currentPosition = SKPositionerManager.getInstance().getCurrentGPSPosition(true);
-        currentCoordinate = currentPosition.getCoordinate();
+        //currentPosition = SKPositionerManager.getInstance().getCurrentGPSPosition(true);
+        //currentCoordinate = currentPosition.getCoordinate();
+        currentCoordinate = new SKCoordinate(50.000000, 20.000000);
         searchObject.setLocation(currentCoordinate);
         searchObject.setRadius(radius);
-        searchObject.setSearchResultsNumber(300);
+        searchObject.setSearchResultsNumber(100);
         searchObject.setSearchCategories(searchCategories);
         searchObject.setSearchTerm(""); // all
         searchObject.setSearchMode(SKSearchManager.SKSearchMode.OFFLINE);
@@ -166,15 +167,15 @@ public class TouristAttractionsActivity extends Activity implements SKSearchList
             }
             if (selectedCategory == null) {
                 ((TextView) view.findViewById(R.id.title)).setText(SKCategories.SKPOICategory.forInt(searchCategories[position])
-                        .toString().replaceFirst(".*_", ""));
+                        .toString().replace("SKPOI_CATEGORY_", "").replaceAll("_", " ").replaceAll("[0-9]", ""));
                 ((TextView) view.findViewById(R.id.subtitle)).setText("number of POIs: "
                         + results.get(SKCategories.SKPOICategory.forInt(searchCategories[position])).size());
             } else {
                 SKSearchResult result = results.get(selectedCategory).get(position);
                 ((TextView) view.findViewById(R.id.title)).setText(!result.getName().equals("") ? result.getName()
-                        : result.getMainCategory().toString().replaceAll(".*_", ""));
-                ((TextView) view.findViewById(R.id.subtitle)).setText("type: "
-                        + result.getCategory().toString().replaceAll(".*_", ""));
+                        : result.getCategory().toString());
+                int distance = (int) SKToolsUtils.distanceBetween(searchObject.getLocation(), result.getLocation());
+                ((TextView) view.findViewById(R.id.subtitle)).setText("distance: " + String.valueOf(distance) + " m");
             }
             return view;
         }

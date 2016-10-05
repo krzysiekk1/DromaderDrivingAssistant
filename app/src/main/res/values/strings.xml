@@ -40,7 +40,7 @@
     <string name="street">Street:</string>
     <string name="house_number">House number:</string>
     <string name="search">Search</string>
-    <string name="searching">Searching ...</string>
+    <string name="searching">Searching...</string>
     <string name="search_topic">Search topic</string>
     <string name="radius">Radius (m)</string>
     <string name="calculate_route">Calculate route</string>

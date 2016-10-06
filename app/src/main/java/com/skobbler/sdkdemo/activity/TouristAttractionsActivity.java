@@ -46,6 +46,7 @@ public class TouristAttractionsActivity extends Activity implements SKSearchList
     short radius = 20000;   // 20 km
 
     private SKCategories.SKPOICategory selectedCategory;
+    List<SKCategories.SKPOICategory> viewCategories;
     private ListView listView;
     private TextView operationInProgressLabel;
     private ResultsListAdapter adapter;
@@ -69,9 +70,6 @@ public class TouristAttractionsActivity extends Activity implements SKSearchList
         listView = (ListView) findViewById(R.id.list_view);
         operationInProgressLabel.setText(getResources().getString(R.string.searching));
 
-        for (int searchCategory : searchCategories) {
-            results.put(SKCategories.SKPOICategory.forInt(searchCategory), new ArrayList<SKSearchResult>());
-        }
         startSearch();
     }
 
@@ -91,12 +89,21 @@ public class TouristAttractionsActivity extends Activity implements SKSearchList
         status = searchManager.nearbySearch(searchObject);
         if (status != SKSearchStatus.SK_SEARCH_NO_ERROR) {
             SKLogging.writeLog("SKSearchStatus: ", status.toString(), 0);
-            Toast.makeText(this, "An error occurred", Toast.LENGTH_SHORT).show();
+            if (status == SKSearchStatus.SK_SEARCH_NO_MAP_INFORMATION) {
+                Toast.makeText(this, "Unknown GPS location", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "An unknown error occurred", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     private void buildResultsMap(List<SKSearchResult> searchResults) {
+        viewCategories = new ArrayList<SKCategories.SKPOICategory>();
         for (SKSearchResult result : searchResults) {
+            if (!results.containsKey(result.getCategory())) {
+                results.put(SKCategories.SKPOICategory.forInt(result.getCategory().getValue()), new ArrayList<SKSearchResult>());
+                viewCategories.add(result.getCategory());
+            }
             results.get(result.getCategory()).add(result);
         }
     }
@@ -114,7 +121,7 @@ public class TouristAttractionsActivity extends Activity implements SKSearchList
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, final int position, long id) {
                 if (selectedCategory == null) {
-                    selectedCategory = SKCategories.SKPOICategory.forInt(searchCategories[position]);
+                    selectedCategory = SKCategories.SKPOICategory.forInt(viewCategories.get(position).getValue());
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -145,7 +152,7 @@ public class TouristAttractionsActivity extends Activity implements SKSearchList
         @Override
         public Object getItem(int position) {
             if (selectedCategory == null) {
-                return results.get(searchCategories[position]);
+                return results.get(viewCategories.get(position).getValue());
             } else {
                 return results.get(selectedCategory).get(position);
             }
@@ -165,11 +172,12 @@ public class TouristAttractionsActivity extends Activity implements SKSearchList
             } else {
                 view = convertView;
             }
+
             if (selectedCategory == null) {
-                ((TextView) view.findViewById(R.id.title)).setText(SKCategories.SKPOICategory.forInt(searchCategories[position])
-                        .toString().replace("SKPOI_CATEGORY_", "").replaceAll("_", " ").replaceAll("[0-9]", ""));
+                ((TextView) view.findViewById(R.id.title)).setText(viewCategories.get(position).toString()
+                        .replace("SKPOI_CATEGORY_", "").replaceAll("_", " ").replaceAll("[0-9]", ""));
                 ((TextView) view.findViewById(R.id.subtitle)).setText("number of POIs: "
-                        + results.get(SKCategories.SKPOICategory.forInt(searchCategories[position])).size());
+                                                                        + results.get(viewCategories.get(position)).size());
             } else {
                 SKSearchResult result = results.get(selectedCategory).get(position);
                 ((TextView) view.findViewById(R.id.title)).setText(!result.getName().equals("") ? result.getName()

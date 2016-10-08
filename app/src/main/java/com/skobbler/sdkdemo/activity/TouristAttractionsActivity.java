@@ -20,6 +20,7 @@ import com.skobbler.ngx.map.SKAnnotation;
 import com.skobbler.ngx.map.SKMapSurfaceView;
 import com.skobbler.ngx.map.SKMapViewHolder;
 import com.skobbler.ngx.positioner.SKPosition;
+import com.skobbler.ngx.positioner.SKPositionerManager;
 import com.skobbler.ngx.sdktools.onebox.utils.SKToolsUtils;
 import com.skobbler.ngx.search.SKNearbySearchSettings;
 import com.skobbler.ngx.search.SKSearchListener;
@@ -81,9 +82,8 @@ public class TouristAttractionsActivity extends Activity implements SKSearchList
     private void startSearch() {
         searchManager = new SKSearchManager(this);
         searchObject = new SKNearbySearchSettings();
-        //currentPosition = SKPositionerManager.getInstance().getCurrentGPSPosition(true);
-        //currentCoordinate = currentPosition.getCoordinate();
-        currentCoordinate = new SKCoordinate(50.000000, 20.000000);
+        currentPosition = SKPositionerManager.getInstance().getCurrentGPSPosition(true);
+        currentCoordinate = currentPosition.getCoordinate();
         searchObject.setLocation(currentCoordinate);
         searchObject.setRadius(radius);
         searchObject.setSearchResultsNumber(100);

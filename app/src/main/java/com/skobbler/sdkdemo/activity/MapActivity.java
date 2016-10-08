@@ -119,12 +119,12 @@ import com.skobbler.ngx.util.SKLogging;
 import com.skobbler.ngx.versioning.SKMapVersioningListener;
 import com.skobbler.ngx.versioning.SKVersioningManager;
 import com.skobbler.sdkdemo.R;
-import com.skobbler.sdkdemo.adapter.MenuDrawerAdapter;
+import com.skobbler.sdkdemo.menu.MenuDrawerAdapter;
 import com.skobbler.sdkdemo.application.ApplicationPreferences;
 import com.skobbler.sdkdemo.application.DDAApplication;
 import com.skobbler.sdkdemo.database.MapDownloadResource;
 import com.skobbler.sdkdemo.fragments.MapFragment;
-import com.skobbler.sdkdemo.model.MenuDrawerItem;
+import com.skobbler.sdkdemo.menu.MenuDrawerItem;
 import com.skobbler.sdkdemo.util.Utils;
 import com.skobbler.sdkdemo.util.PreferenceTypes;
 
@@ -369,7 +369,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     /**
      * Navigation UI layout
      */
-    private RelativeLayout navigationUI;
+    private static RelativeLayout navigationUI;
 
     private boolean isStartPointBtnPressed = false, isEndPointBtnPressed = false, isViaPointSelected = false;
 
@@ -420,7 +420,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     /**
      * the view that holds the map view
      */
-    private SKMapViewHolder mapViewGroup;
+    public static SKMapViewHolder mapViewGroup;
 
     /**
      * Flag for knowing whether the next calculated route should be cached after is calculated
@@ -474,8 +474,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
 
         initializeMenuItems();
-
-
     }
 
     View view;
@@ -641,14 +639,13 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         initializeTrackablePOIs();
     }
 
-
     /**
      * Initializes the navigation drawer list items
      */
     public void initializeMenuItems() {
         menuItems = new LinkedHashMap<MapOption, MenuDrawerItem>();
 
-        menuItems.put(MapOption.NAVI_UI, create(MapOption.NAVI_UI, getResources().getString(R.string.option_map), MenuDrawerItem.ITEM_TYPE));
+        menuItems.put(MapOption.NAVI_UI, create(MapOption.NAVI_UI, getString(R.string.option_map), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.TOURIST_ATTRACTIONS_SEARCH, create(MapOption.TOURIST_ATTRACTIONS_SEARCH, getResources().getString(R.string.option_tourist_attractions_search), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.MAP_DOWNLOADS, create(MapOption.MAP_DOWNLOADS, getResources().getString(R.string.option_map_downloads), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.SETTINGS, create(MapOption.SETTINGS, getResources().getString(R.string.option_settings), MenuDrawerItem.ITEM_TYPE));
@@ -670,7 +667,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         menuItems.put(MapOption.ALTERNATIVE_ROUTES, create(MapOption.ALTERNATIVE_ROUTES, getResources().getString(R.string.option_alternative_routes), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.REAL_REACH, create(MapOption.REAL_REACH, getResources().getString(R.string.option_real_reach), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.POI_TRACKING, create(MapOption.POI_TRACKING, getResources().getString(R.string.option_poi_tracking), MenuDrawerItem.ITEM_TYPE));
-//        menuItems.put(MapOption.NAVI_UI, create(MapOption.NAVI_UI, getResources().getString(R.string.option_car_navigation_ui), MenuDrawerItem.ITEM_TYPE));
 
 //        menuItems.put(MapOption.SEARCHES_SECTION, create(MapOption.SEARCHES_SECTION, getResources().getString(R.string.search).toUpperCase(), MenuDrawerItem.SECTION_TYPE));
         menuItems.put(MapOption.ADDRESS_SEARCH, create(MapOption.ADDRESS_SEARCH, getResources().getString(R.string.option_address_search), MenuDrawerItem.ITEM_TYPE));
@@ -699,7 +695,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         menuDrawerItem.setLabel(label);
         menuDrawerItem.setItemType(itemType);
         return menuDrawerItem;
-
     }
 
     /**
@@ -839,8 +834,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                     break;
             }
         }
-
-
     }
 
     @Override
@@ -1037,8 +1030,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         SKToolsNavigationConfiguration configuration = new SKToolsNavigationConfiguration();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-
-
         //set route type
         String prefRouteType = "0";
             prefRouteType = sharedPreferences.getString(PreferenceTypes.K_ROUTE_TYPE,
@@ -1050,13 +1041,11 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             } else if (prefRouteType.equals("2")) {
                 configuration.setRouteType(SKRouteMode.EFFICIENT);
             }
-        
-   
+
         boolean tollRoads = sharedPreferences.getBoolean(PreferenceTypes.K_AVOID_TOLLS, false);
         if (tollRoads) {
             configuration.setTollRoadsAvoided(true);
         }
-       
 
         configuration.setNavigationType(SKNavigationType.REAL);
          if (currentPosition == null) {
@@ -1097,7 +1086,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         }
     }
 
-
     /**
      * Initializes navigation UI menu
      *
@@ -1132,7 +1120,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         }
         mapView.setZoom(11);
         mapView.animateToLocation(startPoint, 0);
-
 
         selectStartPointBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -2284,7 +2271,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
     }
 
-
     @Override
     public void onRouteCalculationCanceled() {
         skToolsRouteCalculated = false;
@@ -2332,7 +2318,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         this.handleMenuItemClick(list.get(position).getMapOption());
     }
 
-    protected void handleMenuItemClick(MapOption mapOption) {
+    public void handleMenuItemClick(MapOption mapOption) {
         clearMap();
         switch (mapOption) {
             case NAVI_UI:
@@ -2527,5 +2513,13 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     public void clearRouteFromCache() {
         SKRouteManager.getInstance().clearAllRoutesFromCache();
         cachedRouteId = null;
+    }
+
+    public static SKMapViewHolder getMapViewHolder() {
+        return mapViewGroup;
+    }
+
+    public static RelativeLayout getNavigationUI() {
+        return navigationUI;
     }
 }

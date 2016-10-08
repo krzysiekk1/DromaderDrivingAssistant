@@ -2,6 +2,7 @@ package com.skobbler.sdkdemo.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +15,11 @@ import android.widget.Toast;
 
 import com.skobbler.ngx.SKCategories;
 import com.skobbler.ngx.SKCoordinate;
+import com.skobbler.ngx.map.SKAnimationSettings;
+import com.skobbler.ngx.map.SKAnnotation;
+import com.skobbler.ngx.map.SKMapSurfaceView;
+import com.skobbler.ngx.map.SKMapViewHolder;
 import com.skobbler.ngx.positioner.SKPosition;
-import com.skobbler.ngx.positioner.SKPositionerManager;
 import com.skobbler.ngx.sdktools.onebox.utils.SKToolsUtils;
 import com.skobbler.ngx.search.SKNearbySearchSettings;
 import com.skobbler.ngx.search.SKSearchListener;
@@ -123,6 +127,29 @@ public class TouristAttractionsActivity extends Activity implements SKSearchList
                 if (selectedCategory == null) {
                     selectedCategory = SKCategories.SKPOICategory.forInt(viewCategories.get(position).getValue());
                     adapter.notifyDataSetChanged();
+                } else {
+                    String POIName = results.get(selectedCategory).get(position).getName();
+                    DialogMessage dm = new DialogMessage(TouristAttractionsActivity.this, view);
+                    dm.setMessage(POIName, R.string.show_on_map, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            SKAnnotation annotation = new SKAnnotation(5);
+                            annotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_BLUE);
+                            annotation.setLocation(results.get(selectedCategory).get(position).getLocation());
+                            SKMapViewHolder mapViewHolder = MapActivity.getMapViewHolder();
+                            SKMapSurfaceView mapView = mapViewHolder.getMapSurfaceView();
+                            mapView.addAnnotation(annotation, SKAnimationSettings.ANIMATION_NONE);
+                            mapView.setZoom(13);
+                            mapView.animateToLocation(results.get(selectedCategory).get(position).getLocation(), 0);
+                            finish();
+                        }
+                    }, R.string.cancel_dm, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
+                    dm.show();
                 }
             }
         });

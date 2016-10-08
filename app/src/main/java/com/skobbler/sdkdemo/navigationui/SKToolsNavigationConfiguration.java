@@ -15,7 +15,6 @@ import com.skobbler.ngx.routing.SKViaPoint;
  */
 public class SKToolsNavigationConfiguration {
 
-
     /**
      * The start coordinate of the route
      */

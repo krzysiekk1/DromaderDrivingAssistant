@@ -30,7 +30,6 @@ public class DialogMessage {
     * użycie jest pokazane w funkcji testingAlertDialog() w MapActivity, obczajcie i róbcie tak samo
     * */
 
-
     public DialogMessage(Context context, View view) {
         this.dmView = view;
         this.context = context;
@@ -41,7 +40,6 @@ public class DialogMessage {
         this.alertDialogBuilder.setMessage(message);
         this.alertDialogBuilder.setPositiveButton(seq1, listener1);
     }
-
 
     public void setMessage(String message, int seq1,  DialogInterface.OnClickListener listener1, int seq2,  DialogInterface.OnClickListener listener2){
         this.alertDialogBuilder.setMessage(message);
@@ -56,10 +54,7 @@ public class DialogMessage {
         this.alertDialogBuilder.setNegativeButton(seq3, listener3);
     }
 
-
-
-
-    public void show(){
+    public void show() {
         AlertDialog alertDialog = this.alertDialogBuilder.create();
         alertDialog.show();
     }
@@ -76,4 +71,8 @@ public class DialogMessage {
         }, timeout);
     }
 
+    public void cancel() {
+        AlertDialog alertDialog = this.alertDialogBuilder.create();
+        alertDialog.cancel();
+    }
 }

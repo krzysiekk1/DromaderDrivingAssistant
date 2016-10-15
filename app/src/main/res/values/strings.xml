@@ -73,7 +73,6 @@
     <string name="test">Test</string>
     <string name="testing">Testing</string>
 
-
     <string name="real_reach_choose_type">Choose the real reach profile</string>
     <string name="real_reach_profile_time">Time</string>
     <string name="real_reach_profile_energy">Energy</string>
@@ -118,7 +117,10 @@
     <string name="retry">Retry</string>
     <string name="show_simple_toast">Show Simple Toast</string>
     <string name="show_awesome_toast">Show Awesome Toast</string>
-    <string name="something"> Something</string>
+    <string name="something">Something</string>
+
+    <string name="cancel_dm">Cancel</string>
+    <string name="show_on_map">Show on map</string>
 
     <string name="mes1">mes1</string>
     <string name="mes2">mes2</string>

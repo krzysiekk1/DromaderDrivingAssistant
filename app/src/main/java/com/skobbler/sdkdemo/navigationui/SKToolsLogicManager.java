@@ -57,9 +57,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
      */
     private static volatile SKToolsLogicManager instance = null;
 
-    /**
-     * the map view instance
-     */
     private SKMapSurfaceView mapView;
 
     /**
@@ -67,19 +64,10 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
      */
     private SKMapViewHolder mapHolder;
 
-    /**
-     * the current activity
-     */
     private Activity currentActivity;
 
-    /**
-     * Current position provider
-     */
     private SKCurrentPositionProvider currentPositionProvider;
 
-    /**
-     * Navigation manager
-     */
     private SKNavigationManager naviManager;
 
     /**
@@ -114,43 +102,20 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
      */
     private boolean reRoutingInProgress = false;
 
-    /**
-     * the current location
-     */
     public static volatile SKPosition lastUserPosition;
 
-    /**
-     * true, if the navigation was stopped
-     */
     private boolean navigationStopped;
 
-    /**
-     * Map surface listener
-     */
     private SKMapSurfaceListener previousMapSurfaceListener;
 
-    /**
-     * SKRouteInfo list
-     */
     private List<SKRouteInfo> skRouteInfoList = new ArrayList<SKRouteInfo>();
 
-    /**
-     * Navigation listener
-     */
     private SKToolsNavigationListener navigationListener;
 
-    /*
-    Current map style
-     */
     private SKMapViewStyle currentMapStyle;
 
-    /*
-    Current display mode
-     */
     private SKMapSettings.SKMapDisplayMode currentUserDisplayMode;
-    /**
-     * start pedestrian navigation
-     */
+
     public boolean startPedestrian=false;
 
     /**
@@ -208,7 +173,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
      * @param configuration
      * @param mapHolder
      */
-    protected void calculateRoute(SKToolsNavigationConfiguration configuration, SKMapViewHolder mapHolder) {
+    public void calculateRoute(SKToolsNavigationConfiguration configuration, SKMapViewHolder mapHolder) {
         this.mapHolder = mapHolder;
         this.mapView = mapHolder.getMapSurfaceView();
         this.configuration = configuration;
@@ -265,7 +230,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         }
     }
 
-
     /**
      * Starts a navigation with the specified configuration.
      *
@@ -273,7 +237,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
      * @param mapHolder
      * @param isFreeDrive
      */
-    protected void startNavigation(SKToolsNavigationConfiguration configuration,
+    public void startNavigation(SKToolsNavigationConfiguration configuration,
                                    SKMapViewHolder mapHolder, boolean isFreeDrive) {
 
         SKNavigationSettings navigationSettings = new SKNavigationSettings();
@@ -305,7 +269,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         naviManager.setNavigationListener(this);
         naviManager.setMapView(mapView);
         naviManager.startNavigation(navigationSettings);
-
 
         SKToolsNavigationUIManager.getInstance().inflateNavigationViews(currentActivity);
         SKToolsNavigationUIManager.getInstance().reset(configuration.getDistanceUnitType());
@@ -374,7 +337,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         SKToolsAdvicePlayer.getInstance().stop();
         SKMapScreenCaptureManager.getInstance().disableMapScreenCapture();
     }
-
 
     /**
      * Checks the correct map style, taking into consideration auto night configuration settings.
@@ -461,7 +423,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
             roadBlocked = true;
         }
     }
-
 
     /**
      * Handles the items click.
@@ -801,12 +762,9 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     public void onObjectSelected(int i) {
     }
 
-
     @Override
     public void onInternationalisationCalled(int i) {
     }
-
-
 
     @Override
     public void onBoundingBoxImageRendered(int i) {
@@ -935,7 +893,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         }
     }
 
-
     @Override
     public void onVisualAdviceChanged(final boolean firstVisualAdviceChanged, final boolean secondVisualAdviceChanged,
                                       final SKNavigationState skNavigationState) {
@@ -956,7 +913,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     @Override
     public void onTunnelEvent(boolean b) {
     }
-
 
     @Override
     public void onRouteCalculationCompleted(final SKRouteInfo skRouteInfo) {
@@ -1047,7 +1003,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
             SKPositionerManager.getInstance().reportNewGPSPosition(skPosition);
         }
     }
-
 
     @Override
     public void onViaPointReached(int index) {

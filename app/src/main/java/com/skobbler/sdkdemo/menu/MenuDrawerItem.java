@@ -1,4 +1,4 @@
-package com.skobbler.sdkdemo.model;
+package com.skobbler.sdkdemo.menu;
 
 import android.content.Context;
 

@@ -14,6 +14,8 @@ import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.SKMaps;
 import com.skobbler.ngx.sdktools.onebox.SKOneBoxSearchResult;
 import com.skobbler.ngx.sdktools.onebox.fragments.OneBoxManager;
+import com.skobbler.ngx.sdktools.onebox.listeners.OnItemSelectedListener;
+import com.skobbler.ngx.sdktools.onebox.listeners.OnListItemSelectedListener;
 import com.skobbler.ngx.sdktools.onebox.utils.SKToolsUtils;
 import com.skobbler.ngx.search.SKSearchResult;
 
@@ -30,7 +32,14 @@ public class SKSearchResultAdapter extends RecyclerView.Adapter<SKSearchResultAd
 
     List<SKOneBoxSearchResult> skSearchResults;
     private HashMap<SKCategories.SKPOIMainCategory, Integer> imageResources;
+    private static OnItemSelectedListener onItemSelectedListener;
 
+    public void setmOnClickListener(View.OnClickListener mOnClickListener) {
+        this.mOnClickListener = mOnClickListener;
+    }
+
+    private View.OnClickListener mOnClickListener;// = new MyOnClickListener();
+    private OnListItemSelectedListener onListItemSelectedListener;
 
     public SKSearchResultAdapter(List<SKOneBoxSearchResult> results, Context context) {
         skSearchResults = results;
@@ -50,11 +59,13 @@ public class SKSearchResultAdapter extends RecyclerView.Adapter<SKSearchResultAd
     @Override
     public ResultsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ViewGroup v = (ViewGroup) LayoutInflater.from(parent.getContext()).inflate(R.layout.onebox_two_line_item, parent, false);
+        v.setOnClickListener(mOnClickListener);
         return new ResultsHolder(v);
     }
 
+
     @Override
-    public void onBindViewHolder(ResultsHolder holder, int position) {
+    public void onBindViewHolder(final ResultsHolder holder, int position) {
         final SKOneBoxSearchResult resultObject = skSearchResults.get(position);
         final  SKSearchResult result = resultObject.getSearchResult();
 
@@ -87,7 +98,12 @@ public class SKSearchResultAdapter extends RecyclerView.Adapter<SKSearchResultAd
             }
 
             holder.subtitleItem.setText(resultSubtitle);
+
         }
+    }
+
+    public Object getItem(int position) {
+        return skSearchResults.get(position);
     }
 
     private double calculateDistance(SKSearchResult result){
@@ -104,6 +120,12 @@ public class SKSearchResultAdapter extends RecyclerView.Adapter<SKSearchResultAd
         return skSearchResults.size();
     }
 
+    public void setOnItemClickListener(OnItemSelectedListener listener) {
+        onItemSelectedListener = listener;
+    }
+    public void setOnListItemClickListener(OnListItemSelectedListener listener) {
+        onListItemSelectedListener = listener;
+    }
 
     public void sort(final int sortType) {
         switch (sortType){

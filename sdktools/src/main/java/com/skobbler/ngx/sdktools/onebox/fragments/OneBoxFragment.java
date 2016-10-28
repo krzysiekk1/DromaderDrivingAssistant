@@ -1,7 +1,9 @@
 package com.skobbler.ngx.sdktools.onebox.fragments;
 
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -21,16 +23,23 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.skobbler.ngx.R;
 import com.skobbler.ngx.SKCategories;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.SKMaps;
+import com.skobbler.ngx.map.SKAnimationSettings;
+import com.skobbler.ngx.map.SKAnnotation;
+import com.skobbler.ngx.map.SKMapSurfaceView;
+import com.skobbler.ngx.map.SKMapViewHolder;
 import com.skobbler.ngx.sdktools.onebox.SKOneBoxSearchResult;
 import com.skobbler.ngx.sdktools.onebox.SKToolsSearchObject;
 import com.skobbler.ngx.sdktools.onebox.adapters.CategoryListItem;
+import com.skobbler.ngx.sdktools.onebox.listeners.OnListItemSelectedListener;
 import com.skobbler.ngx.sdktools.onebox.listeners.OnSeeMoreListener;
+import com.skobbler.ngx.sdktools.onebox.listeners.mOnClickListener;
 import com.skobbler.ngx.sdktools.onebox.utils.DividerItemDecoration;
 import com.skobbler.ngx.sdktools.onebox.listeners.OnItemSelectedListener;
 import com.skobbler.ngx.sdktools.onebox.adapters.SKCategoriesAdapter;
@@ -52,6 +61,7 @@ public class OneBoxFragment extends Fragment implements SKSearchListener, View.O
     public static boolean ONEBOX_ACTIVATED = false;
     public static final int STATE_DEFAULT = 0, STATE_SHOWING_CATEGORY_RESULTS = 1, STATE_SHOWING_CATEGORIES_EXPANDED = 2, STATE_SHOWING_RESULTS = 3;
     public static final int HIDE = 0, SHOW_CROSS = 1, SHOW_SORT = 2;
+    public static SKCoordinate result_coordinate;
     /**
      * OneBox state
      */
@@ -71,7 +81,8 @@ public class OneBoxFragment extends Fragment implements SKSearchListener, View.O
     /**
      * List of categories(Food,Services, etc.)
      */
-    List<CategoryListItem> categories;
+    List<CategoryListItem> categories = new ArrayList<>();
+    ;
 
     /**
      * Manager for handling search
@@ -89,7 +100,7 @@ public class OneBoxFragment extends Fragment implements SKSearchListener, View.O
      * Sort index
      */
     private int rankIndex;
-
+    private Activity activity;
 
 
     @Override
@@ -109,10 +120,15 @@ public class OneBoxFragment extends Fragment implements SKSearchListener, View.O
         return view;
     }
 
+    public void onAttach(Activity activity){
+        super.onAttach(activity);
+        this.activity = activity;
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        initCategories();
+//        initCategories();
         searchServiceManager = new SKToolsSearchServiceManager(getActivity());
 
         adapterCategories = new SKCategoriesAdapter(getActivity());
@@ -132,24 +148,24 @@ public class OneBoxFragment extends Fragment implements SKSearchListener, View.O
                 SKCategories.SKPOIMainCategory skpoiMainCategory = (SKCategories.SKPOIMainCategory) searchServiceManager.getCategoryForString(item.getText());
                 int[] poiCategories = {skpoiMainCategory.getValue()};
 
-                SKToolsSearchObject searchObject = new SKToolsSearchObject((short)1000,new SKCoordinate(coordinate[0],coordinate[1]),poiCategories,20);
-                searchServiceManager.nbCategorySearch(searchObject,OneBoxFragment.this);
+                SKToolsSearchObject searchObject = new SKToolsSearchObject((short) 1000, new SKCoordinate(coordinate[0], coordinate[1]), poiCategories, 20);
+                searchServiceManager.nbCategorySearch(searchObject, OneBoxFragment.this);
                 changeOneBoxState(STATE_SHOWING_CATEGORY_RESULTS, item.getText());
 
             }
         });
 
-        ((SKCategoriesAdapter) recyclerViewCategories.getAdapter()).setOnSeeMoreListener(new OnSeeMoreListener() {
-            @Override
-            public void onSeeMoreClick(View listParent) {
-                for (CategoryListItem categoryListItem : categories) {
-                    categoryListItem.setShowItem(true);
-                }
-                adapterCategories.updateList(categories);
-                changeOneBoxState(STATE_SHOWING_CATEGORIES_EXPANDED, "OpenStreetMap");
-
-            }
-        });
+//        ((SKCategoriesAdapter) recyclerViewCategories.getAdapter()).setOnSeeMoreListener(new OnSeeMoreListener() {
+//            @Override
+//            public void onSeeMoreClick(View listParent) {
+//                for (CategoryListItem categoryListItem : categories) {
+//                    categoryListItem.setShowItem(true);
+//                }
+//                adapterCategories.updateList(categories);
+//                changeOneBoxState(STATE_SHOWING_CATEGORIES_EXPANDED, "OpenStreetMap");
+//
+//            }
+//        });
 
 
     }
@@ -157,24 +173,22 @@ public class OneBoxFragment extends Fragment implements SKSearchListener, View.O
     /**
      * Initialize SKPOICategories for search
      */
-    private void initCategories() {
-        categories = new ArrayList<>();
-        categories.add(new CategoryListItem("Food", true));
-        categories.add(new CategoryListItem("Health", true));
-        categories.add(new CategoryListItem("Leisure", true));
-        categories.add(new CategoryListItem("Nightlife", true));
-        categories.add(new CategoryListItem("Public", false));
-        categories.add(new CategoryListItem("Services", false));
-        categories.add(new CategoryListItem("Sleeping", false));
-        categories.add(new CategoryListItem("Shopping", false));
-        categories.add(new CategoryListItem("Transport", false));
-
-    }
-
-
+//    private void initCategories() {
+//        categories = new ArrayList<>();
+//        categories.add(new CategoryListItem("Food", true));
+//        categories.add(new CategoryListItem("Health", true));
+//        categories.add(new CategoryListItem("Leisure", true));
+//        categories.add(new CategoryListItem("Nightlife", true));
+//        categories.add(new CategoryListItem("Public", false));
+//        categories.add(new CategoryListItem("Services", false));
+//        categories.add(new CategoryListItem("Sleeping", false));
+//        categories.add(new CategoryListItem("Shopping", false));
+//        categories.add(new CategoryListItem("Transport", false));
+//
+//    }
     @Override
     public void onReceivedSearchResults(List<SKSearchResult> list) {
-
+//        final List<SKOneBoxSearchResult> resultList = new ArrayList<>();
         rankIndex = list.size();
         if (list.size() == 0) {
             recyclerViewCategories.setVisibility(View.GONE);
@@ -186,7 +200,7 @@ public class OneBoxFragment extends Fragment implements SKSearchListener, View.O
 
             changeRightButtonState(clearSearchField, SHOW_SORT);
 
-            List<SKOneBoxSearchResult> resultList = new ArrayList<>();
+            final List<SKOneBoxSearchResult> resultList = new ArrayList<>();
             for (SKSearchResult result : list) {
                 SKOneBoxSearchResult searchObject = new SKOneBoxSearchResult(result, rankIndex);
                 if (!result.getName().isEmpty()) {
@@ -198,10 +212,42 @@ public class OneBoxFragment extends Fragment implements SKSearchListener, View.O
             SKSearchResultAdapter adapter = new SKSearchResultAdapter(resultList, getActivity());
             recyclerViewCategories.setAdapter(adapter);
             hideSoftKeyboard(recyclerViewCategories);
+
+
+//        recyclerViewCategories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            ((SKSearchResultAdapter) recyclerViewCategories.getAdapter()).setmOnClickListener(new mOnClickListener() {
+                @Override
+                public void onClick(final View view) {
+                    int itemPosition = recyclerViewCategories.getChildPosition(view);
+                    System.out.println(itemPosition);
+                    SKAnnotation annotation = new SKAnnotation(5);
+                    annotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_BLUE);
+                    annotation.setLocation(resultList.get(itemPosition).getSearchResult().getLocation());
+                    SKMapViewHolder mapViewHolder = activity.getMapViewHolder();
+                    SKMapSurfaceView mapView = mapViewHolder.getMapSurfaceView();
+                    mapView.addAnnotation(annotation, SKAnimationSettings.ANIMATION_NONE);
+                    mapView.setZoom(13);
+                    mapView.animateToLocation(results.get(selectedCategory).get(position).getLocation(), 0);
+//                String item = mList.get(itemPosition);
+//                Toast.makeText(mContext, item, Toast.LENGTH_LONG).show();
+                }
+//                result_coordinate = item.getSearchResult().getLocation();
+//                SKAnnotation annotation = new SKAnnotation(5);
+//                annotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_BLUE);
+//                annotation.setLocation(item.getSearchResult().getLocation());
+//                SKMapViewHolder mapViewHolder = MapActivity.getMapViewHolder();
+//                SKMapSurfaceView mapView = mapViewHolder.getMapSurfaceView();
+//                mapView.addAnnotation(annotation, SKAnimationSettings.ANIMATION_NONE);
+//                mapView.setZoom(13);
+//                mapView.animateToLocation(item.getSearchResult().getLocation(), 0);
+//                finish();
+
+            });
         }
-
-
     }
+
+
 
     /**
      * Handles back button pressed events
@@ -219,7 +265,8 @@ public class OneBoxFragment extends Fragment implements SKSearchListener, View.O
             adapterCategories.updateList(categories);
             SKCategoriesAdapter.categoryListExpended = false;
             changeOneBoxState(STATE_DEFAULT, "Search text here");
-        } else if (internalState == STATE_SHOWING_CATEGORY_RESULTS) {
+        } else
+        if (internalState == STATE_SHOWING_CATEGORY_RESULTS) {
             if (previousState == STATE_DEFAULT || previousState == STATE_SHOWING_RESULTS) {
                 recyclerViewCategories.setAdapter(adapterCategories);
                 changeOneBoxState(STATE_DEFAULT, "Search text here");

@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Adapter for the main categories.
  */
-public class SKCategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class SKCategoriesAdapter extends RecyclerView.Adapter {
 
     private static final int FOOTER_VIEW = 1;
     private HashMap<String, Integer> imageResources;

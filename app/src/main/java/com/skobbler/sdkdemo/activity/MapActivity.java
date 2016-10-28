@@ -107,6 +107,9 @@ import com.skobbler.ngx.routing.SKViaPoint;
 import com.skobbler.ngx.sdktools.download.SKToolsDownloadItem;
 import com.skobbler.ngx.sdktools.download.SKToolsDownloadListener;
 import com.skobbler.ngx.sdktools.download.SKToolsDownloadManager;
+import com.skobbler.ngx.sdktools.onebox.SKOneBoxSearchResult;
+import com.skobbler.ngx.sdktools.onebox.listeners.OnListItemSelectedListener;
+import com.skobbler.ngx.sdktools.onebox.listeners.mOnClickListener;
 import com.skobbler.sdkdemo.navigationui.SKToolsAdvicePlayer;
 import com.skobbler.sdkdemo.navigationui.SKToolsNavigationConfiguration;
 import com.skobbler.sdkdemo.navigationui.SKToolsNavigationListener;
@@ -134,7 +137,7 @@ import com.skobbler.sdkdemo.util.PreferenceTypes;
 
 public class MapActivity extends Activity implements SKMapSurfaceListener, SKRouteListener, SKNavigationListener,
         SKRealReachListener, SKPOITrackerListener, SKCurrentPositionListener, SensorEventListener,
-        SKMapVersioningListener, SKToolsNavigationListener {
+        SKMapVersioningListener, SKToolsNavigationListener, mOnClickListener {
 
     private static final byte GREEN_PIN_ICON_ID = 0;
 
@@ -639,6 +642,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         initializeTrackablePOIs();
     }
 
+
     /**
      * Initializes the navigation drawer list items
      */
@@ -1005,6 +1009,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 break;
         }
     }
+
 
 
     private void testingAlertDialog(){

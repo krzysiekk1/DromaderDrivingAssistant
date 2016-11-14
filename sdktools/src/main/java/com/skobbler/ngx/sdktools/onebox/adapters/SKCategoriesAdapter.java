@@ -175,15 +175,6 @@ public class SKCategoriesAdapter extends RecyclerView.Adapter {
 
         public FooterViewHolder(final View itemView) {
             super(itemView);
-            textView = (TextView) itemView.findViewById(R.id.see_more);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (onSeeMoreListener != null) {
-                        onSeeMoreListener.onSeeMoreClick(view);
-                    }
-                }
-            });
 
         }
 

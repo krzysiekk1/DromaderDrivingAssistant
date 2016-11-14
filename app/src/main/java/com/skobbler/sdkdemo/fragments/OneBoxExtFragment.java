@@ -1,10 +1,7 @@
-package com.skobbler.ngx.sdktools.onebox.fragments;
-
+package com.skobbler.sdkdemo.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,30 +20,22 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
-
-import com.skobbler.ngx.R;
 import com.skobbler.ngx.SKCategories;
 import com.skobbler.ngx.SKCoordinate;
-import com.skobbler.ngx.SKMaps;
-import com.skobbler.ngx.map.SKAnimationSettings;
-import com.skobbler.ngx.map.SKAnnotation;
-import com.skobbler.ngx.map.SKMapSurfaceView;
-import com.skobbler.ngx.map.SKMapViewHolder;
 import com.skobbler.ngx.sdktools.onebox.SKOneBoxSearchResult;
 import com.skobbler.ngx.sdktools.onebox.SKToolsSearchObject;
+import com.skobbler.ngx.sdktools.onebox.SKToolsSearchServiceManager;
 import com.skobbler.ngx.sdktools.onebox.adapters.CategoryListItem;
-import com.skobbler.ngx.sdktools.onebox.listeners.OnListItemSelectedListener;
-import com.skobbler.ngx.sdktools.onebox.listeners.OnSeeMoreListener;
-import com.skobbler.ngx.sdktools.onebox.listeners.mOnClickListener;
-import com.skobbler.ngx.sdktools.onebox.utils.DividerItemDecoration;
-import com.skobbler.ngx.sdktools.onebox.listeners.OnItemSelectedListener;
 import com.skobbler.ngx.sdktools.onebox.adapters.SKCategoriesAdapter;
 import com.skobbler.ngx.sdktools.onebox.adapters.SKSearchResultAdapter;
-import com.skobbler.ngx.sdktools.onebox.SKToolsSearchServiceManager;
+import com.skobbler.ngx.sdktools.onebox.fragments.OneBoxManager;
+import com.skobbler.ngx.sdktools.onebox.listeners.OnItemSelectedListener;
+import com.skobbler.ngx.sdktools.onebox.listeners.mOnClickListener;
+import com.skobbler.ngx.sdktools.onebox.utils.DividerItemDecoration;
 import com.skobbler.ngx.search.SKSearchListener;
 import com.skobbler.ngx.search.SKSearchResult;
+import com.skobbler.sdkdemo.activity.MapActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,9 +43,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * Class which handles UI for onebox component
+ * Created by Jakub Solawa on 14.11.2016.
  */
-public class OneBoxFragment extends Fragment implements SKSearchListener, View.OnClickListener {
+public class OneBoxExtFragment extends Fragment implements SKSearchListener, View.OnClickListener {
 
     public static boolean ONEBOX_ACTIVATED = false;
     public static final int STATE_DEFAULT = 0, STATE_SHOWING_CATEGORY_RESULTS = 1, STATE_SHOWING_CATEGORIES_EXPANDED = 2, STATE_SHOWING_RESULTS = 3;
@@ -82,7 +71,7 @@ public class OneBoxFragment extends Fragment implements SKSearchListener, View.O
      * List of categories(Food,Services, etc.)
      */
     List<CategoryListItem> categories = new ArrayList<>();
-    ;
+
 
     /**
      * Manager for handling search
@@ -106,17 +95,17 @@ public class OneBoxFragment extends Fragment implements SKSearchListener, View.O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.onebox_fragment, container, false);
+        View view = inflater.inflate(com.skobbler.ngx.R.layout.onebox_fragment, container, false);
 
-        searchFieldEditable = (EditText) view.findViewById(R.id.search_field_editable);
-        recyclerViewCategories = (RecyclerView) view.findViewById(R.id.onebox_recycle_view);
-        noResultsView = (TextView) view.findViewById(R.id.no_results_view);
+        searchFieldEditable = (EditText) view.findViewById(com.skobbler.ngx.R.id.search_field_editable);
+        recyclerViewCategories = (RecyclerView) view.findViewById(com.skobbler.ngx.R.id.onebox_recycle_view);
+        noResultsView = (TextView) view.findViewById(com.skobbler.ngx.R.id.no_results_view);
 
 
         searchFieldEditable.setOnClickListener(this);
-        ImageButton backButton = (ImageButton) view.findViewById(R.id.search_back_button);
+        ImageButton backButton = (ImageButton) view.findViewById(com.skobbler.ngx.R.id.search_back_button);
         backButton.setOnClickListener(this);
-        clearSearchField = (ImageButton) view.findViewById(R.id.search_clear);
+        clearSearchField = (ImageButton) view.findViewById(com.skobbler.ngx.R.id.search_clear);
         return view;
     }
 
@@ -149,7 +138,7 @@ public class OneBoxFragment extends Fragment implements SKSearchListener, View.O
                 int[] poiCategories = {skpoiMainCategory.getValue()};
 
                 SKToolsSearchObject searchObject = new SKToolsSearchObject((short) 1000, new SKCoordinate(coordinate[0], coordinate[1]), poiCategories, 20);
-                searchServiceManager.nbCategorySearch(searchObject, OneBoxFragment.this);
+                searchServiceManager.nbCategorySearch(searchObject, OneBoxExtFragment.this);
                 changeOneBoxState(STATE_SHOWING_CATEGORY_RESULTS, item.getText());
 
             }
@@ -173,19 +162,6 @@ public class OneBoxFragment extends Fragment implements SKSearchListener, View.O
     /**
      * Initialize SKPOICategories for search
      */
-//    private void initCategories() {
-//        categories = new ArrayList<>();
-//        categories.add(new CategoryListItem("Food", true));
-//        categories.add(new CategoryListItem("Health", true));
-//        categories.add(new CategoryListItem("Leisure", true));
-//        categories.add(new CategoryListItem("Nightlife", true));
-//        categories.add(new CategoryListItem("Public", false));
-//        categories.add(new CategoryListItem("Services", false));
-//        categories.add(new CategoryListItem("Sleeping", false));
-//        categories.add(new CategoryListItem("Shopping", false));
-//        categories.add(new CategoryListItem("Transport", false));
-//
-//    }
     @Override
     public void onReceivedSearchResults(List<SKSearchResult> list) {
 //        final List<SKOneBoxSearchResult> resultList = new ArrayList<>();
@@ -214,38 +190,23 @@ public class OneBoxFragment extends Fragment implements SKSearchListener, View.O
             hideSoftKeyboard(recyclerViewCategories);
 
 
-//        recyclerViewCategories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             ((SKSearchResultAdapter) recyclerViewCategories.getAdapter()).setmOnClickListener(new mOnClickListener() {
                 @Override
                 public void onClick(final View view) {
                     int itemPosition = recyclerViewCategories.getChildPosition(view);
-                    System.out.println(itemPosition);
-//                    ((MapActivity)getActivity()).launchRouteCalculation
-//                    .launchRouteCalculation(resultList.get(itemPosition).getSearchResult().getLocation())
-//                    SKAnnotation annotation = new SKAnnotation(5);
-//                    annotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_BLUE);
-//                    annotation.setLocation(resultList.get(itemPosition).getSearchResult().getLocation());
-//                    SKMapViewHolder mapViewHolder = activity.getMapViewHolder();
-//                    SKMapSurfaceView mapView = mapViewHolder.getMapSurfaceView();
-//                    mapView.addAnnotation(annotation, SKAnimationSettings.ANIMATION_NONE);
-//                    mapView.setZoom(13);
-//                    mapView.animateToLocation(results.get(selectedCategory).get(position).getLocation(), 0);
-//                String item = mList.get(itemPosition);
-//                Toast.makeText(mContext, item, Toast.LENGTH_LONG).show();
+                    ((MapActivity)getActivity()).setDestinationPoint(resultList.get(itemPosition).getSearchResult().getLocation());
+                    ((MapActivity)getActivity()).calculateRouteFromSKTools();
+                    recyclerViewCategories.setVisibility(View.VISIBLE);
+                    noResultsView.setVisibility(View.GONE);
+                    changeRightButtonState(clearSearchField, HIDE);
+                    getFragmentManager().popBackStack();
+                    getActivity().getActionBar().show();
+                    hideSoftKeyboard(searchFieldEditable);
+                    ONEBOX_ACTIVATED = false;
                 }
-//                result_coordinate = item.getSearchResult().getLocation();
-//                SKAnnotation annotation = new SKAnnotation(5);
-//                annotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_BLUE);
-//                annotation.setLocation(item.getSearchResult().getLocation());
-//                SKMapViewHolder mapViewHolder = MapActivity.getMapViewHolder();
-//                SKMapSurfaceView mapView = mapViewHolder.getMapSurfaceView();
-//                mapView.addAnnotation(annotation, SKAnimationSettings.ANIMATION_NONE);
-//                mapView.setZoom(13);
-//                mapView.animateToLocation(item.getSearchResult().getLocation(), 0);
-//                finish();
-
             });
+            System.out.println("wszystko ok");
         }
     }
 
@@ -315,14 +276,14 @@ public class OneBoxFragment extends Fragment implements SKSearchListener, View.O
                 searchFieldEditable.setEnabled(false);
                 searchFieldEditable.setClickable(false);
                 searchFieldEditable.setHint(Html.fromHtml(text + " <b>Results</b>"));
-                searchFieldEditable.setHintTextColor(ContextCompat.getColor(getActivity(), R.color.white));
+                searchFieldEditable.setHintTextColor(ContextCompat.getColor(getActivity(), com.skobbler.ngx.R.color.white));
                 break;
             case STATE_SHOWING_CATEGORIES_EXPANDED:
                 internalState = 2;
                 searchFieldEditable.setEnabled(false);
                 searchFieldEditable.setClickable(false);
                 searchFieldEditable.setHint(Html.fromHtml(text + " <b>Categories</b>"));
-                searchFieldEditable.setHintTextColor(ContextCompat.getColor(getActivity(), R.color.white));
+                searchFieldEditable.setHintTextColor(ContextCompat.getColor(getActivity(), com.skobbler.ngx.R.color.white));
                 break;
             case STATE_SHOWING_RESULTS:
                 internalState = 3;
@@ -343,7 +304,7 @@ public class OneBoxFragment extends Fragment implements SKSearchListener, View.O
         auxButton.setVisibility(View.VISIBLE);
         switch (state) {
             case SHOW_SORT:
-                auxButton.setImageResource(R.drawable.icon_sort_white);
+                auxButton.setImageResource(com.skobbler.ngx.R.drawable.icon_sort_white);
                 auxButton.animate().alpha(1).setDuration(duration);
                 auxButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -354,7 +315,7 @@ public class OneBoxFragment extends Fragment implements SKSearchListener, View.O
                 });
                 break;
             case SHOW_CROSS:
-                auxButton.setImageResource(R.drawable.icon_cancel_003_white);
+                auxButton.setImageResource(com.skobbler.ngx.R.drawable.icon_cancel_003_white);
                 auxButton.animate().alpha(1).setDuration(duration);
                 auxButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -380,16 +341,16 @@ public class OneBoxFragment extends Fragment implements SKSearchListener, View.O
      */
     private void initSortLayout() {
         PopupMenu sortMenu = new PopupMenu(getActivity(), clearSearchField);
-        sortMenu.inflate(R.menu.onebox_sort);
+        sortMenu.inflate(com.skobbler.ngx.R.menu.onebox_sort);
         sortMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 int id = menuItem.getItemId();
-                if (id == R.id.sort_name) {
+                if (id == com.skobbler.ngx.R.id.sort_name) {
                     ((SKSearchResultAdapter) recyclerViewCategories.getAdapter()).sort(OneBoxManager.SORT_NAME);
-                } else if (id == R.id.sort_distance) {
+                } else if (id == com.skobbler.ngx.R.id.sort_distance) {
                     ((SKSearchResultAdapter) recyclerViewCategories.getAdapter()).sort(OneBoxManager.SORT_DISTANCE);
-                } else if (id == R.id.sort_rank) {
+                } else if (id == com.skobbler.ngx.R.id.sort_rank) {
                     ((SKSearchResultAdapter) recyclerViewCategories.getAdapter()).sort(OneBoxManager.SORT_RANK);
                 }
                 return false;
@@ -447,7 +408,7 @@ public class OneBoxFragment extends Fragment implements SKSearchListener, View.O
         double[] coordinate = OneBoxManager.getCurrentPosition();
         if (!term.isEmpty()){
             SKToolsSearchObject searchObject = new SKToolsSearchObject(term,new SKCoordinate(coordinate[0],coordinate[1]));
-            searchServiceManager.nbCategorySearch(searchObject, OneBoxFragment.this);
+            searchServiceManager.nbCategorySearch(searchObject, OneBoxExtFragment.this);
 
         }
         changeOneBoxState(STATE_SHOWING_RESULTS, null);
@@ -457,7 +418,7 @@ public class OneBoxFragment extends Fragment implements SKSearchListener, View.O
     @Override
     public void onClick(View view) {
         int id = view.getId();
-        if (id == R.id.search_field_editable) {
+        if (id == com.skobbler.ngx.R.id.search_field_editable) {
             searchFieldEditable.addTextChangedListener(customTextWatcher);
             searchFieldEditable.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
@@ -470,7 +431,7 @@ public class OneBoxFragment extends Fragment implements SKSearchListener, View.O
                 }
             });
 
-        } else if (id == R.id.search_back_button) {
+        } else if (id == com.skobbler.ngx.R.id.search_back_button) {
             handleBackButtonPressed();
         }
     }

@@ -23,7 +23,7 @@
     <string name="option_poi_tracking">POI tracking</string>
     <string name="option_heat_map">Heat Map</string>
     <string name="check_map_updates">Check for map updates</string>
-    <string name="option_onebox">One Box Search</string>
+    <string name="option_onebox">Location Search</string>
     <string name="map_style_day">Day</string>
     <string name="map_style_night">Night</string>
     <string name="map_style_outdoor">Outdoor</string>

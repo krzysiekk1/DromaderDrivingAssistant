@@ -110,6 +110,7 @@ import com.skobbler.ngx.sdktools.download.SKToolsDownloadManager;
 import com.skobbler.ngx.sdktools.onebox.SKOneBoxSearchResult;
 import com.skobbler.ngx.sdktools.onebox.listeners.OnListItemSelectedListener;
 import com.skobbler.ngx.sdktools.onebox.listeners.mOnClickListener;
+import com.skobbler.sdkdemo.fragments.OneBoxExtFragment;
 import com.skobbler.sdkdemo.navigationui.SKToolsAdvicePlayer;
 import com.skobbler.sdkdemo.navigationui.SKToolsNavigationConfiguration;
 import com.skobbler.sdkdemo.navigationui.SKToolsNavigationListener;
@@ -650,6 +651,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         menuItems = new LinkedHashMap<MapOption, MenuDrawerItem>();
 
         menuItems.put(MapOption.NAVI_UI, create(MapOption.NAVI_UI, getString(R.string.option_map), MenuDrawerItem.ITEM_TYPE));
+        menuItems.put(MapOption.ONEBOX_SEARCH, create(MapOption.ONEBOX_SEARCH, getResources().getString(R.string.option_onebox), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.TOURIST_ATTRACTIONS_SEARCH, create(MapOption.TOURIST_ATTRACTIONS_SEARCH, getResources().getString(R.string.option_tourist_attractions_search), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.MAP_DOWNLOADS, create(MapOption.MAP_DOWNLOADS, getResources().getString(R.string.option_map_downloads), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.SETTINGS, create(MapOption.SETTINGS, getResources().getString(R.string.option_settings), MenuDrawerItem.ITEM_TYPE));
@@ -675,7 +677,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 //        menuItems.put(MapOption.SEARCHES_SECTION, create(MapOption.SEARCHES_SECTION, getResources().getString(R.string.search).toUpperCase(), MenuDrawerItem.SECTION_TYPE));
         menuItems.put(MapOption.ADDRESS_SEARCH, create(MapOption.ADDRESS_SEARCH, getResources().getString(R.string.option_address_search), MenuDrawerItem.ITEM_TYPE));
         menuItems.put(MapOption.NEARBY_SEARCH, create(MapOption.NEARBY_SEARCH, getResources().getString(R.string.option_nearby_search), MenuDrawerItem.ITEM_TYPE));
-        menuItems.put(MapOption.ONEBOX_SEARCH, create(MapOption.ONEBOX_SEARCH, getResources().getString(R.string.option_onebox), MenuDrawerItem.ITEM_TYPE));
+
 
         menuItems.put(MapOption.REVERSE_GEOCODING, create(MapOption.REVERSE_GEOCODING, getResources().getString(R.string.option_reverse_geocoding), MenuDrawerItem.ITEM_TYPE));
 
@@ -1030,7 +1032,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     }
 
 
-    private void calculateRouteFromSKTools() {
+    public void calculateRouteFromSKTools() {
 
         SKToolsNavigationConfiguration configuration = new SKToolsNavigationConfiguration();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -1188,11 +1190,11 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
         android.app.FragmentManager fragmentManager = getFragmentManager();
         android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        OneBoxFragment oneboxFragment = new OneBoxFragment();
-        fragmentTransaction.add(R.id.onebox_fragment, oneboxFragment, OneBoxManager.ONEBOX_FRAGMENT_ID);
+        OneBoxExtFragment OneBoxExtFragment = new OneBoxExtFragment();
+        fragmentTransaction.add(R.id.onebox_fragment, OneBoxExtFragment, OneBoxManager.ONEBOX_FRAGMENT_ID);
         fragmentTransaction.addToBackStack(OneBoxManager.ONEBOX_FRAGMENT_ID);
         fragmentTransaction.commit();
-        ((OneBoxFragment)getFragmentManager().findFragmentByTag(OneBoxManager.ONEBOX_FRAGMENT_ID)).ONEBOX_ACTIVATED = true;
+        ((OneBoxExtFragment)getFragmentManager().findFragmentByTag(OneBoxManager.ONEBOX_FRAGMENT_ID)).ONEBOX_ACTIVATED = true;
     }
 
     private void showNoCurrentPosDialog() {
@@ -1211,7 +1213,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     /**
      * Launches a single route calculation
      */
-    private void launchRouteCalculation(SKCoordinate startPoint, SKCoordinate destinationPoint) {
+    public void launchRouteCalculation(SKCoordinate startPoint, SKCoordinate destinationPoint) {
         clearRouteFromCache();
         // get a route object and populate it with the desired properties
         SKRouteSettings route = new SKRouteSettings();
@@ -1894,7 +1896,9 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
     }
 
-
+    public SKPosition getCurrentPosition() {
+        return currentPosition;
+    }
 
     @Override
     public void onDestinationReached() {
@@ -2038,10 +2042,10 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     @Override
     public void onBackPressed() {
         // TODO Auto-generated method stub
-        if (((OneBoxFragment)getFragmentManager().findFragmentByTag(OneBoxManager.ONEBOX_FRAGMENT_ID)).ONEBOX_ACTIVATED) {
+        if (((OneBoxExtFragment)getFragmentManager().findFragmentByTag(OneBoxManager.ONEBOX_FRAGMENT_ID)).ONEBOX_ACTIVATED) {
 
             if(getFragmentManager().findFragmentByTag(OneBoxManager.ONEBOX_FRAGMENT_ID) != null)
-                ((OneBoxFragment)getFragmentManager().findFragmentByTag(OneBoxManager.ONEBOX_FRAGMENT_ID)).handleBackButtonPressed();
+                ((OneBoxExtFragment)getFragmentManager().findFragmentByTag(OneBoxManager.ONEBOX_FRAGMENT_ID)).handleBackButtonPressed();
             return;
         }
 
@@ -2289,7 +2293,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if(!((OneBoxFragment)getFragmentManager().findFragmentByTag(OneBoxManager.ONEBOX_FRAGMENT_ID)).ONEBOX_ACTIVATED){
+        if(!((OneBoxExtFragment)getFragmentManager().findFragmentByTag(OneBoxManager.ONEBOX_FRAGMENT_ID)).ONEBOX_ACTIVATED){
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         }
         if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
@@ -2526,5 +2530,13 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
     public static RelativeLayout getNavigationUI() {
         return navigationUI;
+    }
+
+    public SKCoordinate getDestinationPoint() {
+        return destinationPoint;
+    }
+
+    public void setDestinationPoint(SKCoordinate destinationPoint) {
+        this.destinationPoint = destinationPoint;
     }
 }

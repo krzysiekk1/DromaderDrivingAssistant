@@ -2,6 +2,7 @@ package com.skobbler.sdkdemo.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,6 +24,11 @@ import android.widget.TextView;
 
 import com.skobbler.ngx.SKCategories;
 import com.skobbler.ngx.SKCoordinate;
+import com.skobbler.ngx.map.SKAnimationSettings;
+import com.skobbler.ngx.map.SKAnnotation;
+import com.skobbler.ngx.map.SKMapSurfaceView;
+import com.skobbler.ngx.map.SKMapViewHolder;
+import com.skobbler.ngx.routing.SKViaPoint;
 import com.skobbler.ngx.sdktools.onebox.SKOneBoxSearchResult;
 import com.skobbler.ngx.sdktools.onebox.SKToolsSearchObject;
 import com.skobbler.ngx.sdktools.onebox.SKToolsSearchServiceManager;
@@ -35,12 +41,17 @@ import com.skobbler.ngx.sdktools.onebox.listeners.mOnClickListener;
 import com.skobbler.ngx.sdktools.onebox.utils.DividerItemDecoration;
 import com.skobbler.ngx.search.SKSearchListener;
 import com.skobbler.ngx.search.SKSearchResult;
+import com.skobbler.sdkdemo.R;
+import com.skobbler.sdkdemo.activity.DialogMessage;
 import com.skobbler.sdkdemo.activity.MapActivity;
+import com.skobbler.sdkdemo.activity.TouristAttractionsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static com.skobbler.sdkdemo.activity.MapActivity.VIA_POINT_ICON_ID;
 
 /**
  * Created by Jakub Solawa on 14.11.2016.
@@ -194,16 +205,47 @@ public class OneBoxExtFragment extends Fragment implements SKSearchListener, Vie
             ((SKSearchResultAdapter) recyclerViewCategories.getAdapter()).setmOnClickListener(new mOnClickListener() {
                 @Override
                 public void onClick(final View view) {
-                    int itemPosition = recyclerViewCategories.getChildPosition(view);
-                    ((MapActivity)getActivity()).setDestinationPoint(resultList.get(itemPosition).getSearchResult().getLocation());
-                    ((MapActivity)getActivity()).calculateRouteFromSKTools();
-                    recyclerViewCategories.setVisibility(View.VISIBLE);
-                    noResultsView.setVisibility(View.GONE);
-                    changeRightButtonState(clearSearchField, HIDE);
-                    getFragmentManager().popBackStack();
-                    getActivity().getActionBar().show();
-                    hideSoftKeyboard(searchFieldEditable);
-                    ONEBOX_ACTIVATED = false;
+                    final int itemPosition = recyclerViewCategories.getChildPosition(view);
+                    String locationName = resultList.get(itemPosition).getSearchResult().getName();
+                    final DialogMessage dm = new DialogMessage(getActivity(), view);
+
+                    dm.setMessage(locationName, R.string.end_point_nav, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            ((MapActivity)getActivity()).setDestinationPoint(resultList.get(itemPosition).getSearchResult().getLocation());
+//                            ((MapActivity)getActivity()).calculateRouteFromSKTools();
+                            recyclerViewCategories.setVisibility(View.VISIBLE);
+                            noResultsView.setVisibility(View.GONE);
+                            changeRightButtonState(clearSearchField, HIDE);
+                            getFragmentManager().popBackStack();
+                            getActivity().getActionBar().show();
+                            hideSoftKeyboard(searchFieldEditable);
+                            ONEBOX_ACTIVATED = false;
+                        }
+                    }, R.string.cancel_dm, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dm.cancel();
+                                }
+                    },
+                            R.string.select_via_point, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    ((MapActivity)getActivity()).setViaPoint(new SKViaPoint(VIA_POINT_ICON_ID,resultList.get(itemPosition).getSearchResult().getLocation()));
+//                            ((MapActivity)getActivity()).calculateRouteFromSKTools();
+                                    recyclerViewCategories.setVisibility(View.VISIBLE);
+                                    noResultsView.setVisibility(View.GONE);
+                                    changeRightButtonState(clearSearchField, HIDE);
+                                    getFragmentManager().popBackStack();
+                                    getActivity().getActionBar().show();
+                                    hideSoftKeyboard(searchFieldEditable);
+                                    ONEBOX_ACTIVATED = false;
+                                }
+                        });
+                    dm.show();
+
+
+
                 }
             });
             System.out.println("wszystko ok");

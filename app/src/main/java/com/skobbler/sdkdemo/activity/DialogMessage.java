@@ -50,9 +50,11 @@ public class DialogMessage {
     public void setMessage(String message, int seq1,  DialogInterface.OnClickListener listener1, int seq2,  DialogInterface.OnClickListener listener2, int seq3,  DialogInterface.OnClickListener listener3){
         this.alertDialogBuilder.setMessage(message);
         this.alertDialogBuilder.setPositiveButton(seq1, listener1);
-        this.alertDialogBuilder.setNegativeButton(seq2, listener2);
+        this.alertDialogBuilder.setNeutralButton(seq2, listener2);
         this.alertDialogBuilder.setNegativeButton(seq3, listener3);
     }
+
+
 
     public void show() {
         AlertDialog alertDialog = this.alertDialogBuilder.create();

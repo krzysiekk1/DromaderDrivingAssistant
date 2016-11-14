@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Adapter for the main categories.
  */
-public class SKCategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class SKCategoriesAdapter extends RecyclerView.Adapter {
 
     private static final int FOOTER_VIEW = 1;
     private HashMap<String, Integer> imageResources;
@@ -175,15 +175,6 @@ public class SKCategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         public FooterViewHolder(final View itemView) {
             super(itemView);
-            textView = (TextView) itemView.findViewById(R.id.see_more);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (onSeeMoreListener != null) {
-                        onSeeMoreListener.onSeeMoreClick(view);
-                    }
-                }
-            });
 
         }
 

@@ -2539,4 +2539,12 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     public void setDestinationPoint(SKCoordinate destinationPoint) {
         this.destinationPoint = destinationPoint;
     }
+
+    public SKViaPoint getViaPoint() {
+        return viaPoint;
+    }
+
+    public void setViaPoint(SKViaPoint viaPoint) {
+        this.viaPoint = viaPoint;
+    }
 }

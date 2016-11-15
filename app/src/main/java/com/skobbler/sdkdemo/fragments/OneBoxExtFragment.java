@@ -102,6 +102,8 @@ public class OneBoxExtFragment extends Fragment implements SKSearchListener, Vie
     private int rankIndex;
     private Activity activity;
 
+    SKAnnotation annotationViaPoint = new SKAnnotation(5);
+    SKAnnotation annotationEndPoint = new SKAnnotation(5);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -221,6 +223,13 @@ public class OneBoxExtFragment extends Fragment implements SKSearchListener, Vie
                             getActivity().getActionBar().show();
                             hideSoftKeyboard(searchFieldEditable);
                             ONEBOX_ACTIVATED = false;
+                            annotationEndPoint.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_RED);
+                            annotationEndPoint.setLocation(resultList.get(itemPosition).getSearchResult().getLocation());
+                            SKMapViewHolder mapViewHolder = MapActivity.getMapViewHolder();
+                            SKMapSurfaceView mapView = mapViewHolder.getMapSurfaceView();
+                            mapView.addAnnotation(annotationEndPoint, SKAnimationSettings.ANIMATION_NONE);
+                            mapView.setZoom(13);
+                            mapView.animateToLocation(resultList.get(itemPosition).getSearchResult().getLocation(), 0);
                         }
                     }, R.string.cancel_dm, new DialogInterface.OnClickListener() {
                                 @Override
@@ -240,6 +249,14 @@ public class OneBoxExtFragment extends Fragment implements SKSearchListener, Vie
                                     getActivity().getActionBar().show();
                                     hideSoftKeyboard(searchFieldEditable);
                                     ONEBOX_ACTIVATED = false;
+
+                                    annotationViaPoint.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_PURPLE);
+                                    annotationViaPoint.setLocation(resultList.get(itemPosition).getSearchResult().getLocation());
+                                    SKMapViewHolder mapViewHolder = MapActivity.getMapViewHolder();
+                                    SKMapSurfaceView mapView = mapViewHolder.getMapSurfaceView();
+                                    mapView.addAnnotation(annotationViaPoint, SKAnimationSettings.ANIMATION_NONE);
+                                    mapView.setZoom(13);
+                                    mapView.animateToLocation(resultList.get(itemPosition).getSearchResult().getLocation(), 0);
                                 }
                         });
                     dm.show();

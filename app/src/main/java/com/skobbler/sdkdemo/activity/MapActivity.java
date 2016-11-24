@@ -1024,6 +1024,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         }, R.string.mes2, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
                         finish();
                     } });
 

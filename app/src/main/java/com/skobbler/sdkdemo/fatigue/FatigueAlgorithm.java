@@ -97,7 +97,8 @@ public class FatigueAlgorithm {
 
             // take minutes
             minutes = (int) execution/60000;
-            hours = 0;
+
+            /* hours = 0;
 
             while(minutes >= 60){
                 minutes -= 60;
@@ -107,7 +108,8 @@ public class FatigueAlgorithm {
             executionTime = (double) hours;
 
             executionTime += (double) ((minutes * 5) / 3);
-
+            */
+            executionTime = (double) minutes;
             // take weather near location - i have to take our coordinates and after that find the nearest place
             weather = weatherInstance.weatherNearLocation();
 

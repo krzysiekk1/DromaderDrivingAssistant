@@ -14,23 +14,24 @@ VAR_OUTPUT				// Define output variable - driver's fatigue at the moment
 END_VAR
 
 FUZZIFY execution			// Fuzzify input variable 'execution': {'short', 'mid' , 'long'}, every term is continuous
-	TERM short := (0, 1) (4, 0) ;
-	TERM mid := (1, 0) (4,1) (6,1) (9,0);
-	TERM long := (6, 0) (9, 1);
+	TERM short := sigm -30 45 ;
+	TERM mid := gauss 75 15;
+	TERM long := sigm 20 100;
 END_FUZZIFY
 
-FUZZIFY local			// Fuzzify input variable 'local': { 'morning', 'midday', 'afternoon', 'evening', 'midnight', 'night' }, every term is continuous
-	TERM morning := (0, 1) (1, 1) (3,0) ;
-	TERM midday := (7,0) (9,1);
-	TERM afternoon := (7,0) (9,1);
-	TERM evening := (7,0) (9,1);
-	TERM midnight := (7,0) (9,1);
-	TERM night := (7,0) (9,1);
+FUZZIFY local			// Fuzzify input variable 'local': { 'morning', 'midday', 'afternoon', 'evening', 'beforemidnight', 'aftermidnight', 'night' }, every term is continuous
+	TERM morning := gbell 2 3 9 ;
+	TERM midday := gauss 12 1;
+	TERM afternoon := gbell 1.5 2.5 16;
+	TERM evening := gauss 19.5 1.5;
+	TERM beforemidnight := gauss 23 1.5;
+	TERM aftermidnight := gauss 1 1;
+	TERM night := gauss 4 2;
 END_FUZZIFY
 
 DEFUZZIFY fatigue			// Defzzzify output variable 'fatigue' : {'small', 'big' }, term are continuous
-	TERM small := (0,0) (5,1) (10,0);
-	TERM big := (10,0) (15,1) (20,0);
+	TERM small := sigm -1 10;
+	TERM big := sigm 1 10; // we are using sigmoidal shape to define if we should suggest taking a break or not
 	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
 	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY

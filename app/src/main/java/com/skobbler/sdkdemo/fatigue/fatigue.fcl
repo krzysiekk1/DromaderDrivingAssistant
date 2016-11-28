@@ -14,7 +14,7 @@ VAR_OUTPUT				// Define output variable - driver's fatigue at the moment
 END_VAR
 
 FUZZIFY execution			// Fuzzify input variable 'execution': {'short', 'mid' , 'long'}, every term is continuous
-	TERM short := sigm -30 45 ;
+	TERM short := sigm -30 30;
 	TERM mid := gauss 75 15;
 	TERM long := sigm 20 100;
 END_FUZZIFY
@@ -32,7 +32,7 @@ END_FUZZIFY
 DEFUZZIFY fatigue			// Defzzzify output variable 'fatigue' : {'small', 'big' }, term are continuous
 	TERM small := sigm -1 10;
 	TERM big := sigm 1 10; // we are using sigmoidal shape to define if we should suggest taking a break or not
-	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
+	METHOD : COA;		// Use 'Center Of Gravity' defuzzification method
 	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
 
@@ -41,10 +41,15 @@ RULEBLOCK No1
 	ACT : MIN;			// Use 'min' activation method
 	ACCU : MAX;			// Use 'max' accumulation method
 
-	RULE 1 : IF service IS poor OR food IS rancid THEN tip IS cheap;
-	RULE 2 : IF service IS good THEN tip IS average;
-	RULE 3 : IF service IS excellent AND food IS delicious THEN tip IS generous;
+    RULE 1 : IF execution IS short THEN fatigue IS small;
+    RULE 2 : IF execution IS long THEN fatigue IS big;
+    RULE 3 : IF local IS morning AND (execution IS short OR execution IS mid) THEN fatigue IS small;
+    RULE 4 : IF local IS midday AND (execution IS short OR execution IS mid) THEN fatigue IS small;
+    RULE 5 : IF local IS afternoon AND (execution IS long OR execution IS mid) THEN fatigue IS big;
+    RULE 6 : IF local IS evening AND (execution IS short OR execution IS mid) THEN fatigue IS small;
+    RULE 7 : IF local IS beforemidnight AND (execution IS long OR execution IS mid) THEN fatigue IS big;
+    RULE 8 : IF local IS aftermidnight AND (execution IS long OR execution IS mid) THEN fatigue IS big;
+    RULE 9 : IF local IS night THEN fatigue IS big;
 END_RULEBLOCK
 
 END_FUNCTION_BLOCK
-

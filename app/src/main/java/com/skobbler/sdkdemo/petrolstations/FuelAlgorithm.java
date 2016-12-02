@@ -1,4 +1,4 @@
-package com.skobbler.sdkdemo.fuel;
+package com.skobbler.sdkdemo.petrolstations;
 
 /**
  * Created by marcinsendera on 02.12.2016.

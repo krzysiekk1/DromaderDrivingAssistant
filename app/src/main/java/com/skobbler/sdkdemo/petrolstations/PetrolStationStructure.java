@@ -1,4 +1,4 @@
-package com.skobbler.sdkdemo.fuel;
+package com.skobbler.sdkdemo.petrolstations;
 
 import com.skobbler.ngx.SKCoordinate;
 
@@ -6,7 +6,7 @@ import com.skobbler.ngx.SKCoordinate;
  * Created by marcinsendera on 02.12.2016.
  */
 
-public class GasStationStructure {
+public class PetrolStationStructure {
 
     // initializing my
     private int positionNumber;
@@ -19,6 +19,11 @@ public class GasStationStructure {
     private String countryCode;
 
 
+
+
+    public boolean compareCoordinates(){
+        return true;
+    }
 
 
 

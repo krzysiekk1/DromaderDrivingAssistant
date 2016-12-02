@@ -3,6 +3,8 @@ package com.skobbler.sdkdemo.fatigue;
 
 import android.os.Handler;
 
+import com.skobbler.sdkdemo.activity.MapActivity;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -34,6 +36,7 @@ public class FatigueAlgorithm {
     //initialization taking most important arguments
 
     private FatigueComputations fatigueComputations = new FatigueComputations();
+    private MapActivity mapActivityInstance;
 
     // Handlers stuff
     private boolean repeat = true;
@@ -71,6 +74,18 @@ public class FatigueAlgorithm {
     // weather instance
     private WeatherInstance weatherInstance;
     private String weather;
+
+    private boolean response;
+
+
+
+    /*
+    * Initializing FatigueAlgorithm from MapActivity with its instance
+    * */
+
+    public FatigueAlgorithm(MapActivity myMapActivity){
+        this.mapActivityInstance = myMapActivity;
+    }
 
 
     private Runnable mRunnable = new Runnable() {
@@ -113,7 +128,8 @@ public class FatigueAlgorithm {
             // take weather near location - i have to take our coordinates and after that find the nearest place
             weather = weatherInstance.weatherNearLocation();
 
-            fatigueComputations.onCompute(localTime, executionTime, weather);
+            //getting response if we should show information about fatigue!!!
+            response = fatigueComputations.onCompute(localTime, executionTime, weather);
 
             myHandler.postDelayed(mRunnable, MEASUREMENT_DELAY_TIME);
         }

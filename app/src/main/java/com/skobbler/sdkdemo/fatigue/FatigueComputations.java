@@ -36,7 +36,7 @@ public class FatigueComputations {
     }
 
 
-    public void onCompute(double localTime, double executionTime, String weather){
+    public boolean onCompute(double localTime, double executionTime, String weather){
 
         this.myLocalTime = localTime;
 
@@ -44,7 +44,20 @@ public class FatigueComputations {
 
         this.myWeather = weather;
 
+        double response = this.fuzzyLogic.getValue(this.myLocalTime, this.myExecutionTime);
 
+        boolean sendMessage;
+
+        if(response >= 10.0){
+            // recognized as fatigue
+            sendMessage = true;
+        }
+        else {
+            // driver can
+            sendMessage = false;
+        }
+
+        return sendMessage;
     }
 
 

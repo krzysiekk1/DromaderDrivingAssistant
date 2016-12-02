@@ -9,7 +9,7 @@ import com.skobbler.ngx.search.SKSearchResultParent;
  * Created by marcinsendera on 02.12.2016.
  */
 
-public class PetrolStationStructure {
+public class FuelStationStructure {
 
     // initializing my
     private int positionNumber;
@@ -25,7 +25,7 @@ public class PetrolStationStructure {
     private String countryCode;
 
 
-    public PetrolStationStructure(int position, SKCoordinate coordinates){
+    public FuelStationStructure(int position, SKCoordinate coordinates){
         this.positionNumber = position;
         this.coordinates = coordinates;
 

@@ -30,6 +30,7 @@ import com.skobbler.sdkdemo.database.DownloadResource;
 import com.skobbler.sdkdemo.database.MapDataParser;
 import com.skobbler.sdkdemo.database.MapDownloadResource;
 import com.skobbler.sdkdemo.database.MapsDAO;
+import com.skobbler.sdkdemo.database.ResourcesDAO;
 import com.skobbler.sdkdemo.database.ResourcesDAOHandler;
 import com.skobbler.ngx.versioning.SKVersioningManager;
 
@@ -922,7 +923,9 @@ public class ResourceDownloadsListActivity extends Activity {
      */
     public void onClick(View view) {
         if (view.getId() == R.id.check_for_updates_button) {
-             SKVersioningManager.getInstance().checkNewVersion(3);
+            SKVersioningManager.getInstance().checkNewVersion(3);
+            ResourcesDAO resourcesDAO = ResourcesDAO.getInstance(appContext);
+            resourcesDAO.updateDatabase(resourcesDAO.getDatabase());
          }
         if (view.getId() == R.id.cancel_all_button) {
             boolean cancelled = downloadManager.cancelAllDownloads();

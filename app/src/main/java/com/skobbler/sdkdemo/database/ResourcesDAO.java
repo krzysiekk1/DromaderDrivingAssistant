@@ -76,6 +76,21 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         db.setTransactionSuccessful();
         db.endTransaction();
 
+        createAndFillTables(db);
+
+    }
+
+    public void updateDatabase (final SQLiteDatabase db) {
+        db.beginTransaction();
+        db.execSQL(dropTablesQuery());
+        db.setTransactionSuccessful();
+        db.endTransaction();
+
+        createAndFillTables(db);
+
+    }
+
+    public void createAndFillTables (final SQLiteDatabase db){
         db.beginTransaction();
         db.execSQL(createTollsTable());
         db.setTransactionSuccessful();
@@ -152,6 +167,7 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         }
     }
 
+
     public String createMapResourcesTable() {
         String createMapResourcesTable =
                 new StringBuilder("CREATE TABLE IF NOT EXISTS ").append(MapsDAO.MAPS_TABLE).append(" (")
@@ -198,6 +214,13 @@ public class ResourcesDAO extends SQLiteOpenHelper {
                 .append("DieselCost").append(" REAL, ").append("LPGCost").append(" REAL)").toString();
         return create;
     }
+
+    public String dropTablesQuery() {
+        String drop = new StringBuilder("DROP TABLE IF EXISTS ").append("AvgFuelCosts; ").append("DROP TABLE IF EXISTS ")
+                .append("VignetteHighways; ").append("DROP TABLE IF EXISTS ").append("Tolls;").toString();
+        return drop;
+    }
+
 
     public String fillTollsTable(String[] values) {
         int id = Integer.parseInt(values[0].substring(1, values[0].length()-1));

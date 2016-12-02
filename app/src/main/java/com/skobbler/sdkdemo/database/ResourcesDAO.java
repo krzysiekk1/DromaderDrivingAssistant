@@ -86,6 +86,11 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         db.setTransactionSuccessful();
         db.endTransaction();
 
+        db.beginTransaction();
+        db.execSQL(createAvgFuelCostsTable());
+        db.setTransactionSuccessful();
+        db.endTransaction();
+
         InputStream is = context.getResources().openRawResource(R.raw.tolls);
         InputStreamReader r = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(r);
@@ -122,6 +127,26 @@ public class ResourcesDAO extends SQLiteOpenHelper {
             db.setTransactionSuccessful();
             db.endTransaction();
             br2.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        InputStream is3 = context.getResources().openRawResource(R.raw.avg_fuel_costs);
+        InputStreamReader r3 = new InputStreamReader(is3);
+        BufferedReader br3 = new BufferedReader(r3);
+        String line3 = null;
+        try {
+            line3 = br3.readLine();
+            db.beginTransaction();
+            line3 = br3.readLine();
+            while (line3 != null) {
+                String[] avgFuelCostsValues = line3.split(",");
+                db.execSQL(fillAvgFuelCostsTable(avgFuelCostsValues));
+                line3 = br3.readLine();
+            }
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            br3.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -166,6 +191,14 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         return create;
     }
 
+    public String createAvgFuelCostsTable() {
+        String create = new StringBuilder("CREATE TABLE IF NOT EXISTS ").append("AvgFuelCosts").append(" (")
+                .append("Id").append(" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ")
+                .append("CountryCode").append(" TEXT, ").append("PetrolCost").append(" REAL, ")
+                .append("DieselCost").append(" REAL, ").append("LPGCost").append(" REAL)").toString();
+        return create;
+    }
+
     public String fillTollsTable(String[] values) {
         int id = Integer.parseInt(values[0].substring(1, values[0].length()-1));
         String name = values[1];
@@ -187,6 +220,18 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         String country_code = values[2];
         String fill = new StringBuilder("INSERT INTO ").append("VignetteHighways").append(" VALUES(")
                 .append(id).append(", ").append(road_nr).append(", ").append(country_code).append(")").toString();
+        return fill;
+    }
+
+    public String fillAvgFuelCostsTable(String[] values) {
+        int id = Integer.parseInt(values[0].substring(1, values[0].length()-1));
+        String country_code = values[1];
+        Double petrolCost = Double.parseDouble(values[2].substring(1, values[2].length()-1));
+        Double dieselCost = Double.parseDouble(values[3].substring(1, values[3].length()-1));
+        Double LPGCost = Double.parseDouble(values[4].substring(1, values[4].length()-1));
+        String fill = new StringBuilder("INSERT INTO ").append("AvgFuelCosts").append(" VALUES(")
+                .append(id).append(", ").append(country_code).append(", ").append(petrolCost).append(", ")
+                .append(dieselCost).append(", ").append(LPGCost).append(")").toString();
         return fill;
     }
 

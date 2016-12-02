@@ -6,7 +6,7 @@ import com.skobbler.ngx.SKCoordinate;
  * Created by marcinsendera on 02.12.2016.
  */
 
-public class PetrolStationStructure {
+public class FuelStationStructure {
 
     // initializing my
     private int positionNumber;
@@ -27,7 +27,7 @@ public class PetrolStationStructure {
 
 
 
-    private String getCountryCode(SKCoordinate coordinates){
+    public String getCountryCode(SKCoordinate coordinates){
         String countryName = "";
         return countryName;
     }

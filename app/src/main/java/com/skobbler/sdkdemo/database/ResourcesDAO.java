@@ -99,27 +99,7 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         db.setTransactionSuccessful();
         db.endTransaction();
 
-        System.out.println("ASPERION");
-        Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
-
-        if (c.moveToFirst()) {
-            while ( !c.isAfterLast() ) {
-               System.out.println("Table Name=> "+c.getString(0));
-                c.moveToNext();
-            }
-        }
-
-        System.out.println("AFTER");
-
         createAndFillTables(db);
-        c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
-
-        if (c.moveToFirst()) {
-            while ( !c.isAfterLast() ) {
-                System.out.println("Table Name=> "+c.getString(0));
-                c.moveToNext();
-            }
-        }
 
     }
 

@@ -1,9 +1,12 @@
 package com.skobbler.sdkdemo.database;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
+
 import com.skobbler.ngx.util.SKLogging;
 import com.skobbler.sdkdemo.R;
 
@@ -82,11 +85,41 @@ public class ResourcesDAO extends SQLiteOpenHelper {
 
     public void updateDatabase (final SQLiteDatabase db) {
         db.beginTransaction();
-        db.execSQL(dropTablesQuery());
+        db.execSQL(dropTableQuery("AvgFuelCosts"));
+        db.setTransactionSuccessful();
+
+        db.endTransaction();
+        db.beginTransaction();
+        db.execSQL(dropTableQuery("Tolls"));
         db.setTransactionSuccessful();
         db.endTransaction();
 
+        db.beginTransaction();
+        db.execSQL(dropTableQuery("VignetteHighways"));
+        db.setTransactionSuccessful();
+        db.endTransaction();
+
+        System.out.println("ASPERION");
+        Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
+
+        if (c.moveToFirst()) {
+            while ( !c.isAfterLast() ) {
+               System.out.println("Table Name=> "+c.getString(0));
+                c.moveToNext();
+            }
+        }
+
+        System.out.println("AFTER");
+
         createAndFillTables(db);
+        c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
+
+        if (c.moveToFirst()) {
+            while ( !c.isAfterLast() ) {
+                System.out.println("Table Name=> "+c.getString(0));
+                c.moveToNext();
+            }
+        }
 
     }
 
@@ -215,9 +248,10 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         return create;
     }
 
-    public String dropTablesQuery() {
-        String drop = new StringBuilder("DROP TABLE IF EXISTS ").append("AvgFuelCosts; ").append("DROP TABLE IF EXISTS ")
-                .append("VignetteHighways; ").append("DROP TABLE IF EXISTS ").append("Tolls;").toString();
+    public String dropTableQuery(String table) {
+        String drop = new StringBuilder("DROP TABLE IF EXISTS ").append(table).toString();
+//        String drop = new StringBuilder("DROP TABLE IF EXISTS ").append("AvgFuelCosts; ").append("DROP TABLE IF EXISTS ")
+//                .append("VignetteHighways; ").append("DROP TABLE IF EXISTS ").append("Tolls;").toString();
         return drop;
     }
 

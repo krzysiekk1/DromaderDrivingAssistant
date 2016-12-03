@@ -250,8 +250,6 @@ public class ResourcesDAO extends SQLiteOpenHelper {
 
     public String dropTableQuery(String table) {
         String drop = new StringBuilder("DROP TABLE IF EXISTS ").append(table).toString();
-//        String drop = new StringBuilder("DROP TABLE IF EXISTS ").append("AvgFuelCosts; ").append("DROP TABLE IF EXISTS ")
-//                .append("VignetteHighways; ").append("DROP TABLE IF EXISTS ").append("Tolls;").toString();
         return drop;
     }
 

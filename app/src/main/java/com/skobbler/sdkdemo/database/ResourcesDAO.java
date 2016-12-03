@@ -224,7 +224,8 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         String create = new StringBuilder("CREATE TABLE IF NOT EXISTS ").append("AvgFuelCosts").append(" (")
                 .append("Id").append(" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ")
                 .append("CountryCode").append(" TEXT, ").append("PetrolCost").append(" REAL, ")
-                .append("DieselCost").append(" REAL, ").append("LPGCost").append(" REAL)").toString();
+                .append("DieselCost").append(" REAL, ").append("LPGCost").append(" REAL, ")
+                .append("MotorwayPattern").append(" TEXT, ").append("TrunkPattern").append(" TEXT)").toString();
         return create;
     }
 
@@ -264,9 +265,12 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         Double petrolCost = Double.parseDouble(values[2].substring(1, values[2].length()-1));
         Double dieselCost = Double.parseDouble(values[3].substring(1, values[3].length()-1));
         Double LPGCost = Double.parseDouble(values[4].substring(1, values[4].length()-1));
+        String motorwayPattern = values[5];
+        String trunkPattern = values[6];
         String fill = new StringBuilder("INSERT INTO ").append("AvgFuelCosts").append(" VALUES(")
                 .append(id).append(", ").append(country_code).append(", ").append(petrolCost).append(", ")
-                .append(dieselCost).append(", ").append(LPGCost).append(")").toString();
+                .append(dieselCost).append(", ").append(LPGCost).append(", ").append(motorwayPattern).append(", ")
+                .append(trunkPattern).append(")").toString();
         return fill;
     }
 

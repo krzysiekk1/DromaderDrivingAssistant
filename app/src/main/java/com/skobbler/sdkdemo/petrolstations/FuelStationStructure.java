@@ -11,13 +11,15 @@ import com.skobbler.ngx.search.SKSearchResultParent;
 
 public class FuelStationStructure {
 
-    // initializing my
+    // initializing my types
     private int positionNumber;
 
     private SKCoordinate coordinates;
 
+    //distance from the road begin
+    private double distance;
 
-    // prices for fuels
+    // prices for fuels in euro
     private double petrol = 10.0;
     private double diesel = 10.0;
     private double lpg = 10.0;
@@ -59,11 +61,9 @@ public class FuelStationStructure {
         this.petrol = price;
     }
 
-    public void setDieselCost(double price){
-        this.petrol = price;
-    }
+    public void setDieselCost(double price) { this.diesel = price; }
 
     public void setLpgCost(double price){
-        this.petrol = price;
+        this.lpg = price;
     }
 }

@@ -1,9 +1,12 @@
 package com.skobbler.sdkdemo.database;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
+
 import com.skobbler.ngx.util.SKLogging;
 import com.skobbler.sdkdemo.R;
 
@@ -76,6 +79,31 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         db.setTransactionSuccessful();
         db.endTransaction();
 
+        createAndFillTables(db);
+
+    }
+
+    public void updateDatabase (final SQLiteDatabase db) {
+        db.beginTransaction();
+        db.execSQL(dropTableQuery("AvgFuelCosts"));
+        db.setTransactionSuccessful();
+
+        db.endTransaction();
+        db.beginTransaction();
+        db.execSQL(dropTableQuery("Tolls"));
+        db.setTransactionSuccessful();
+        db.endTransaction();
+
+        db.beginTransaction();
+        db.execSQL(dropTableQuery("VignetteHighways"));
+        db.setTransactionSuccessful();
+        db.endTransaction();
+
+        createAndFillTables(db);
+
+    }
+
+    public void createAndFillTables (final SQLiteDatabase db){
         db.beginTransaction();
         db.execSQL(createTollsTable());
         db.setTransactionSuccessful();
@@ -152,6 +180,7 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         }
     }
 
+
     public String createMapResourcesTable() {
         String createMapResourcesTable =
                 new StringBuilder("CREATE TABLE IF NOT EXISTS ").append(MapsDAO.MAPS_TABLE).append(" (")
@@ -198,6 +227,12 @@ public class ResourcesDAO extends SQLiteOpenHelper {
                 .append("DieselCost").append(" REAL, ").append("LPGCost").append(" REAL)").toString();
         return create;
     }
+
+    public String dropTableQuery(String table) {
+        String drop = new StringBuilder("DROP TABLE IF EXISTS ").append(table).toString();
+        return drop;
+    }
+
 
     public String fillTollsTable(String[] values) {
         int id = Integer.parseInt(values[0].substring(1, values[0].length()-1));

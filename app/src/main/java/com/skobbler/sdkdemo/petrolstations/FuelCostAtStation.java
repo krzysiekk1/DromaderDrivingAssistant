@@ -6,6 +6,7 @@ import android.database.Cursor;
 import com.skobbler.ngx.SKCategories;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.reversegeocode.SKReverseGeocoderManager;
+import com.skobbler.ngx.sdktools.onebox.utils.SKToolsUtils;
 import com.skobbler.ngx.search.SKNearbySearchSettings;
 import com.skobbler.ngx.search.SKSearchListener;
 import com.skobbler.ngx.search.SKSearchManager;
@@ -15,6 +16,8 @@ import com.skobbler.ngx.search.SKSearchStatus;
 import com.skobbler.ngx.util.SKLogging;
 import com.skobbler.sdkdemo.database.ResourcesDAO;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -47,7 +50,18 @@ public class FuelCostAtStation implements SKSearchListener {
     SKNearbySearchSettings searchObject;
     SKSearchStatus status;
 
+    private static final int[] searchCategories2 = new int[] {
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_FUEL.getValue()
+    };
+    short radius2 = 32000;   // 32 km
+    SKSearchManager searchManager2;
+    SKNearbySearchSettings searchObject2;
+    SKSearchStatus status2;
+    boolean searchResults1Got = false;
+    SKCoordinate stationCoordinate;
+
     public void calculateFuelCostAtStation(SKCoordinate coordinate, String countryCode, Context app) {
+        stationCoordinate = coordinate;
 
         // get average fuel costs in country
         context = app;
@@ -85,12 +99,17 @@ public class FuelCostAtStation implements SKSearchListener {
             }
             startSearchToNearBorderUpdate(coordinate);
 
-            // 2
+            // 2 - nearest road costs update
             nearestRoadCostUpdate(coordinate);
 
-            // 3
-
+            // 3 - nearest station costs update
+            startSearchToNearestStationUpdate(coordinate);
         }
+
+        // rounding to 2 decimal places
+        petrolLiterCost = new BigDecimal(petrolLiterCost).setScale(2, RoundingMode.HALF_UP).doubleValue();
+        dieselLiterCost = new BigDecimal(dieselLiterCost).setScale(2, RoundingMode.HALF_UP).doubleValue();
+        LPGLiterCost = new BigDecimal(LPGLiterCost).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 
     private void startSearchToNearBorderUpdate(SKCoordinate coordinate) {
@@ -110,7 +129,12 @@ public class FuelCostAtStation implements SKSearchListener {
 
     @Override
     public void onReceivedSearchResults(final List<SKSearchResult> searchResults) {
-        updateCostIfNearBorder(searchResults);
+        if (searchResults1Got = false) {
+            updateCostIfNearBorder(searchResults);
+        } else {
+            updateCostNearestStation(searchResults);
+        }
+        searchResults1Got = true;
     }
 
     private void updateCostIfNearBorder(List<SKSearchResult> searchResults) {
@@ -212,7 +236,43 @@ public class FuelCostAtStation implements SKSearchListener {
                 }
             }
         }
+    }
 
+    private void startSearchToNearestStationUpdate(SKCoordinate coordinate) {
+        searchManager2 = new SKSearchManager(this);
+        searchObject2 = new SKNearbySearchSettings();
+        searchObject2.setLocation(coordinate);
+        searchObject2.setRadius(radius2);
+        searchObject2.setSearchResultsNumber(1);
+        searchObject2.setSearchCategories(searchCategories2);
+        searchObject2.setSearchTerm(""); // all
+        searchObject2.setSearchMode(SKSearchManager.SKSearchMode.OFFLINE);
+        status2 = searchManager2.nearbySearch(searchObject2);
+        if (status2 != SKSearchStatus.SK_SEARCH_NO_ERROR) {
+            SKLogging.writeLog("SKSearchStatus: ", status.toString(), 0);
+        }
+    }
+
+    private void updateCostNearestStation(List<SKSearchResult> searchResults) {
+        if (searchResults.size() > 0) {
+            SKCoordinate nearestStationCoordinate = searchResults.get(0).getLocation();
+            double distance = SKToolsUtils.distanceBetween(stationCoordinate, nearestStationCoordinate);   // in meters
+            if (distance > 32000) { // >32km
+                petrolLiterCost += (0.02*avgPetrolLiterCost);
+                dieselLiterCost += (0.02*avgDieselLiterCost);
+                LPGLiterCost += (0.02*avgLPGLiterCost);
+            } else if (distance > 10000) {  // 10-32km
+                double percent = 1 + (Math.log((distance/1000)-9)/Math.log(23));
+                petrolLiterCost += ((percent/100)*avgPetrolLiterCost);
+                dieselLiterCost += ((percent/100)*avgDieselLiterCost);
+                LPGLiterCost += ((percent/100)*avgLPGLiterCost);
+            } else if (distance > 3000) {   // 3-10km
+                double percent = (distance/1000)/7 - (3/7);
+                petrolLiterCost += ((percent/100)*avgPetrolLiterCost);
+                dieselLiterCost += ((percent/100)*avgDieselLiterCost);
+                LPGLiterCost += ((percent/100)*avgLPGLiterCost);
+            }
+        }
     }
 
     public double getAvgPetrolLiterCost() {

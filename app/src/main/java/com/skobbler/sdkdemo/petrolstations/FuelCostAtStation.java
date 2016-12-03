@@ -15,7 +15,9 @@ import com.skobbler.ngx.search.SKSearchStatus;
 import com.skobbler.ngx.util.SKLogging;
 import com.skobbler.sdkdemo.database.ResourcesDAO;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Created by Krzysiek on 02.12.2016.
@@ -74,23 +76,24 @@ public class FuelCostAtStation implements SKSearchListener {
         }
 
         if (online = true) {
-            // 1
+            // 1 - near border costs update
             SKSearchResult searchResult = SKReverseGeocoderManager.getInstance().reverseGeocodePosition(coordinate);
             if (searchResult != null && searchResult.getParentsList() != null) {
                 for (SKSearchResultParent parent : searchResult.getParentsList()) {
                     countryCode = parent.getParentName();
                 }
             }
-            startSearch(coordinate);
+            startSearchToNearBorderUpdate(coordinate);
 
             // 2
+            nearestRoadCostUpdate(coordinate);
 
             // 3
 
         }
     }
 
-    private void startSearch(SKCoordinate coordinate) {
+    private void startSearchToNearBorderUpdate(SKCoordinate coordinate) {
         searchManager = new SKSearchManager(this);
         searchObject = new SKNearbySearchSettings();
         searchObject.setLocation(coordinate);
@@ -154,6 +157,62 @@ public class FuelCostAtStation implements SKSearchListener {
                 }
             }
         }
+    }
+
+    private void nearestRoadCostUpdate(SKCoordinate coordinate) {
+        List<SKCoordinate> coordsToCheck = new ArrayList<>();
+        double vertical100 = 0.000900;      // 100 m along meridian
+        double horizontal100 = 0.001400;    // 100 m along parallel
+        double i, j;
+
+        for (i=coordinate.getLatitude()-vertical100; i<=coordinate.getLatitude()+vertical100; i+=(vertical100/5)) {
+            coordsToCheck.add(new SKCoordinate(i, coordinate.getLongitude()-horizontal100));
+            coordsToCheck.add(new SKCoordinate(i, coordinate.getLongitude()+horizontal100));
+        }
+        for (j=coordinate.getLongitude()-horizontal100; i<=coordinate.getLongitude()+horizontal100; i+=(horizontal100/5)) {
+            coordsToCheck.add(new SKCoordinate(coordinate.getLatitude()-vertical100, j));
+            coordsToCheck.add(new SKCoordinate(coordinate.getLatitude()+vertical100, j));
+        }
+
+        for (SKCoordinate coord : coordsToCheck) {
+            SKSearchResult searchResult = SKReverseGeocoderManager.getInstance().reverseGeocodePosition(coord);
+            if (searchResult != null) {
+                String streetName = searchResult.getAddress().getStreet();
+                ResourcesDAO resourcesDAO = ResourcesDAO.getInstance(context);
+                resourcesDAO.openDatabase();
+                String[] array = new String[] {countryCode};
+                String query = "SELECT DISTINCT " + "MotorwayPattern" + ", " + "TrunkPattern" +
+                        " FROM " + "AvgFuelCosts" + " WHERE " + "CountryCode" + "=?";
+                Cursor resultCursor = resourcesDAO.getDatabase().rawQuery(query, array);
+                if ((resultCursor != null) && (resultCursor.getCount() > 0)) {
+                    try {
+                        resultCursor.moveToFirst();
+                        String motorwayPattern = resultCursor.getString(0);
+                        String trunkPattern = resultCursor.getString(1);
+                        if (Pattern.matches(motorwayPattern, streetName)) {
+                            petrolLiterCost += (0.04*avgPetrolLiterCost);
+                            dieselLiterCost += (0.04*avgDieselLiterCost);
+                            LPGLiterCost += (0.04*avgLPGLiterCost);
+                        } else if (Pattern.matches(trunkPattern, streetName)) {
+                            petrolLiterCost += (0.02*avgPetrolLiterCost);
+                            dieselLiterCost += (0.02*avgDieselLiterCost);
+                            LPGLiterCost += (0.02*avgLPGLiterCost);
+                        } else if (!motorwayPattern.equals("100%") || !trunkPattern.equals("100%")) {
+                            petrolLiterCost -= (0.01*avgPetrolLiterCost);
+                            dieselLiterCost -= (0.01*avgDieselLiterCost);
+                            LPGLiterCost -= (0.01*avgLPGLiterCost);
+                        }
+                    } finally {
+                        resultCursor.close();
+                    }
+                } else {
+                    if (resultCursor != null) {
+                        resultCursor.close();
+                    }
+                }
+            }
+        }
+
     }
 
     public double getAvgPetrolLiterCost() {

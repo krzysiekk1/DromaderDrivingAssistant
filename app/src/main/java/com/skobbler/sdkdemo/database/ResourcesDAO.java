@@ -1,12 +1,9 @@
 package com.skobbler.sdkdemo.database;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.Toast;
-
 import com.skobbler.ngx.util.SKLogging;
 import com.skobbler.sdkdemo.R;
 
@@ -14,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 
 
@@ -79,31 +77,36 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         db.setTransactionSuccessful();
         db.endTransaction();
 
-        createAndFillTables(db);
+        createTables(db);
+        fillTable(db, context.getResources().openRawResource(R.raw.tolls), "tolls");
+        fillTable(db, context.getResources().openRawResource(R.raw.vignette_highways), "vignette");
+        fillTable(db, context.getResources().openRawResource(R.raw.avg_fuel_costs), "fuel");
 
     }
 
-    public void updateDatabase (final SQLiteDatabase db) {
+    public void updateDatabase (final SQLiteDatabase db, InputStream tollsStream, InputStream vignetteStream, InputStream fuelStream) {
         db.beginTransaction();
-        db.execSQL(dropTableQuery("AvgFuelCosts"));
-        db.setTransactionSuccessful();
-
-        db.endTransaction();
-        db.beginTransaction();
-        db.execSQL(dropTableQuery("Tolls"));
+        db.execSQL(dropFuelTableQuery());
         db.setTransactionSuccessful();
         db.endTransaction();
 
         db.beginTransaction();
-        db.execSQL(dropTableQuery("VignetteHighways"));
+        db.execSQL(dropVignetteTableQuery());
         db.setTransactionSuccessful();
         db.endTransaction();
 
-        createAndFillTables(db);
+        db.beginTransaction();
+        db.execSQL(dropTollsTableQuery());
+        db.setTransactionSuccessful();
+        db.endTransaction();
 
+        createTables(db);
+        fillTable(db, vignetteStream, "vignette");
+        fillTable(db, fuelStream, "fuel");
+        fillTable(db, tollsStream, "tolls");
     }
 
-    public void createAndFillTables (final SQLiteDatabase db){
+    public void createTables (final SQLiteDatabase db){
         db.beginTransaction();
         db.execSQL(createTollsTable());
         db.setTransactionSuccessful();
@@ -119,7 +122,9 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         db.setTransactionSuccessful();
         db.endTransaction();
 
-        InputStream is = context.getResources().openRawResource(R.raw.tolls);
+    }
+
+    public void fillTable(final SQLiteDatabase db, InputStream is, String tableName) {
         InputStreamReader r = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(r);
         String line = null;
@@ -127,54 +132,35 @@ public class ResourcesDAO extends SQLiteOpenHelper {
             line = br.readLine();
             db.beginTransaction();
             line = br.readLine();
-            while (line != null) {
-                String[] tollsValues = line.split(",");
-                db.execSQL(fillTollsTable(tollsValues));
-                line = br.readLine();
+            switch (tableName) {
+                case "tolls":
+                    while (line != null) {
+                        String[] tollsValues = line.split(",");
+                        db.execSQL(fillTollsTable(tollsValues));
+                        line = br.readLine();
+                    }
+                    break;
+                case "vignette":
+                    while (line != null) {
+                        String[] vignetteHighwaysValues = line.split(",");
+                        db.execSQL(fillVignetteHighwaysTable(vignetteHighwaysValues));
+                        line = br.readLine();
+                    }
+                    break;
+                case "fuel":
+                    while (line != null) {
+                        String[] avgFuelCosts = line.split(",");
+                        db.execSQL(fillAvgFuelCostsTable(avgFuelCosts));
+                        line = br.readLine();
+                    }
+                    break;
+                default:
+                    break;
             }
-            db.setTransactionSuccessful();
-            db.endTransaction();
-            br.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+                db.setTransactionSuccessful();
+                db.endTransaction();
+                br.close();
 
-        InputStream is2 = context.getResources().openRawResource(R.raw.vignette_highways);
-        InputStreamReader r2 = new InputStreamReader(is2);
-        BufferedReader br2 = new BufferedReader(r2);
-        String line2 = null;
-        try {
-            line2 = br2.readLine();
-            db.beginTransaction();
-            line2 = br2.readLine();
-            while (line2 != null) {
-                String[] vignetteHighwaysValues = line2.split(",");
-                db.execSQL(fillVignetteHighwaysTable(vignetteHighwaysValues));
-                line2 = br2.readLine();
-            }
-            db.setTransactionSuccessful();
-            db.endTransaction();
-            br2.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        InputStream is3 = context.getResources().openRawResource(R.raw.avg_fuel_costs);
-        InputStreamReader r3 = new InputStreamReader(is3);
-        BufferedReader br3 = new BufferedReader(r3);
-        String line3 = null;
-        try {
-            line3 = br3.readLine();
-            db.beginTransaction();
-            line3 = br3.readLine();
-            while (line3 != null) {
-                String[] avgFuelCostsValues = line3.split(",");
-                db.execSQL(fillAvgFuelCostsTable(avgFuelCostsValues));
-                line3 = br3.readLine();
-            }
-            db.setTransactionSuccessful();
-            db.endTransaction();
-            br3.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -229,10 +215,21 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         return create;
     }
 
-    public String dropTableQuery(String table) {
-        String drop = new StringBuilder("DROP TABLE IF EXISTS ").append(table).toString();
+    public String dropFuelTableQuery() {
+        String drop = new StringBuilder("DROP TABLE IF EXISTS ").append("AvgFuelCosts;").toString();
         return drop;
     }
+
+    public String dropTollsTableQuery() {
+        String drop = new StringBuilder("DROP TABLE IF EXISTS ").append("Tolls;").toString();
+        return drop;
+    }
+
+    public String dropVignetteTableQuery() {
+        String drop = new StringBuilder("DROP TABLE IF EXISTS ").append("VignetteHighways;").toString();
+        return drop;
+    }
+
 
 
     public String fillTollsTable(String[] values) {

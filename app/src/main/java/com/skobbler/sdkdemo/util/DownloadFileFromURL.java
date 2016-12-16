@@ -26,7 +26,7 @@ import javax.xml.transform.Result;
 
 public class DownloadFileFromURL extends AsyncTask {
 
-    private ArrayList<String> urlArray = new ArrayList<>(Arrays.asList("https://www.dropbox.com/s/x31ys8324wwkpaw/avg_fuel_costs.csv?dl=1", "https://www.dropbox.com/s/o3ix0p8fzdmipcr/tolls.csv?dl=1", "https://www.dropbox.com/s/um1a2fu866m74lv/vignette_highways.csv?dl=1"));
+    private ArrayList<String> urlArray = new ArrayList<>(Arrays.asList("https://www.dropbox.com/s/wuaozangdr73g7n/avg_fuel_costs.csv?dl=1", "https://www.dropbox.com/s/sjdg995bzyf5caa/tolls.csv?dl=1", "https://www.dropbox.com/s/6143m63cnz85xl4/vignette_highways.csv?dl=1"));
 
     public InputStream connectAndDownload(String address){
         URL url = null;

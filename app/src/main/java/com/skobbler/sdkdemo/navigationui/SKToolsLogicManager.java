@@ -45,6 +45,7 @@ import com.skobbler.sdkdemo.navigationui.autonight.SKToolsAutoNightManager;
 import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.ngx.util.SKLogging;
 import com.skobbler.sdkdemo.costs.tolls.TollsCostCalculator;
+import com.skobbler.sdkdemo.util.WeatherTask;
 
 /**
  * This class handles the logic related to the navigation and route calculation.
@@ -967,6 +968,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                         final String distance = SKToolsUtils.convertAndFormatDistance(skRouteInfoList.get(i)
                                         .getDistance(),
                                 configuration.getDistanceUnitType(), currentActivity);
+                        new WeatherTask().execute(skRouteInfoList.get(i).getRouteID());
                         final String cost = String.format("%.2f", TollsCostCalculator.getTollsCost(
                                 skRouteInfoList.get(i), getCurrentActivity().getApplicationContext()));
                         SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, cost);

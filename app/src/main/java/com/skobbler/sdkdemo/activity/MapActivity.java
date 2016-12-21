@@ -107,18 +107,15 @@ import com.skobbler.ngx.routing.SKViaPoint;
 import com.skobbler.ngx.sdktools.download.SKToolsDownloadItem;
 import com.skobbler.ngx.sdktools.download.SKToolsDownloadListener;
 import com.skobbler.ngx.sdktools.download.SKToolsDownloadManager;
-import com.skobbler.ngx.sdktools.onebox.SKOneBoxSearchResult;
-import com.skobbler.ngx.sdktools.onebox.listeners.OnListItemSelectedListener;
 import com.skobbler.ngx.sdktools.onebox.listeners.mOnClickListener;
+import com.skobbler.sdkdemo.costs.CostCalculator;
 import com.skobbler.sdkdemo.fatigue.FatigueAlgorithm;
 import com.skobbler.sdkdemo.fragments.OneBoxExtFragment;
 import com.skobbler.sdkdemo.navigationui.SKToolsAdvicePlayer;
 import com.skobbler.sdkdemo.navigationui.SKToolsNavigationConfiguration;
 import com.skobbler.sdkdemo.navigationui.SKToolsNavigationListener;
 import com.skobbler.sdkdemo.navigationui.SKToolsNavigationManager;
-import com.skobbler.ngx.sdktools.onebox.fragments.OneBoxFragment;
 import com.skobbler.ngx.sdktools.onebox.fragments.OneBoxManager;
-import com.skobbler.sdkdemo.costs.tolls.TollsCostCalculator;
 import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.ngx.util.SKLogging;
 import com.skobbler.ngx.versioning.SKMapVersioningListener;
@@ -2154,9 +2151,10 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         if (currentMapOption == MapOption.ALTERNATIVE_ROUTES) {
             int routeIndex = routeIds.size();
             routeIds.add(routeInfo.getRouteID());
-            double tollsCost = TollsCostCalculator.getTollsCost(routeInfo, app);
+            CostCalculator costCalculator = new CostCalculator();
+            double cost = costCalculator.getCost(routeInfo, app);
             altRoutesButtons[routeIndex].setText(Utils.formatDistance(routeInfo.getDistance()) + "\n");
-//            Utils.formatTime(routeInfo.getEstimatedTime() + "\n" + tollsCost + " EUR");
+//            Utils.formatTime(routeInfo.getEstimatedTime() + "\n" + cost + " EUR");
               if (routeIndex == 0) {
                 // select 1st alternative by default
                 selectAlternativeRoute(0);

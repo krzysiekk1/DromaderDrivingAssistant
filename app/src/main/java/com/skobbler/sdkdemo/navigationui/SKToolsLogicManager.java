@@ -44,6 +44,7 @@ import com.skobbler.ngx.routing.SKRouteSettings;
 import com.skobbler.ngx.routing.SKViaPoint;
 import com.skobbler.sdkdemo.activity.DialogMessage;
 import com.skobbler.sdkdemo.activity.MapActivity;
+import com.skobbler.sdkdemo.costs.CostCalculator;
 import com.skobbler.sdkdemo.navigationui.autonight.SKToolsAutoNightManager;
 import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.ngx.util.SKLogging;
@@ -988,9 +989,9 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                     for (int i = 0; i < skRouteInfoList.size(); i++) {
                         final String time = SKToolsUtils.formatTime(skRouteInfoList.get(i).getEstimatedTime());
                         final String distance = SKToolsUtils.convertAndFormatDistance(skRouteInfoList.get(i)
-                                        .getDistance(),
-                                configuration.getDistanceUnitType(), currentActivity);
-                        final String cost = String.format("%.2f", TollsCostCalculator.getTollsCost(
+                                        .getDistance(), configuration.getDistanceUnitType(), currentActivity);
+                        CostCalculator costCalculator = new CostCalculator();
+                        final String cost = String.format("%.2f", costCalculator.getCost(
                                 skRouteInfoList.get(i), getCurrentActivity().getApplicationContext()));
                         SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, cost);
                     }

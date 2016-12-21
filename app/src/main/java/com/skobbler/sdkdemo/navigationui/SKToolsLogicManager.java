@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Toast;
 import com.skobbler.ngx.R;
+import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.SKMaps;
 import com.skobbler.ngx.map.SKAnnotation;
 import com.skobbler.ngx.map.SKCoordinateRegion;
@@ -45,6 +46,7 @@ import com.skobbler.ngx.routing.SKViaPoint;
 import com.skobbler.sdkdemo.activity.DialogMessage;
 import com.skobbler.sdkdemo.activity.MapActivity;
 import com.skobbler.sdkdemo.costs.CostCalculator;
+import com.skobbler.sdkdemo.fatigue.FatigueAlgorithm;
 import com.skobbler.sdkdemo.navigationui.autonight.SKToolsAutoNightManager;
 import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.ngx.util.SKLogging;
@@ -119,6 +121,11 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     private SKMapViewStyle currentMapStyle;
 
     private SKMapSettings.SKMapDisplayMode currentUserDisplayMode;
+
+    private FatigueAlgorithm fatigueAlgorithm;
+
+    private SKCoordinate hotelCoordinates;
+    private SKCoordinate parkingCoordinates;
 
     public boolean startPedestrian=false;
 
@@ -308,6 +315,9 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         if (navigationListener != null) {
             navigationListener.onNavigationStarted();
         }
+
+        fatigueAlgorithm = new FatigueAlgorithm();
+        fatigueAlgorithm.startMeasurement();
     }
 
     /**
@@ -845,6 +855,8 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     }
 
 
+
+
     private void testingAlertDialog(){
         DialogMessage dm = new DialogMessage(currentActivity);
         dm.setMessage("cokolwiek", com.skobbler.sdkdemo.R.string.mes1, new DialogInterface.OnClickListener() {
@@ -863,9 +875,51 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     }
 
 
+    public void setHotelCoordinates(SKCoordinate coordinates){
+        this.hotelCoordinates = coordinates;
+    }
+
+
+    public void setParkingCoordinates(SKCoordinate coordinates){
+        this.parkingCoordinates = coordinates;
+    }
+
+
+    private void fatigueMessage(){
+        DialogMessage dm = new DialogMessage(currentActivity);
+      /*  dm.setMessage("You are probably tired. What do you want to do?",
+                "Go to the hotel!",
+                new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }
+                ,"Go on car park!",
+                new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                },"Dismiss!",
+                new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });*/
+    }
+
+
     @Override
     public void onUpdateNavigationState(SKNavigationState skNavigationState) {
-        testingAlertDialog();
+
+        if(this.fatigueAlgorithm.getResponse()){
+            fatigueMessage();
+        }
+
+
+        //testingAlertDialog();
         SKLogging.writeLog("SKToolsLogicManager", "NAVIGATION STATE " + skNavigationState.toString(), SKLogging.LOG_DEBUG);
         if(currentUserDisplayMode == SKMapSettings.SKMapDisplayMode.MODE_3D){
             mapView.getMapSettings().setStreetNamePopupsShown(true);

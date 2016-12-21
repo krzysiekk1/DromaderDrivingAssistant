@@ -83,8 +83,8 @@ public class FatigueAlgorithm {
     * Initializing FatigueAlgorithm from MapActivity with its instance
     * */
 
-    public FatigueAlgorithm(MapActivity myMapActivity){
-        this.mapActivityInstance = myMapActivity;
+    public FatigueAlgorithm(){
+        //this.mapActivityInstance = myMapActivity;
     }
 
 
@@ -138,6 +138,24 @@ public class FatigueAlgorithm {
     };
 
     //initializing Handler and boolean repeat -> if repeat == false -> delaying FatigueAlgorithm at all
+
+
+    public boolean getResponse(){
+        return this.response;
+    }
+
+    public void setResponse(boolean response){
+        this.response = response;
+    }
+
+    public void takeBreak(){
+
+    }
+
+    public void dismiss(){
+
+    }
+
 
     public void startMeasurement() {
 

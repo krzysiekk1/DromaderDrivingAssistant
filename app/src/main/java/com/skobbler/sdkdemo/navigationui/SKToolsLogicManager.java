@@ -3,6 +3,7 @@ package com.skobbler.sdkdemo.navigationui;
 import java.util.ArrayList;
 import java.util.List;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.util.Log;
@@ -41,6 +42,8 @@ import com.skobbler.ngx.routing.SKRouteListener;
 import com.skobbler.ngx.routing.SKRouteManager;
 import com.skobbler.ngx.routing.SKRouteSettings;
 import com.skobbler.ngx.routing.SKViaPoint;
+import com.skobbler.sdkdemo.activity.DialogMessage;
+import com.skobbler.sdkdemo.activity.MapActivity;
 import com.skobbler.sdkdemo.navigationui.autonight.SKToolsAutoNightManager;
 import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.ngx.util.SKLogging;
@@ -840,8 +843,28 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     public void onSpeedExceededWithInstruction(String instruction, boolean speedExceeded) {
     }
 
+
+    private void testingAlertDialog(){
+        DialogMessage dm = new DialogMessage(currentActivity);
+        dm.setMessage("cokolwiek", com.skobbler.sdkdemo.R.string.mes1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                Toast.makeText(currentActivity,"You clicked yes button",Toast.LENGTH_LONG).show();
+            }
+        }, com.skobbler.sdkdemo.R.string.mes2, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            } });
+
+        dm.showWithTimeout(5000);
+
+    }
+
+
     @Override
     public void onUpdateNavigationState(SKNavigationState skNavigationState) {
+        testingAlertDialog();
         SKLogging.writeLog("SKToolsLogicManager", "NAVIGATION STATE " + skNavigationState.toString(), SKLogging.LOG_DEBUG);
         if(currentUserDisplayMode == SKMapSettings.SKMapDisplayMode.MODE_3D){
             mapView.getMapSettings().setStreetNamePopupsShown(true);

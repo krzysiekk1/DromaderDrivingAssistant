@@ -110,6 +110,7 @@ import com.skobbler.ngx.sdktools.download.SKToolsDownloadManager;
 import com.skobbler.ngx.sdktools.onebox.SKOneBoxSearchResult;
 import com.skobbler.ngx.sdktools.onebox.listeners.OnListItemSelectedListener;
 import com.skobbler.ngx.sdktools.onebox.listeners.mOnClickListener;
+import com.skobbler.sdkdemo.fatigue.FatigueAlgorithm;
 import com.skobbler.sdkdemo.fragments.OneBoxExtFragment;
 import com.skobbler.sdkdemo.navigationui.SKToolsAdvicePlayer;
 import com.skobbler.sdkdemo.navigationui.SKToolsNavigationConfiguration;
@@ -443,6 +444,8 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
     private static final String[] INITIAL_PERMS={Manifest.permission.ACCESS_FINE_LOCATION};
+
+    private FatigueAlgorithm fatigueAlgorithm;
 
 
 
@@ -1015,7 +1018,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
 
     private void testingAlertDialog(){
-        DialogMessage dm = new DialogMessage(this, view);
+        DialogMessage dm = new DialogMessage(this);
         dm.setMessage("cokolwiek", R.string.mes1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {

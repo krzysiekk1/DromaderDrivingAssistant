@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 public class DialogMessage {
 
-    private View dmView;
+    //private View dmView;
     private AlertDialog.Builder alertDialogBuilder;
     private Context context;
 
@@ -30,8 +30,8 @@ public class DialogMessage {
     * użycie jest pokazane w funkcji testingAlertDialog() w MapActivity, obczajcie i róbcie tak samo
     * */
 
-    public DialogMessage(Context context, View view) {
-        this.dmView = view;
+    public DialogMessage(Context context) {
+        //this.dmView = view;
         this.context = context;
         this.alertDialogBuilder = new AlertDialog.Builder(context);
     }

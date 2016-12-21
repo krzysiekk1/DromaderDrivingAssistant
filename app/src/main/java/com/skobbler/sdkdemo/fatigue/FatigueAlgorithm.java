@@ -131,6 +131,8 @@ public class FatigueAlgorithm {
             //getting response if we should show information about fatigue!!!
             response = fatigueComputations.onCompute(localTime, executionTime, weather);
 
+            
+
             myHandler.postDelayed(mRunnable, MEASUREMENT_DELAY_TIME);
         }
     };

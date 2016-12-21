@@ -56,6 +56,7 @@ public class FuelStationStructure {
     }
 
 
+    public SKCoordinate getCoordinates() {return this.coordinates;}
 
     public void setPetrolCost(double price){
         this.petrol = price;

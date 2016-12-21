@@ -16,7 +16,7 @@ public class CostCalculator {
         double sum = 0.0;
 
         FuelCostCalculator fuelCostCalculator = new FuelCostCalculator();
-        sum += fuelCostCalculator.getFuelCost(routeInfo);
+        sum += fuelCostCalculator.getFuelCost(routeInfo, app);
 
         sum += TollsCostCalculator.getTollsCost(routeInfo, app);
 

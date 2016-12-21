@@ -26,7 +26,7 @@ public class TablesElements {
         this.fuel = new double[this.GV.size()];
 
         this.size = this.GV.size();
-        System.out.println("this.GV.size: "+ this.size);
+       // System.out.println("this.GV.size: "+ this.size);
 
     }
 

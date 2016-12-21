@@ -110,7 +110,7 @@ public class Algorithm {
 */
 
             double bestResult = dynamic.getBestResult();
-            System.out.println(bestResult);
+            //System.out.println(bestResult);
             return dynamic.getBestResult();
 
         }

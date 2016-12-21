@@ -31,12 +31,12 @@ public class DynamicFunction {
         this.listSize = this.list.list.size();
         this.A = new TablesElements[listSize][fillStops];
 
-        System.out.println("1st size: "+listSize+"2nd size: "+fillStops);
+       // System.out.println("1st size: "+listSize+"2nd size: "+fillStops);
         for(int i = 0; i< this.list.list.size(); i++){
 
 
-            System.out.println("mylist size: "+this.list.list.get(i).GV.size());
-            System.out.println("");
+         //   System.out.println("mylist size: "+this.list.list.get(i).GV.size());
+         //   System.out.println("");
             for(int j=0; j< this.fillStops; j++){
                 List<GVTuple> mylist = this.list.list.get(i).GV;
                 A[i][j] = new TablesElements(mylist);
@@ -55,7 +55,7 @@ public class DynamicFunction {
 
             distance = lastElementDistance - this.list.distances.get(i);
 
-            System.out.println("For loop 1");
+          //  System.out.println("For loop 1");
             for(GVTuple g: A[i][1].GV){
                 System.out.println("For loop 2");
                 if(distance <= this.tankVolume && g.getFuelLevel() <= this.tankVolume){
@@ -84,16 +84,16 @@ public class DynamicFunction {
                 vertexListR.add(new VertexRange(i));
             }
         }
-        System.out.println("1");
+     //   System.out.println("1");
 
         for(VertexRange v: vertexListR){
-            System.out.println("11");
+        //    System.out.println("11");
             double d = list.distances.get(v.vertexNumber) - distanceU;
-            System.out.println("12");
+        //    System.out.println("12");
             if(list.costFunction.get(v.vertexNumber) <= costU){
-                v.indep((A[v.vertexNumber][stopsLeftQ - 1].getVertexFuel(0.0)) + (d*costU));System.out.println("if");
+                v.indep((A[v.vertexNumber][stopsLeftQ - 1].getVertexFuel(0.0)) + (d*costU));//System.out.println("if");
             } else {
-                v.indep((A[v.vertexNumber][stopsLeftQ - 1].getVertexFuel(tankVolume - d)) + (tankVolume*costU));System.out.println("else");
+                v.indep((A[v.vertexNumber][stopsLeftQ - 1].getVertexFuel(tankVolume - d)) + (tankVolume*costU));//System.out.println("else");
             }
 
         }
@@ -106,16 +106,16 @@ public class DynamicFunction {
             }
         });
 
-        System.out.println("2");
+       // System.out.println("2");
 
         int vertexInR = 0;
 
         for(GVTuple GV: list.list.get(vertexU).GV){
-            System.out.println("3");
+           // System.out.println("3");
 
             if(vertexListR.size()!=0) {
                 while (GV.getFuelLevel() > (list.distances.get(vertexListR.get(vertexInR).vertexNumber) - distanceU)) {
-                    System.out.println("4");
+              //      System.out.println("4");
                     // increasing v value
 
                     if (vertexListR.size() > (vertexInR + 1)) {
@@ -139,10 +139,10 @@ public class DynamicFunction {
         double bestResult = Double.POSITIVE_INFINITY;
 
         for (int i = 1; i<fillStops; i++){
-            System.out.println("getBestResult: i = "+ i);
+          //  System.out.println("getBestResult: i = "+ i);
 
-            System.out.println(A[0][i].getSize());
-            System.out.println(A[0][i].getVertexFuel(0.0));
+          //  System.out.println(A[0][i].getSize());
+          //  System.out.println(A[0][i].getVertexFuel(0.0));
 
             if((A[0][i].getVertexFuel(0.0)) < bestResult){
 

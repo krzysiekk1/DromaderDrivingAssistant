@@ -32,7 +32,7 @@ public class HotelSearch implements SKSearchListener {
     SKCoordinate currentCoordinate;
     SKSearchStatus status;
 
-    private void startSearch() {
+    public void startSearch() {
         searchManager = new SKSearchManager(this);
         searchObject = new SKNearbySearchSettings();
         currentPosition = SKPositionerManager.getInstance().getCurrentGPSPosition(true);

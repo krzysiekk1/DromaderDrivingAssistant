@@ -84,6 +84,11 @@
     <string name="round_trip">Round trip on</string>
     <string name="round_trip_off">Round trip off</string>
 
+    <!--Messages-->
+    <string name="go_to_hotel">Go to the hotel!</string>
+    <string name="go_on_parking">Go on car park!</string>
+    <string name="dismiss">Dismiss!</string>
+
     <!--Settings-->
     <string name="app_settings_button">Application settings</string>
     <string name="navi_settings_button">Navigation settings</string>

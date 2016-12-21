@@ -47,10 +47,14 @@ import com.skobbler.sdkdemo.activity.DialogMessage;
 import com.skobbler.sdkdemo.activity.MapActivity;
 import com.skobbler.sdkdemo.costs.CostCalculator;
 import com.skobbler.sdkdemo.fatigue.FatigueAlgorithm;
+import com.skobbler.sdkdemo.fatigue.HotelSearch;
+import com.skobbler.sdkdemo.fatigue.ParkingSearch;
 import com.skobbler.sdkdemo.navigationui.autonight.SKToolsAutoNightManager;
 import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.ngx.util.SKLogging;
 import com.skobbler.sdkdemo.costs.tolls.TollsCostCalculator;
+
+import static com.skobbler.sdkdemo.activity.MapActivity.VIA_POINT_ICON_ID;
 
 /**
  * This class handles the logic related to the navigation and route calculation.
@@ -887,28 +891,62 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
 
     private void fatigueMessage(){
         DialogMessage dm = new DialogMessage(currentActivity);
-      /*  dm.setMessage("You are probably tired. What do you want to do?",
-                "Go to the hotel!",
+        dm.setMessage("You are probably tired. What do you want to do?",
+                R.string.go_to_hotel,
+                new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        hotelCoordinates = null;
+                        HotelSearch hotelSearch = new HotelSearch();
+                        hotelSearch.startSearch();
+
+                        while(hotelCoordinates == null){
+
+                        }
+
+                        SKViaPoint viaPoint = new SKViaPoint(VIA_POINT_ICON_ID, hotelCoordinates);
+
+                        SKRouteManager.getInstance().addViaPoint(viaPoint, -1);
+
+                        fatigueAlgorithm.takeBreak();
+
+                    }
+                },
+                R.string.go_on_parking,
+                new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        parkingCoordinates = null;
+                        ParkingSearch parkingSearch = new ParkingSearch();
+                        parkingSearch.startSearch();
+
+                        while(parkingCoordinates == null){
+
+                        }
+
+                        SKViaPoint viaPoint = new SKViaPoint(VIA_POINT_ICON_ID, parkingCoordinates);
+
+                        SKRouteManager.getInstance().addViaPoint(viaPoint, -1);
+
+                    fatigueAlgorithm.takeBreak();
+                    }
+                },
+                R.string.dismiss,
                 new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                    }
-                }
-                ,"Go on car park!",
-                new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
 
-                    }
-                },"Dismiss!",
-                new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                        fatigueAlgorithm.dismiss();
 
+                        dialog.cancel();
                     }
-                });*/
+                });
+
+        dm.showWithTimeout(15000);
+
     }
+
 
 
     @Override

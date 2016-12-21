@@ -3,7 +3,9 @@ package com.skobbler.sdkdemo.petrolstations;
 import com.skobbler.ngx.SKCategories;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.routing.SKExtendedRoutePosition;
+import com.skobbler.ngx.routing.SKRouteInfo;
 import com.skobbler.ngx.routing.SKRouteManager;
+import com.skobbler.ngx.sdktools.onebox.utils.SKToolsUtils;
 import com.skobbler.ngx.search.SKNearbySearchSettings;
 import com.skobbler.ngx.search.SKSearchListener;
 import com.skobbler.ngx.search.SKSearchManager;
@@ -34,22 +36,36 @@ public class FuelAlgorithm implements SKSearchListener{
 
     private List<SKCoordinate> coordinates = new ArrayList<SKCoordinate>();
 
+    private List<GasStation> list = new ArrayList<GasStation>();
+
     private FuelStationList stationList = new FuelStationList();
 
     private SKCoordinate startCoordinates;
+    private SKRouteInfo routeInfo;
 
-    public FuelAlgorithm(int routeID, SKCoordinate startCoordinates){
+    public FuelAlgorithm(SKRouteInfo routeInfo){
 
-        this.startCoordinates = startCoordinates;
+        this.routeInfo = routeInfo;
+
+        double allDistance = routeInfo.getDistance()/1000.0;
+        double straightDistance;
+
+        int routeID = routeInfo.getRouteID();
+
+       // this.startCoordinates = startCoordinates;
         
         this.stationList = new FuelStationList();
 
         //getting coordinates across whole route
         List<SKCoordinate> tempList = new ArrayList<SKCoordinate>();
         List<SKExtendedRoutePosition> positions = SKRouteManager.getInstance().getExtendedRoutePointsForRouteByUniqueId(routeID);
+
+
         for (SKExtendedRoutePosition pos : positions){
             tempList.add(new SKCoordinate(pos.getCoordinate().getLongitude(), pos.getCoordinate().getLatitude()));
         }
+
+
 
         int END_COORDINATE_NR = tempList.size() - 1;
 
@@ -73,6 +89,8 @@ public class FuelAlgorithm implements SKSearchListener{
             }
         }
 
+
+
     }
 
     @Override
@@ -85,6 +103,15 @@ public class FuelAlgorithm implements SKSearchListener{
         for (SKSearchResult result : searchResults) {
             stationList.addToList(result.getLocation());
         }
+    }
+
+
+    public double getMinimalCost() {
+
+
+
+
+        return 2.0;
     }
 
 }

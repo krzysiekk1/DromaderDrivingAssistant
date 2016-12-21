@@ -1,15 +1,11 @@
 package com.skobbler.sdkdemo.activity;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceScreen;
-import android.text.InputType;
 import android.util.Log;
 import com.skobbler.sdkdemo.R;
 import com.skobbler.sdkdemo.util.PreferenceTypes;
@@ -21,19 +17,9 @@ public class AppSettingsActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.app_settings);
 
-        final CheckBoxPreference checkBoxCarParksAlerts = (CheckBoxPreference) findPreference(PreferenceTypes
-                .K_CAR_PARKS_ALERTS);
-        checkBoxCarParksAlerts.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                Log.d("MyApp", "Pref " + preference.getKey() + " changed to " + newValue.toString());
-                return true;
-            }
-        });
-
-        final CheckBoxPreference checkBoxAccommodationAlerts = (CheckBoxPreference) findPreference(PreferenceTypes
-                .K_ACCOMMODATION_ALERTS);
-        checkBoxAccommodationAlerts.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        final CheckBoxPreference checkBoxFatigueAlerts = (CheckBoxPreference) findPreference(PreferenceTypes
+                .K_FATIGUE_ALERTS);
+        checkBoxFatigueAlerts.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 Log.d("MyApp", "Pref " + preference.getKey() + " changed to " + newValue.toString());

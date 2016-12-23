@@ -85,8 +85,8 @@
     <string name="round_trip_off">Round trip off</string>
 
     <!--Messages-->
-    <string name="go_to_hotel">Go to the hotel!</string>
-    <string name="go_on_parking">Go on car park!</string>
+    <string name="go_to_hotel">Hotel</string>
+    <string name="go_on_parking">Car park</string>
     <string name="dismiss">Dismiss!</string>
 
     <!--Settings-->

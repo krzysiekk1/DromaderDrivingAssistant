@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.Toast;
 import com.skobbler.ngx.R;
+import com.skobbler.ngx.SKCategories;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.SKMaps;
 import com.skobbler.ngx.map.SKAnnotation;
@@ -46,6 +48,10 @@ import com.skobbler.ngx.routing.SKRouteListener;
 import com.skobbler.ngx.routing.SKRouteManager;
 import com.skobbler.ngx.routing.SKRouteSettings;
 import com.skobbler.ngx.routing.SKViaPoint;
+import com.skobbler.ngx.search.SKNearbySearchSettings;
+import com.skobbler.ngx.search.SKSearchListener;
+import com.skobbler.ngx.search.SKSearchManager;
+import com.skobbler.ngx.search.SKSearchStatus;
 import com.skobbler.sdkdemo.activity.DialogMessage;
 import com.skobbler.sdkdemo.activity.MapActivity;
 import com.skobbler.sdkdemo.costs.CostCalculator;
@@ -135,6 +141,10 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     private SKCoordinate hotelCoordinates;
     private SKCoordinate parkingCoordinates;
 
+    private int sth = 0;
+
+    private int messageResponse = 0;
+
     public boolean startPedestrian=false;
 
     /**
@@ -152,6 +162,8 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         }
         return instance;
     }
+
+
 
     private SKToolsLogicManager() {
         naviManager = SKNavigationManager.getInstance();
@@ -324,7 +336,8 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
             navigationListener.onNavigationStarted();
         }
 
-        fatigueAlgorithm = new FatigueAlgorithm();
+
+        fatigueAlgorithm = new FatigueAlgorithm(currentActivity.getApplicationContext());
         fatigueAlgorithm.startMeasurement();
     }
 
@@ -885,6 +898,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
 
     public void setHotelCoordinates(SKCoordinate coordinates){
         this.hotelCoordinates = coordinates;
+        Log.d("myTag",coordinates.toString()+ "hotel coordinates");
     }
 
 
@@ -900,19 +914,12 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                 new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        hotelCoordinates = null;
-                        HotelSearch hotelSearch = new HotelSearch();
-                        hotelSearch.startSearch();
 
-                        while(hotelCoordinates == null){
-
-                        }
-
-                        SKViaPoint viaPoint = new SKViaPoint(VIA_POINT_ICON_ID, hotelCoordinates);
-
-                        SKRouteManager.getInstance().addViaPoint(viaPoint, -1);
+                        messageResponse = 1;
 
                         fatigueAlgorithm.takeBreak();
+
+                        dialog.cancel();
 
                     }
                 },
@@ -956,11 +963,39 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     @Override
     public void onUpdateNavigationState(SKNavigationState skNavigationState) {
 
-        fatigueMessage();
-
+        sth++;
+        if(sth == 10) {
+            fatigueMessage();
+            sth = 0;
+        }
         if(this.fatigueAlgorithm.getResponse()){
             fatigueMessage();
         }
+
+        if(messageResponse == 1){
+
+            hotelCoordinates = null;
+
+            HotelSearch hotelSearch = new HotelSearch();
+            hotelSearch.startSearch();
+
+            if(Looper.myLooper() == Looper.getMainLooper()) {
+                Log.d("myTag", "SKToolsLOgicManager is main thread");
+
+                // Current Thread is Main Thread.
+            }
+            while(hotelCoordinates == null){
+
+            }
+
+            Log.d("myTag","After while");
+
+            SKViaPoint viaPoint = new SKViaPoint(VIA_POINT_ICON_ID, hotelCoordinates);
+
+            SKRouteManager.getInstance().addViaPoint(viaPoint, -1);
+            messageResponse = 0;
+        }
+
 
 
         //testingAlertDialog();
@@ -1094,7 +1129,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                         SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, cost);
                         LayoutInflater inflater = (LayoutInflater) currentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                         View view = currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
-                        new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(), mapView, inflater, view, currentActivity.getResources(), currentActivity.getPackageName());
+                       // new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(), mapView, inflater, view, currentActivity.getResources(), currentActivity.getPackageName());
 
                     }
 

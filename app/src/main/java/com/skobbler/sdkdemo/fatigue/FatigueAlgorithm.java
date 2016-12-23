@@ -1,6 +1,7 @@
 package com.skobbler.sdkdemo.fatigue;
 
 
+import android.content.Context;
 import android.os.Handler;
 
 import com.skobbler.sdkdemo.activity.MapActivity;
@@ -35,7 +36,7 @@ public class FatigueAlgorithm {
 
     //initialization taking most important arguments
 
-    private FatigueComputations fatigueComputations = new FatigueComputations();
+    private FatigueComputations fatigueComputations;
     private MapActivity mapActivityInstance;
 
     // Handlers stuff
@@ -80,13 +81,16 @@ public class FatigueAlgorithm {
     private boolean pause;
 
 
+
     /*
     * Initializing FatigueAlgorithm from MapActivity with its instance
     * */
 
-    public FatigueAlgorithm(){
+    public FatigueAlgorithm(Context context){
         executionStartTime = System.currentTimeMillis();
         pause = false;
+
+        fatigueComputations = new FatigueComputations(context);
         //this.mapActivityInstance = myMapActivity;
     }
 

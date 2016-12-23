@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -114,6 +115,7 @@ public class TouristAttractionsActivity extends Activity implements SKSearchList
 
     @Override
     public void onReceivedSearchResults(final List<SKSearchResult> searchResults) {
+      //  Log.d("myTag","tourist");
         buildResultsMap(searchResults);
         operationInProgressLabel.setVisibility(View.GONE);
         listView.setVisibility(View.VISIBLE);

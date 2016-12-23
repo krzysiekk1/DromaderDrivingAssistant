@@ -1,7 +1,15 @@
 package com.skobbler.sdkdemo.fatigue;
 
+import android.content.Context;
+import android.content.res.AssetManager;
+
+import com.skobbler.sdkdemo.R;
+
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by marcinsendera on 24.11.2016.
@@ -11,7 +19,7 @@ public class FuzzyLogicClass {
 
     // Filename with algorithm's fuzzy logic
     //TODO While debugging please check if the path is correct!!!!!!!!
-    private static final String fatigue_filename = "src/main/java/com/skobbler/sdkdemo/fatigue/fatigue.fcl";
+    private static final String fatigue_filename = "/fatigue.fcl";
 
     // Names of variables
     private static final String executionTime = "execution";
@@ -26,12 +34,16 @@ public class FuzzyLogicClass {
     // Function Block
     private FunctionBlock fb;
 
+    private Context context;
 
 
-    public FuzzyLogicClass() throws FCLFileCannotBeOpenedException {
+
+    public FuzzyLogicClass(Context context) throws FCLFileCannotBeOpenedException {
 
 
-        this.fis = FIS.load(this.fatigue_filename, true);
+        this.context = context;
+        //context.getResources().openRawResource(R.raw.fatigue);
+        this.fis = FIS.load(context.getResources().openRawResource(R.raw.fatigue), true);
 
         if(fis == null) {
 

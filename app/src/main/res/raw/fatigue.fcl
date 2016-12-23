@@ -1,0 +1,55 @@
+/*
+There is the fatigue.fcl file which include fuzzy logic for the fatigue computation algorithm
+*/
+
+FUNCTION_BLOCK fatigue	// Block definition - block_function name fatigue
+
+VAR_INPUT				// Define 2 input variables: localTime for the started timeZone and executionTime
+	execution : REAL;
+	local : REAL;
+END_VAR
+
+VAR_OUTPUT				// Define output variable - driver's fatigue at the moment
+	fatigue : REAL;
+END_VAR
+
+FUZZIFY execution			// Fuzzify input variable 'execution': {'short', 'mid' , 'long'}, every term is continuous
+	TERM short := sigm -30 30;
+	TERM mid := gauss 75 15;
+	TERM long := sigm 20 100;
+END_FUZZIFY
+
+FUZZIFY local			// Fuzzify input variable 'local': { 'morning', 'midday', 'afternoon', 'evening', 'beforemidnight', 'aftermidnight', 'night' }, every term is continuous
+	TERM morning := gbell 2 3 9 ;
+	TERM midday := gauss 12 1;
+	TERM afternoon := gbell 1.5 2.5 16;
+	TERM evening := gauss 19.5 1.5;
+	TERM beforemidnight := gauss 23 1.5;
+	TERM aftermidnight := gauss 1 1;
+	TERM night := gauss 4 2;
+END_FUZZIFY
+
+DEFUZZIFY fatigue			// Defzzzify output variable 'fatigue' : {'small', 'big' }, term are continuous
+	TERM small := sigm -1 10;
+	TERM big := sigm 1 10; // we are using sigmoidal shape to define if we should suggest taking a break or not
+	METHOD : COA;		// Use 'Center Of Gravity' defuzzification method
+	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
+END_DEFUZZIFY
+
+RULEBLOCK No1
+	AND : MIN;			// Use 'min' for 'and' (also implicit use 'max' for 'or' to fulfill DeMorgan's Law)
+	ACT : MIN;			// Use 'min' activation method
+	ACCU : MAX;			// Use 'max' accumulation method
+
+    RULE 1 : IF execution IS short THEN fatigue IS small;
+    RULE 2 : IF execution IS long THEN fatigue IS big;
+    RULE 3 : IF local IS morning AND (execution IS short OR execution IS mid) THEN fatigue IS small;
+    RULE 4 : IF local IS midday AND (execution IS short OR execution IS mid) THEN fatigue IS small;
+    RULE 5 : IF local IS afternoon AND (execution IS long OR execution IS mid) THEN fatigue IS big;
+    RULE 6 : IF local IS evening AND (execution IS short OR execution IS mid) THEN fatigue IS small;
+    RULE 7 : IF local IS beforemidnight AND (execution IS long OR execution IS mid) THEN fatigue IS big;
+    RULE 8 : IF local IS aftermidnight AND (execution IS long OR execution IS mid) THEN fatigue IS big;
+    RULE 9 : IF local IS night THEN fatigue IS big;
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK

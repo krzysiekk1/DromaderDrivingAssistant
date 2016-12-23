@@ -1,5 +1,7 @@
 package com.skobbler.sdkdemo.fatigue;
 
+import android.content.Context;
+
 import java.io.IOException;
 
 /**
@@ -22,11 +24,12 @@ public class FatigueComputations {
     private double myExecutionTime;
 
 
-    public FatigueComputations() {
+
+    public FatigueComputations(Context context) {
 
         // handling exception while creating a new instance of a FuzzyLogicClass
         try {
-            this.fuzzyLogic = new FuzzyLogicClass();
+            this.fuzzyLogic = new FuzzyLogicClass(context);
         } catch (FCLFileCannotBeOpenedException e) {
 
             e.printStackTrace();

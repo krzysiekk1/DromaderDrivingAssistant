@@ -55,6 +55,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.skobbler.ngx.SKCategories;
 import com.skobbler.ngx.SKCategories.SKPOICategory;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.SKMaps;
@@ -108,10 +109,15 @@ import com.skobbler.ngx.sdktools.download.SKToolsDownloadItem;
 import com.skobbler.ngx.sdktools.download.SKToolsDownloadListener;
 import com.skobbler.ngx.sdktools.download.SKToolsDownloadManager;
 import com.skobbler.ngx.sdktools.onebox.listeners.mOnClickListener;
+import com.skobbler.ngx.search.SKNearbySearchSettings;
+import com.skobbler.ngx.search.SKSearchListener;
+import com.skobbler.ngx.search.SKSearchManager;
+import com.skobbler.ngx.search.SKSearchStatus;
 import com.skobbler.sdkdemo.costs.CostCalculator;
 import com.skobbler.sdkdemo.fatigue.FatigueAlgorithm;
 import com.skobbler.sdkdemo.fragments.OneBoxExtFragment;
 import com.skobbler.sdkdemo.navigationui.SKToolsAdvicePlayer;
+import com.skobbler.sdkdemo.navigationui.SKToolsLogicManager;
 import com.skobbler.sdkdemo.navigationui.SKToolsNavigationConfiguration;
 import com.skobbler.sdkdemo.navigationui.SKToolsNavigationListener;
 import com.skobbler.sdkdemo.navigationui.SKToolsNavigationManager;
@@ -137,7 +143,8 @@ import com.skobbler.sdkdemo.util.WeatherTask;
 
 public class MapActivity extends Activity implements SKMapSurfaceListener, SKRouteListener, SKNavigationListener,
         SKRealReachListener, SKPOITrackerListener, SKCurrentPositionListener, SensorEventListener,
-        SKMapVersioningListener, SKToolsNavigationListener, mOnClickListener {
+        SKMapVersioningListener, SKToolsNavigationListener, mOnClickListener{
+
 
     private static final byte GREEN_PIN_ICON_ID = 0;
 

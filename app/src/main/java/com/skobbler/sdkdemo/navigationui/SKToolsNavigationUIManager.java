@@ -17,6 +17,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -37,18 +38,28 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.skobbler.ngx.R;
+import com.skobbler.ngx.SKCategories;
+import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.SKMaps;
 import com.skobbler.ngx.map.SKMapSettings;
 import com.skobbler.ngx.navigation.SKNavigationManager;
 import com.skobbler.ngx.navigation.SKNavigationState;
 import com.skobbler.ngx.navigation.SKVisualAdviceColor;
+import com.skobbler.ngx.positioner.SKPosition;
+import com.skobbler.ngx.positioner.SKPositionerManager;
 import com.skobbler.ngx.routing.SKRouteListener;
 import com.skobbler.ngx.routing.SKRouteSettings;
+import com.skobbler.ngx.search.SKNearbySearchSettings;
+import com.skobbler.ngx.search.SKSearchListener;
+import com.skobbler.ngx.search.SKSearchManager;
+import com.skobbler.ngx.search.SKSearchResult;
+import com.skobbler.ngx.search.SKSearchStatus;
+import com.skobbler.ngx.util.SKLogging;
 
 /**
  * This class handles the user interface related to the navigation experience.
  */
-class SKToolsNavigationUIManager {
+class SKToolsNavigationUIManager{
 
     /**
      * Singleton instance for current class
@@ -532,6 +543,8 @@ class SKToolsNavigationUIManager {
         this.currentActivity = activity;
         rootLayout = (ViewGroup) currentActivity.findViewById(rootId);
     }
+
+
 
 
     /**

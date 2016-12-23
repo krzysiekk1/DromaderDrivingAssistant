@@ -1,5 +1,11 @@
 package com.skobbler.sdkdemo.fatigue;
 
+import android.app.Activity;
+import android.os.AsyncTask;
+import android.os.Looper;
+import android.util.Log;
+import android.widget.Toast;
+
 import com.skobbler.ngx.SKCategories;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.positioner.SKPosition;
@@ -43,19 +49,34 @@ public class HotelSearch implements SKSearchListener {
         searchObject.setSearchCategories(searchCategories);
         searchObject.setSearchTerm(""); // all
         searchObject.setSearchMode(SKSearchManager.SKSearchMode.OFFLINE);
+        Log.d("myTag","status1");
         status = searchManager.nearbySearch(searchObject);
+        Log.d("myTag","status2");
         if (status != SKSearchStatus.SK_SEARCH_NO_ERROR) {
             SKLogging.writeLog("SKSearchStatus: ", status.toString(), 0);
+
+        }
+        Log.d("myTag","status3");
+        if(Looper.myLooper() == Looper.getMainLooper()) {
+            Log.d("myTag", "HotelSearch is main thread");
+
+            // Current Thread is Main Thread.
         }
     }
 
+
     @Override
-    public void onReceivedSearchResults(final List<SKSearchResult> searchResults) {
-        if (searchResults.size() > 0) {
-            hotelCoordinate = searchResults.get(0).getLocation();
-            SKToolsLogicManager skToolsLogicManager = SKToolsLogicManager.getInstance();
-            skToolsLogicManager.setHotelCoordinates(hotelCoordinate);
-        }
+    public void onReceivedSearchResults(List<SKSearchResult> searchResults) {
+
+            Log.d("myTag","on received search results");
+            if (searchResults.size() > 0) {
+                hotelCoordinate = searchResults.get(0).getLocation();
+                Log.d("myTag","1st find hotel coord" + hotelCoordinate.toString());
+                SKToolsLogicManager skToolsLogicManager = SKToolsLogicManager.getInstance();
+                skToolsLogicManager.setHotelCoordinates(hotelCoordinate);
+            }
+
     }
+
 
 }

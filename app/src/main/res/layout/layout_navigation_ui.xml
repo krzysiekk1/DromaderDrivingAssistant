@@ -85,15 +85,15 @@
     
     </LinearLayout>
 
-    <!--<ImageButton-->
-        <!--android:id="@+id/position_me_navigation_ui_button"-->
-        <!--android:layout_width="70dp"-->
-        <!--android:layout_height="50dp"-->
-        <!--android:layout_margin="5dp"-->
-        <!--android:onClick="onClick"-->
-        <!--android:background="@android:color/darker_gray"-->
-        <!--android:src="@drawable/icon_position_me"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_alignParentLeft="true" />-->
+    <ImageButton
+        android:id="@+id/position_me_navigation_ui_button"
+        android:layout_width="70dp"
+        android:layout_height="50dp"
+        android:layout_margin="5dp"
+        android:onClick="onClick"
+        android:background="@android:color/darker_gray"
+        android:src="@drawable/icon_position_me"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true" />
 
 </RelativeLayout>

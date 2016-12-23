@@ -213,7 +213,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     /**
      * Current option selected
      */
-    private MapOption currentMapOption = MapOption.NAVI_UI;
+    private MapOption currentMapOption = MapOption.MAP_DISPLAY;
 
     /**
      * Application context object
@@ -754,10 +754,10 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             startOrientationSensor();
         }
 
-//        if (currentMapOption == MapOption.NAVI_UI) {
-//            final ToggleButton selectStartPointBtn = (ToggleButton) findViewById(R.id.select_start_point_button);
-//            selectStartPointBtn.setVisibility(View.GONE);
-//        }
+        if (currentMapOption == MapOption.NAVI_UI) {
+            final ToggleButton selectStartPointBtn = (ToggleButton) findViewById(R.id.select_start_point_button);
+            selectStartPointBtn.setVisibility(View.GONE);
+        }
 
         if (Utils.isMultipleMapSupportEnabled == false && currentMapOption == MapOption.HEAT_MAP && heatMapCategories != null) {
             mapView.showHeatMapsWithPoiType(heatMapCategories);
@@ -794,6 +794,8 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
     @Override
     public void onSurfaceCreated(SKMapViewHolder mapHolder) {
+        positionMeButton.setVisibility(View.GONE);
+        headingButton.setVisibility(View.GONE);
         View chessBackground = view.findViewById(R.id.chess_board_background);
         chessBackground.setVisibility(View.GONE);
         mapView = mapViewGroup.getMapSurfaceView();
@@ -996,19 +998,19 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 mapView.deleteAnnotation(VIA_POINT_ICON_ID);
                 findViewById(R.id.clear_via_point_button).setVisibility(View.GONE);
                 break;
-//            case R.id.position_me_navigation_ui_button:
-//                if (currentPosition != null) {
-//                    mapView.centerOnCurrentPosition(15, true, 1000);
-//                    mapView.getMapSettings().setOrientationIndicatorType(
-//                            SKMapSurfaceView.SKOrientationIndicatorType.DEFAULT);
-//                    mapView.getMapSettings()
-//                            .setHeadingMode(SKMapSettings.SKHeadingMode.NONE);
-//                } else {
-//                    Toast.makeText(MapActivity.this,
-//                            getString(R.string.no_position_available),
-//                            Toast.LENGTH_LONG).show();
-//                }
-//                break;
+            case R.id.position_me_navigation_ui_button:
+                if (currentPosition != null) {
+                    mapView.centerOnCurrentPosition(15, true, 1000);
+                    mapView.getMapSettings().setOrientationIndicatorType(
+                            SKMapSurfaceView.SKOrientationIndicatorType.DEFAULT);
+                    mapView.getMapSettings()
+                            .setHeadingMode(SKMapSettings.SKHeadingMode.NONE);
+                } else {
+                    Toast.makeText(MapActivity.this,
+                            getString(R.string.no_position_available),
+                            Toast.LENGTH_LONG).show();
+                }
+                break;
 
             default:
                 break;
@@ -1453,8 +1455,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
                 break;
         }
         currentMapOption = MapOption.NAVI_UI;
-        positionMeButton.setVisibility(View.VISIBLE);
-        headingButton.setVisibility(View.VISIBLE);
     }
 
     private void deselectAlternativeRoutesButtons() {
@@ -2431,7 +2431,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
             default:
                 break;
         }
-        if (currentMapOption != MapOption.MAP_DISPLAY && currentMapOption != MapOption.NAVI_UI) {
+        if (currentMapOption != MapOption.MAP_DISPLAY) {
             positionMeButton.setVisibility(View.GONE);
             headingButton.setVisibility(View.GONE);
         }

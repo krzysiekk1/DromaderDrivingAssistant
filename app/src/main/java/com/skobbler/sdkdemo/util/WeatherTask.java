@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -48,8 +49,8 @@ public class WeatherTask extends AsyncTask {
     private SKMapSurfaceView mapView;
     private RelativeLayout customView;
     String iconString;
-    ImageView imgView;
-    ImageView imgView2;
+    View view;
+    ImageView view2;
     LayoutInflater inflater;
     List<SKCoordinate> coordinates;
     Bitmap myIcon = null;
@@ -115,15 +116,14 @@ public class WeatherTask extends AsyncTask {
         coordinates = getCoordinatesForWeather((int) params[0]);
         this.mapView = (SKMapSurfaceView) params[1];
         this.inflater = (LayoutInflater) params[2];
-        this.imgView = (ImageView) params[3];
-        this.imgView2 = (ImageView) params[4];
+        this.view = (View) params[3];
         for (SKCoordinate coordinate : coordinates){
             connectAndDownload(String.valueOf(coordinate.getLatitude()), String.valueOf(coordinate.getLongitude()));
         }
 
         try {
             InputStream in = new java.net.URL("http://openweathermap.org/img/w/10d.png").openStream();
-            this.myIcon = BitmapFactory.decodeStream(in);
+            this.myIcon2 = BitmapFactory.decodeStream(in);
         } catch (Exception e) {
             Log.e("Error", e.getMessage());
             System.out.println("BUOND");
@@ -139,8 +139,8 @@ public class WeatherTask extends AsyncTask {
         super.onPreExecute();
     }
 
-//    public copyImgView (ImageView imgView){
-//        this.imgView2 = imgView
+//    public copyview (ImageView view){
+//        this.view2 = view
 //    }
 
     @Override
@@ -162,26 +162,51 @@ public class WeatherTask extends AsyncTask {
                 }
 
             }
-            SKCoordinate coordinate = new SKCoordinate(50,19.9);
-            SKAnnotation annotationWithTextureId = new SKAnnotation(10);
-            annotationWithTextureId.setLocation(coordinate);
-            annotationWithTextureId.setMininumZoomLevel(5);
 
-            SKAnnotationView annotationView = new SKAnnotationView();
+
+            SKCoordinate coordinate = new SKCoordinate(50,19.9);
+            SKAnnotation annotation1 = new SKAnnotation(10);
+            annotation1.setLocation(coordinate);
+            annotation1.setMininumZoomLevel(5);
+
+            SKCoordinate coordinate2 = new SKCoordinate(50,19.6);
+            SKAnnotation annotation2 = new SKAnnotation(11);
+            annotation2.setLocation(coordinate2);
+            annotation2.setMininumZoomLevel(5);
+
+            SKAnnotationView annotationView1 = new SKAnnotationView();
+
             customView = (RelativeLayout)(inflater.inflate(R.layout.layout_custom_view, null, false));
+
+            ImageView imgView = (ImageView) view;
+            imgView.setImageBitmap(myIcon2);
+
+            annotationView1.setView(view);
+            annotation1.setAnnotationView(annotationView1);
+            annotation2.setAnnotationView(annotationView1);
+            mapView.addAnnotation(annotation1, SKAnimationSettings.ANIMATION_NONE);
+            mapView.addAnnotation(annotation2, SKAnimationSettings.ANIMATION_NONE);
+            mapView.setZoom(13);
+
+
+
+
+
+//            SKAnnotationView annotationView = new SKAnnotationView();
+//            customView = (RelativeLayout)(inflater.inflate(R.layout.layout_custom_view, null, false));
 //            imgView.setImageBitmap(myIcon);
 //            annotationView.setView(imgView);
 //            annotationWithTextureId.setAnnotationView(annotationView);
 //            mapView.addAnnotation(annotationWithTextureId, SKAnimationSettings.ANIMATION_NONE);
 
 
-            SKCoordinate coordinate2 = new SKCoordinate(50,17.6);
-            SKAnnotation annotationWithTextureId2 = new SKAnnotation(11);
-            annotationWithTextureId2.setLocation(coordinate2);
-            annotationWithTextureId2.setMininumZoomLevel(5);
-            SKAnnotationView annotationView2 = new SKAnnotationView();
+//            SKCoordinate coordinate2 = new SKCoordinate(50,17.6);
+//            SKAnnotation annotationWithTextureId2 = new SKAnnotation(11);
+//            annotationWithTextureId2.setLocation(coordinate2);
+//            annotationWithTextureId2.setMininumZoomLevel(5);
+//            SKAnnotationView annotationView2 = new SKAnnotationView();
 //            RelativeLayout customView2 = (RelativeLayout)(inflater.inflate(R.layout.layout_custom_view, null, false));
-            imgView2.setImageBitmap(myIcon2);
+//            imgView2.setImageBitmap(myIcon2);
 //            annotationView.setView(imgView2);
 //            annotationWithTextureId2.setAnnotationView(annotationView2);
 //            mapView.addAnnotation(annotationWithTextureId2, SKAnimationSettings.ANIMATION_NONE);

@@ -129,6 +129,7 @@ import com.skobbler.sdkdemo.fragments.MapFragment;
 import com.skobbler.sdkdemo.menu.MenuDrawerItem;
 import com.skobbler.sdkdemo.util.Utils;
 import com.skobbler.sdkdemo.util.PreferenceTypes;
+import com.skobbler.sdkdemo.util.WeatherTask;
 
 /**
  * Activity displaying the map
@@ -1261,34 +1262,39 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
     private void prepareAnnotations() {
 
         // Add annotation using texture ID - from the json files.
-        // get the annotation object
-        SKAnnotation annotationWithTextureId = new SKAnnotation(10);
-        // set annotation location
-        annotationWithTextureId.setLocation(new SKCoordinate(37.7765, -122.4200));
-        // set minimum zoom level at which the annotation should be visible
-        annotationWithTextureId.setMininumZoomLevel(5);
-        // set the annotation's type
-        annotationWithTextureId.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_BLUE);
-        // render annotation on map
-        mapView.addAnnotation(annotationWithTextureId, SKAnimationSettings.ANIMATION_NONE);
+//        // get the annotation object
+//        SKAnnotation annotationWithTextureId = new SKAnnotation(10);
+//        // set annotation location
+//        annotationWithTextureId.setLocation(new SKCoordinate(37.7765, -122.4200));
+//        // set minimum zoom level at which the annotation should be visible
+//        annotationWithTextureId.setMininumZoomLevel(5);
+//        // set the annotation's type
+//        annotationWithTextureId.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_BLUE);
+//        // render annotation on map
+//        mapView.addAnnotation(annotationWithTextureId, SKAnimationSettings.ANIMATION_NONE);
+//
+//        // // add an annotation with a view
+//        SKAnnotation annotationFromView = new SKAnnotation(11);
+//        annotationFromView.setLocation(new SKCoordinate(37.761349, -122.423573));
+//        annotationFromView.setMininumZoomLevel(5);
+//        SKAnnotationView annotationView = new SKAnnotationView();
+//        customView =
+//                (RelativeLayout) ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
+//                        R.layout.layout_custom_view, null, false);
+//        //  If width and height of the view  are not power of 2 the actual size of the image will be the next power of 2 of max(width,height).
+//        annotationView.setView(findViewById(R.id.customView));
+//        annotationFromView.setAnnotationView(annotationView);
+//        mapView.addAnnotation(annotationFromView, SKAnimationSettings.ANIMATION_NONE);
+//
+//        // set map zoom level
+//        mapView.setZoom(13);
+//        // center map on a position
+//        mapView.animateToLocation(new SKCoordinate(37.7765, -122.4200), 1000);
 
-        // // add an annotation with a view
-        SKAnnotation annotationFromView = new SKAnnotation(11);
-        annotationFromView.setLocation(new SKCoordinate(37.761349, -122.423573));
-        annotationFromView.setMininumZoomLevel(5);
-        SKAnnotationView annotationView = new SKAnnotationView();
-        customView =
-                (RelativeLayout) ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
-                        R.layout.layout_custom_view, null, false);
-        //  If width and height of the view  are not power of 2 the actual size of the image will be the next power of 2 of max(width,height).
-        annotationView.setView(findViewById(R.id.customView));
-        annotationFromView.setAnnotationView(annotationView);
-        mapView.addAnnotation(annotationFromView, SKAnimationSettings.ANIMATION_NONE);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = findViewById(com.skobbler.sdkdemo.R.id.customView);
+        new WeatherTask().execute(null, mapView, inflater, view);
 
-        // set map zoom level
-        mapView.setZoom(13);
-        // center map on a position
-        mapView.animateToLocation(new SKCoordinate(37.7765, -122.4200), 1000);
     }
 
     /**

@@ -896,7 +896,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     private void fatigueMessage(){
         DialogMessage dm = new DialogMessage(currentActivity);
         dm.setMessage("You are probably tired. What do you want to do?",
-                R.string.go_to_hotel,
+                com.skobbler.sdkdemo.R.string.go_to_hotel,
                 new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -916,7 +916,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
 
                     }
                 },
-                R.string.go_on_parking,
+                com.skobbler.sdkdemo.R.string.go_on_parking,
                 new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -935,7 +935,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                     fatigueAlgorithm.takeBreak();
                     }
                 },
-                R.string.dismiss,
+                com.skobbler.sdkdemo.R.string.dismiss,
                 new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -1092,8 +1092,8 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                         SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, cost);
 
                         LayoutInflater inflater = (LayoutInflater) currentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                        ImageView imgView = (ImageView) currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
-                        new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(), mapView, inflater, imgView);
+                        View view = currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
+                        new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(), mapView, inflater, view);
 
                     }
 

@@ -1293,7 +1293,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = findViewById(com.skobbler.sdkdemo.R.id.customView);
-        new WeatherTask().execute(null, mapView, inflater, view);
+        new WeatherTask().execute(null, mapView, inflater, view, getResources());
 
     }
 

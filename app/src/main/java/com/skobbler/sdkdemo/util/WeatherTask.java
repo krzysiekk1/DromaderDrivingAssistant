@@ -1,6 +1,7 @@
 package com.skobbler.sdkdemo.util;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -46,15 +47,14 @@ public class WeatherTask extends AsyncTask {
 
     List<JSONObject> data = new ArrayList<JSONObject>();
     List<Bitmap> icons = new ArrayList<Bitmap>();
+    private String packageName;
     private SKMapSurfaceView mapView;
     private RelativeLayout customView;
     String iconString;
     View view;
-    ImageView view2;
     LayoutInflater inflater;
     List<SKCoordinate> coordinates;
-    Bitmap myIcon = null;
-    Bitmap myIcon2 = null;
+    Resources resources = null;
 
     public InputStream connectAndDownload(String lat, String lon) {
         URL url = null;
@@ -92,45 +92,21 @@ public class WeatherTask extends AsyncTask {
             e.printStackTrace();
         }
 
-        if (data != null) {
-            for (JSONObject datum : data) {
-                try {
-                    jsonObj = datum.getJSONObject("weather");
-                    iconString = jsonObj.getString("icon");
-                    InputStream in = new URL("http://openweathermap.org/img/w/" + iconString + ".png").openStream();
-                    icons.add(BitmapFactory.decodeStream(in));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-        }
-            return null;
-
+        return null;
     }
 
 
     @Override
     protected Object doInBackground(Object[] params) {
-        coordinates = getCoordinatesForWeather((int) params[0]);
+        this.coordinates = getCoordinatesForWeather((int) params[0]);
         this.mapView = (SKMapSurfaceView) params[1];
         this.inflater = (LayoutInflater) params[2];
         this.view = (View) params[3];
-        for (SKCoordinate coordinate : coordinates){
+        this.resources = (Resources) params[4];
+        this.packageName = (String) params[5];
+        for (SKCoordinate coordinate : this.coordinates){
             connectAndDownload(String.valueOf(coordinate.getLatitude()), String.valueOf(coordinate.getLongitude()));
         }
-
-        try {
-            InputStream in = new java.net.URL("http://openweathermap.org/img/w/10d.png").openStream();
-            this.myIcon2 = BitmapFactory.decodeStream(in);
-        } catch (Exception e) {
-            Log.e("Error", e.getMessage());
-            System.out.println("BUOND");
-            e.printStackTrace();
-        }
-
-
         return null;
     }
 
@@ -139,95 +115,50 @@ public class WeatherTask extends AsyncTask {
         super.onPreExecute();
     }
 
-//    public copyview (ImageView view){
-//        this.view2 = view
-//    }
-
     @Override
     protected void onPostExecute(Object o) {
-        JSONObject array = null;
+        JSONObject object;
+        JSONObject objectIcon;
         String lat = null;
         String lon = null;
+        String icon = null;
+        int annotationId = 10;
+        SKAnnotationView annotationView1 = new SKAnnotationView();
+        customView = (RelativeLayout) (inflater.inflate(R.layout.layout_custom_view, null, false));
+        ImageView imgView = (ImageView) view;
 
-        if(data!=null){
-            for(JSONObject datum : data) {
-
+        if (data != null) {
+            for (JSONObject datum : data) {
                 List<String> list = new ArrayList<String>();
                 try {
-                    array = datum.getJSONObject("coord");
-                    lat = array.getString("lon");
-                    lon = array.getString("lat");
+                    object = datum.getJSONObject("coord");
+                    objectIcon = datum.getJSONObject("weather");
+                    lat = object.getString("lon");
+                    lon = object.getString("lat");
+                    icon = objectIcon.getString("icon");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
+                SKCoordinate coordinate = new SKCoordinate(Double.parseDouble(lat), Double.parseDouble(lon));
+                SKAnnotation annotation1 = new SKAnnotation(annotationId);
+                annotation1.setLocation(coordinate);
+                annotation1.setMininumZoomLevel(5);
+                Bitmap bm;
+                String resourceString = "a" + icon;
+                bm = BitmapFactory.decodeResource(resources, resources.getIdentifier(resourceString, "drawable", packageName));
+                imgView.setImageBitmap(bm);
+                annotationView1.setView(view);
+                annotation1.setAnnotationView(annotationView1);
+                mapView.addAnnotation(annotation1, SKAnimationSettings.ANIMATION_NONE);
             }
-
-
-            SKCoordinate coordinate = new SKCoordinate(50,19.9);
-            SKAnnotation annotation1 = new SKAnnotation(10);
-            annotation1.setLocation(coordinate);
-            annotation1.setMininumZoomLevel(5);
-
-            SKCoordinate coordinate2 = new SKCoordinate(50,19.6);
-            SKAnnotation annotation2 = new SKAnnotation(11);
-            annotation2.setLocation(coordinate2);
-            annotation2.setMininumZoomLevel(5);
-
-            SKAnnotationView annotationView1 = new SKAnnotationView();
-
-            customView = (RelativeLayout)(inflater.inflate(R.layout.layout_custom_view, null, false));
-
-            ImageView imgView = (ImageView) view;
-            imgView.setImageBitmap(myIcon2);
-
-            annotationView1.setView(view);
-            annotation1.setAnnotationView(annotationView1);
-            annotation2.setAnnotationView(annotationView1);
-            mapView.addAnnotation(annotation1, SKAnimationSettings.ANIMATION_NONE);
-            mapView.addAnnotation(annotation2, SKAnimationSettings.ANIMATION_NONE);
-            mapView.setZoom(13);
-
-
-
-
-
-//            SKAnnotationView annotationView = new SKAnnotationView();
-//            customView = (RelativeLayout)(inflater.inflate(R.layout.layout_custom_view, null, false));
-//            imgView.setImageBitmap(myIcon);
-//            annotationView.setView(imgView);
-//            annotationWithTextureId.setAnnotationView(annotationView);
-//            mapView.addAnnotation(annotationWithTextureId, SKAnimationSettings.ANIMATION_NONE);
-
-
-//            SKCoordinate coordinate2 = new SKCoordinate(50,17.6);
-//            SKAnnotation annotationWithTextureId2 = new SKAnnotation(11);
-//            annotationWithTextureId2.setLocation(coordinate2);
-//            annotationWithTextureId2.setMininumZoomLevel(5);
-//            SKAnnotationView annotationView2 = new SKAnnotationView();
-//            RelativeLayout customView2 = (RelativeLayout)(inflater.inflate(R.layout.layout_custom_view, null, false));
-//            imgView2.setImageBitmap(myIcon2);
-//            annotationView.setView(imgView2);
-//            annotationWithTextureId2.setAnnotationView(annotationView2);
-//            mapView.addAnnotation(annotationWithTextureId2, SKAnimationSettings.ANIMATION_NONE);
-
         }
-//        SKAnnotation annotationFromView = new SKAnnotation(11);
-//        annotationFromView.setLocation(new SKCoordinate(37.761349, -122.423573));
-//        annotationFromView.setMininumZoomLevel(5);
-//        SKAnnotationView annotationView = new SKAnnotationView();
-//        customView =
-//                (RelativeLayout) ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
-//                        R.layout.layout_custom_view, null, false);
-//        annotationView.setView(findViewById(R.id.customView));
-//        annotationFromView.setAnnotationView(annotationView);
-//        mapView.addAnnotation(annotationFromView, SKAnimationSettings.ANIMATION_NONE);
-//        mapView.setZoom(13);
-
-
-
-
     }
+
+
+
+
+
 
     private static List<SKCoordinate> getCoordinatesForWeather (int routeID) {
         List<SKCoordinate> coordinates = new ArrayList<SKCoordinate>();

@@ -1092,10 +1092,9 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                         final String cost = String.format("%.2f", costCalculator.getCost(
                                 skRouteInfoList.get(i), getCurrentActivity().getApplicationContext()));
                         SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, cost);
-
                         LayoutInflater inflater = (LayoutInflater) currentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                         View view = currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
-                        new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(), mapView, inflater, view);
+                        new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(), mapView, inflater, view, currentActivity.getResources(), currentActivity.getPackageName());
 
                     }
 

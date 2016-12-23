@@ -44,6 +44,7 @@ public class FatigueAlgorithm {
 
     private static final int MEASUREMENT_DELAY_TIME = 300000; // invoke method every 5 minutes - in ms;
     private static final int FIRST_DELAY_TIME = 7200000; // first invoke after 2 hours from the computation beginning - in ms;
+    private static final int PAUSE_DELAY_TIME = 1800000; // pause on 30 minutes!
 
     // timeZone for the start position - this time is driver "inside" time
     private TimeZone timeZone = TimeZone.getDefault();
@@ -62,7 +63,7 @@ public class FatigueAlgorithm {
     private double localTime;
 
     // execution time
-    private long executionStartTime = System.currentTimeMillis();
+    private long executionStartTime;
     private long executionEndTime;
     private long execution;
 
@@ -76,15 +77,17 @@ public class FatigueAlgorithm {
     private String weather;
 
     private boolean response;
-
+    private boolean pause;
 
 
     /*
     * Initializing FatigueAlgorithm from MapActivity with its instance
     * */
 
-    public FatigueAlgorithm(MapActivity myMapActivity){
-        this.mapActivityInstance = myMapActivity;
+    public FatigueAlgorithm(){
+        executionStartTime = System.currentTimeMillis();
+        pause = false;
+        //this.mapActivityInstance = myMapActivity;
     }
 
 
@@ -128,14 +131,48 @@ public class FatigueAlgorithm {
             // take weather near location - i have to take our coordinates and after that find the nearest place
             weather = weatherInstance.weatherNearLocation();
 
+            if(pause){
+                try {
+                    Thread.sleep(PAUSE_DELAY_TIME);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                pause = false;
+            }
+
             //getting response if we should show information about fatigue!!!
             response = fatigueComputations.onCompute(localTime, executionTime, weather);
+
+            
 
             myHandler.postDelayed(mRunnable, MEASUREMENT_DELAY_TIME);
         }
     };
 
     //initializing Handler and boolean repeat -> if repeat == false -> delaying FatigueAlgorithm at all
+
+
+    public boolean getResponse(){
+        return this.response;
+    }
+
+    public void setResponse(boolean response){
+        this.response = response;
+    }
+
+    public void takeBreak(){
+
+        executionStartTime = System.currentTimeMillis();
+        response = false;
+    }
+
+    public void dismiss(){
+        executionStartTime = System.currentTimeMillis();
+        pause = true;
+        response = false;
+
+    }
+
 
     public void startMeasurement() {
 

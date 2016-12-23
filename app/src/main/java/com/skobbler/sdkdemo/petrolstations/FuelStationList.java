@@ -12,7 +12,7 @@ import java.util.List;
 public class FuelStationList {
 
 
-    private List<FuelStationStructure> list = new ArrayList<FuelStationStructure>();
+    public List<FuelStationStructure> list = new ArrayList<FuelStationStructure>();
 
     private double roadDistanceFactor;
 

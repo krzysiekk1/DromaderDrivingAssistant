@@ -444,6 +444,8 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
     private static final String[] INITIAL_PERMS={Manifest.permission.ACCESS_FINE_LOCATION};
 
+    private FatigueAlgorithm fatigueAlgorithm;
+
 
 
     @Override
@@ -1015,7 +1017,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
 
     private void testingAlertDialog(){
-        DialogMessage dm = new DialogMessage(this, view);
+        DialogMessage dm = new DialogMessage(this);
         dm.setMessage("cokolwiek", R.string.mes1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
@@ -2151,9 +2153,10 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         if (currentMapOption == MapOption.ALTERNATIVE_ROUTES) {
             int routeIndex = routeIds.size();
             routeIds.add(routeInfo.getRouteID());
-            double tollsCost = TollsCostCalculator.getTollsCost(routeInfo, app);
+            CostCalculator costCalculator = new CostCalculator();
+            double cost = costCalculator.getCost(routeInfo, app);
             altRoutesButtons[routeIndex].setText(Utils.formatDistance(routeInfo.getDistance()) + "\n");
-//            Utils.formatTime(routeInfo.getEstimatedTime() + "\n" + tollsCost + " EUR");
+//            Utils.formatTime(routeInfo.getEstimatedTime() + "\n" + cost + " EUR");
               if (routeIndex == 0) {
                 // select 1st alternative by default
                 selectAlternativeRoute(0);

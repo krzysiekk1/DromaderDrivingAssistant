@@ -129,7 +129,7 @@ public class TouristAttractionsActivity extends Activity implements SKSearchList
                     adapter.notifyDataSetChanged();
                 } else {
                     String POIName = results.get(selectedCategory).get(position).getName();
-                    final DialogMessage dm = new DialogMessage(TouristAttractionsActivity.this, view);
+                    final DialogMessage dm = new DialogMessage(TouristAttractionsActivity.this);
                     dm.setMessage(POIName, R.string.show_on_map, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {

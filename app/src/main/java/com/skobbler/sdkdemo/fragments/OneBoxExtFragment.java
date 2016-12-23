@@ -209,7 +209,7 @@ public class OneBoxExtFragment extends Fragment implements SKSearchListener, Vie
                 public void onClick(final View view) {
                     final int itemPosition = recyclerViewCategories.getChildPosition(view);
                     String locationName = resultList.get(itemPosition).getSearchResult().getName();
-                    final DialogMessage dm = new DialogMessage(getActivity(), view);
+                    final DialogMessage dm = new DialogMessage(getActivity());
 
                     dm.setMessage(locationName, R.string.end_point_nav, new DialogInterface.OnClickListener() {
                         @Override

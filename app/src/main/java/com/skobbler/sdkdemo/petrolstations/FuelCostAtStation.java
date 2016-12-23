@@ -89,7 +89,7 @@ public class FuelCostAtStation implements SKSearchListener {
             }
         }
 
-        if (online = true) {
+        if (online == true) {
             // 1 - near border costs update
             SKSearchResult searchResult = SKReverseGeocoderManager.getInstance().reverseGeocodePosition(coordinate);
             if (searchResult != null && searchResult.getParentsList() != null) {
@@ -129,7 +129,7 @@ public class FuelCostAtStation implements SKSearchListener {
 
     @Override
     public void onReceivedSearchResults(final List<SKSearchResult> searchResults) {
-        if (searchResults1Got = false) {
+        if (searchResults1Got == false) {
             updateCostIfNearBorder(searchResults);
         } else {
             updateCostNearestStation(searchResults);
@@ -141,7 +141,7 @@ public class FuelCostAtStation implements SKSearchListener {
         String searchedCountryCode = "";
 
         for (SKSearchResult result : searchResults) {
-            if (nearBorder = false) {
+            if (nearBorder == false) {
                 SKSearchResult searchResult = SKReverseGeocoderManager.getInstance().reverseGeocodePosition(result.getLocation());
                 if (searchResult != null && searchResult.getParentsList() != null) {
                     for (SKSearchResultParent parent : searchResult.getParentsList()) {
@@ -153,7 +153,7 @@ public class FuelCostAtStation implements SKSearchListener {
                 }
             }
         }
-        if (nearBorder = true) {
+        if (nearBorder == true) {
             ResourcesDAO resourcesDAO = ResourcesDAO.getInstance(context);
             resourcesDAO.openDatabase();
             String[] array = new String[] {searchedCountryCode};

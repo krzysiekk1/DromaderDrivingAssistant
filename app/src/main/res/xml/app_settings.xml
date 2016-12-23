@@ -9,13 +9,8 @@
         android:title="Alerts">
 
         <CheckBoxPreference
-            android:key="check_pref_car_parks_alerts"
-            android:title="Rest alerts (car parks) "
-            android:defaultValue="true" />
-
-        <CheckBoxPreference
-            android:key="check_pref_accommodation_alerts"
-            android:title="Sleep alerts (accommodation) "
+            android:key="check_pref_fatigue_alerts"
+            android:title="Fatigue alerts "
             android:defaultValue="true" />
 
         <CheckBoxPreference

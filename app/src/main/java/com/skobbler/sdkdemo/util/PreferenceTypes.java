@@ -16,8 +16,7 @@ package com.skobbler.sdkdemo.util;
  */
 public final class PreferenceTypes {
 
-    public static final String K_CAR_PARKS_ALERTS = "check_pref_car_parks_alerts";
-    public static final String K_ACCOMMODATION_ALERTS = "check_pref_accommodation_alerts";
+    public static final String K_FATIGUE_ALERTS = "check_pref_fatigue_alerts";
     public static final String K_PETROL_STATIONS_ALERTS = "check_pref_petrol_stations_alerts";
     public static final String K_TANK_CAPACITY = "pref_tank_capacity";
     public static final String K_FUEL_TYPE = "pref_fuel_type";

@@ -3,6 +3,7 @@ package com.skobbler.sdkdemo.navigationui;
 import java.util.ArrayList;
 import java.util.List;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -14,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.Toast;
 import com.skobbler.ngx.R;
+import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.SKMaps;
 import com.skobbler.ngx.map.SKAnnotation;
 import com.skobbler.ngx.map.SKCoordinateRegion;
@@ -44,11 +46,19 @@ import com.skobbler.ngx.routing.SKRouteListener;
 import com.skobbler.ngx.routing.SKRouteManager;
 import com.skobbler.ngx.routing.SKRouteSettings;
 import com.skobbler.ngx.routing.SKViaPoint;
+import com.skobbler.sdkdemo.activity.DialogMessage;
+import com.skobbler.sdkdemo.activity.MapActivity;
+import com.skobbler.sdkdemo.costs.CostCalculator;
+import com.skobbler.sdkdemo.fatigue.FatigueAlgorithm;
+import com.skobbler.sdkdemo.fatigue.HotelSearch;
+import com.skobbler.sdkdemo.fatigue.ParkingSearch;
 import com.skobbler.sdkdemo.navigationui.autonight.SKToolsAutoNightManager;
 import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.ngx.util.SKLogging;
 import com.skobbler.sdkdemo.costs.tolls.TollsCostCalculator;
 import com.skobbler.sdkdemo.util.WeatherTask;
+
+import static com.skobbler.sdkdemo.activity.MapActivity.VIA_POINT_ICON_ID;
 
 /**
  * This class handles the logic related to the navigation and route calculation.
@@ -959,42 +969,48 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
 
     @Override
     public void onAllRoutesCompleted() {
-        if (!skRouteInfoList.isEmpty()) {
-            currentActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (SKToolsNavigationUIManager.getInstance().isPreNavigationMode()) {
-                        SKToolsNavigationUIManager.getInstance().showStartNavigationPanel();
-                    }
-                    for (int i = 0; i < skRouteInfoList.size(); i++) {
-                        final String time = SKToolsUtils.formatTime(skRouteInfoList.get(i).getEstimatedTime());
-                        final String distance = SKToolsUtils.convertAndFormatDistance(skRouteInfoList.get(i)
-                                        .getDistance(),
-                                configuration.getDistanceUnitType(), currentActivity);
-                        LayoutInflater inflater = (LayoutInflater) currentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                        ImageView imgView = (ImageView) currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
-                        ImageView imgView2 = (ImageView) currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
-                        new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(), mapView, inflater, imgView, imgView2);
-                        final String cost = String.format("%.2f", TollsCostCalculator.getTollsCost(
-                                skRouteInfoList.get(i), getCurrentActivity().getApplicationContext()));
-                        SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, cost);
-                    }
+            if (!skRouteInfoList.isEmpty()) {
+                currentActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (SKToolsNavigationUIManager.getInstance().isPreNavigationMode()) {
+                            SKToolsNavigationUIManager.getInstance().showStartNavigationPanel();
+                        }
+                        for (int i = 0; i < skRouteInfoList.size(); i++) {
+                            final String time = SKToolsUtils.formatTime(skRouteInfoList.get(i).getEstimatedTime());
+                            final String distance = SKToolsUtils.convertAndFormatDistance(skRouteInfoList.get(i)
+                                    .getDistance(), configuration.getDistanceUnitType(), currentActivity);
+                            CostCalculator costCalculator = new CostCalculator();
 
-                    int routeId = skRouteInfoList.get(0).getRouteID();
-                    SKRouteManager.getInstance().setCurrentRouteByUniqueId(routeId);
-                    SKToolsNavigationUIManager.getInstance().selectAlternativeRoute(0);
-                    if (SKToolsNavigationUIManager.getInstance().isPreNavigationMode()) {
-                        SKToolsMapOperationsManager.getInstance().zoomToRoute(currentActivity);
-                    }
+                            LayoutInflater inflater = (LayoutInflater) currentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                            ImageView imgView = (ImageView) currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
+                            ImageView imgView2 = (ImageView) currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
+                            new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(), mapView, inflater, imgView, imgView2);
 
-                }
-            });
+
+                            final String cost = String.format("%.2f", costCalculator.getCost(
+                                    skRouteInfoList.get(i), getCurrentActivity().getApplicationContext()));
+                            SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, cost);
+                        }
+
+                        int routeId = skRouteInfoList.get(0).getRouteID();
+                        SKRouteManager.getInstance().setCurrentRouteByUniqueId(routeId);
+                        SKToolsNavigationUIManager.getInstance().selectAlternativeRoute(0);
+                        if (SKToolsNavigationUIManager.getInstance().isPreNavigationMode()) {
+                            SKToolsMapOperationsManager.getInstance().zoomToRoute(currentActivity);
+                        }
+
+                    }
+                });
+            }
+
+            if (navigationListener != null) {
+                navigationListener.onRouteCalculationCompleted();
+            }
         }
 
-        if (navigationListener != null) {
-            navigationListener.onRouteCalculationCompleted();
-        }
-    }
+
+
 
     @Override
     public void onServerLikeRouteCalculationCompleted(SKRouteJsonAnswer skRouteJsonAnswer) {

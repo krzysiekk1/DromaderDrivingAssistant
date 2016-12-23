@@ -3,12 +3,15 @@ package com.skobbler.sdkdemo.navigationui;
 import java.util.ArrayList;
 import java.util.List;
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.Toast;
 import com.skobbler.ngx.R;
 import com.skobbler.ngx.SKMaps;
@@ -968,7 +971,10 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                         final String distance = SKToolsUtils.convertAndFormatDistance(skRouteInfoList.get(i)
                                         .getDistance(),
                                 configuration.getDistanceUnitType(), currentActivity);
-                        new WeatherTask().execute(skRouteInfoList.get(i).getRouteID());
+                        LayoutInflater inflater = (LayoutInflater) currentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                        ImageView imgView = (ImageView) currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
+                        ImageView imgView2 = (ImageView) currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
+                        new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(), mapView, inflater, imgView, imgView2);
                         final String cost = String.format("%.2f", TollsCostCalculator.getTollsCost(
                                 skRouteInfoList.get(i), getCurrentActivity().getApplicationContext()));
                         SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, cost);

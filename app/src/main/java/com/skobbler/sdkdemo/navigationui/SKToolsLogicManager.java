@@ -956,6 +956,8 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     @Override
     public void onUpdateNavigationState(SKNavigationState skNavigationState) {
 
+        fatigueMessage();
+
         if(this.fatigueAlgorithm.getResponse()){
             fatigueMessage();
         }

@@ -57,6 +57,8 @@ public class FuelAlgorithm implements SKSearchListener{
 
     private int maxStopsNumber;
 
+    private double straightDistance;
+
     public FuelAlgorithm(SKRouteInfo routeInfo, Context app){
 
 
@@ -64,9 +66,12 @@ public class FuelAlgorithm implements SKSearchListener{
         this.routeInfo = routeInfo;
 
         double allDistance = routeInfo.getDistance()/1000.0;
-        double straightDistance;
+
 
         this.maxStopsNumber = (int) allDistance/300;
+        if(this.maxStopsNumber == 0){
+            this.maxStopsNumber = 1;
+        }
 
         int routeID = routeInfo.getRouteID();
 
@@ -178,6 +183,9 @@ public class FuelAlgorithm implements SKSearchListener{
 
         }
 
+        list.add(new GasStation(this.straightDistance, 100.0));
+        list.add(0, new GasStation(0.0, 0.0));
+
 
     }
 
@@ -189,15 +197,17 @@ public class FuelAlgorithm implements SKSearchListener{
 
         double cost = 2.0;
 
-        double startVolume = (double) sharedPreferences.getFloat(PreferenceTypes.K_FUEL_LEVEL, (float) 10.0);
-        double tankVolume = (double) sharedPreferences.getFloat(PreferenceTypes.K_TANK_CAPACITY, (float) 50.0);
-        double avg = (double) sharedPreferences.getFloat(PreferenceTypes.K_FUEL_CONSUMPTION, (float) 7.0);
-
+        String startVolume = sharedPreferences.getString(PreferenceTypes.K_FUEL_LEVEL, "10.0");
+        String tankVolume = sharedPreferences.getString(PreferenceTypes.K_TANK_CAPACITY, "50.0");
+        String avg = sharedPreferences.getString(PreferenceTypes.K_FUEL_CONSUMPTION, "7.0");
+        double startV = Double.parseDouble(startVolume);
+        double tankV = Double.parseDouble(tankVolume);
+        double average = Double.parseDouble(avg);
 
 
         int stationNumber = list.size();
 
-        Algorithm algo = new Algorithm(list, avg, tankVolume, startVolume, stationNumber, maxStopsNumber);
+        Algorithm algo = new Algorithm(list, average, tankV, startV, stationNumber, maxStopsNumber);
 
         algo.getGVSets();
 

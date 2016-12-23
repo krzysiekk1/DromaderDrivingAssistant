@@ -56,12 +56,12 @@ public class DynamicFunction {
             distance = lastElementDistance - this.list.distances.get(i);
 
           //  System.out.println("For loop 1");
-            for(GVTuple g: A[i][1].GV){
+            for(GVTuple g: A[i][0].GV){
                 System.out.println("For loop 2");
                 if(distance <= this.tankVolume && g.getFuelLevel() <= this.tankVolume){
-                    A[i][1].setVertexFuel(g.getFuelLevel(), ((distance - g.getFuelLevel())*(this.list.costFunction.get(i))));
+                    A[i][0].setVertexFuel(g.getFuelLevel(), ((distance - g.getFuelLevel())*(this.list.costFunction.get(i))));
                 } else {
-                    A[i][1].setVertexFuel(g.getFuelLevel(), Double.POSITIVE_INFINITY);
+                    A[i][0].setVertexFuel(g.getFuelLevel(), Double.POSITIVE_INFINITY);
                 }
 
 

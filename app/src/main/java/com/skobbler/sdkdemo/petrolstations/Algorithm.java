@@ -35,7 +35,7 @@ public class Algorithm {
             this.stationNumber = stations;
 
             this.stationList = new GasStationList(this.stations, avgConsumption);
-            this.graph = new Graph(stationNumber, tankVolume, startVolume, stationList);
+//            this.graph = new Graph(stationNumber, tankVolume, startVolume, stationList);
 
 
 

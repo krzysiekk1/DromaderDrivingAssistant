@@ -17,7 +17,6 @@ public class FatigueComputations {
     //private String myLocalTime;
     private double myLocalTime;
 
-    private String myWeather;
 
     // changing received data
 
@@ -39,13 +38,13 @@ public class FatigueComputations {
     }
 
 
-    public boolean onCompute(double localTime, double executionTime, String weather){
+    public boolean onCompute(double localTime, double executionTime){
 
         this.myLocalTime = localTime;
 
         this.myExecutionTime = executionTime;
 
-        this.myWeather = weather;
+
 
         double response = this.fuzzyLogic.getValue(this.myLocalTime, this.myExecutionTime);
 

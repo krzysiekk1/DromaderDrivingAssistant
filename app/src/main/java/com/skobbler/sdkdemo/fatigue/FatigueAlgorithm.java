@@ -73,9 +73,7 @@ public class FatigueAlgorithm {
 
     private double executionTime;
 
-    // weather instance
-    private WeatherInstance weatherInstance;
-    private String weather;
+
 
     private boolean response;
     private boolean pause;
@@ -133,7 +131,7 @@ public class FatigueAlgorithm {
             */
             executionTime = (double) minutes;
             // take weather near location - i have to take our coordinates and after that find the nearest place
-            weather = weatherInstance.weatherNearLocation();
+
 
             if(pause){
                 try {
@@ -145,7 +143,7 @@ public class FatigueAlgorithm {
             }
 
             //getting response if we should show information about fatigue!!!
-            response = fatigueComputations.onCompute(localTime, executionTime, weather);
+            response = fatigueComputations.onCompute(localTime, executionTime);
 
             
 

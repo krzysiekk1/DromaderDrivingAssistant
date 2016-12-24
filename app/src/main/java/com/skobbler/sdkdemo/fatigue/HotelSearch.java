@@ -1,15 +1,12 @@
 package com.skobbler.sdkdemo.fatigue;
 
-import android.app.Activity;
-import android.os.AsyncTask;
-import android.os.Looper;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.skobbler.ngx.SKCategories;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.positioner.SKPosition;
 import com.skobbler.ngx.positioner.SKPositionerManager;
+import com.skobbler.ngx.sdktools.onebox.utils.SKToolsUtils;
 import com.skobbler.ngx.search.SKNearbySearchSettings;
 import com.skobbler.ngx.search.SKSearchListener;
 import com.skobbler.ngx.search.SKSearchManager;
@@ -45,38 +42,34 @@ public class HotelSearch implements SKSearchListener {
         currentCoordinate = currentPosition.getCoordinate();
         searchObject.setLocation(currentCoordinate);
         searchObject.setRadius(radius);
-        searchObject.setSearchResultsNumber(1);
+        searchObject.setSearchResultsNumber(100);
         searchObject.setSearchCategories(searchCategories);
         searchObject.setSearchTerm(""); // all
         searchObject.setSearchMode(SKSearchManager.SKSearchMode.OFFLINE);
-        Log.d("myTag","status1");
         status = searchManager.nearbySearch(searchObject);
-        Log.d("myTag","status2");
         if (status != SKSearchStatus.SK_SEARCH_NO_ERROR) {
             SKLogging.writeLog("SKSearchStatus: ", status.toString(), 0);
-
-        }
-        Log.d("myTag","status3");
-        if(Looper.myLooper() == Looper.getMainLooper()) {
-            Log.d("myTag", "HotelSearch is main thread");
-
-            // Current Thread is Main Thread.
         }
     }
-
 
     @Override
     public void onReceivedSearchResults(List<SKSearchResult> searchResults) {
-
-            Log.d("myTag","on received search results");
+            int closest = 32000;
+            int closestNr = 0;
             if (searchResults.size() > 0) {
-                hotelCoordinate = searchResults.get(0).getLocation();
-                Log.d("myTag","1st find hotel coord" + hotelCoordinate.toString());
+                for (int i = 0; i < searchResults.size(); i++) {
+                    int distance = (int) SKToolsUtils.distanceBetween(currentCoordinate, searchResults.get(i).getLocation());
+                    if (distance < closest) {
+                        closest = distance;
+                        closestNr = i;
+                    }
+                }
+                hotelCoordinate = searchResults.get(closestNr).getLocation();
+                Log.d("myTag","hotel coord" + hotelCoordinate.toString());
                 SKToolsLogicManager skToolsLogicManager = SKToolsLogicManager.getInstance();
                 skToolsLogicManager.setHotelCoordinates(hotelCoordinate);
+                skToolsLogicManager.goViaHotel();
             }
-
     }
-
 
 }

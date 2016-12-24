@@ -1,9 +1,12 @@
 package com.skobbler.sdkdemo.fatigue;
 
+import android.util.Log;
+
 import com.skobbler.ngx.SKCategories;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.positioner.SKPosition;
 import com.skobbler.ngx.positioner.SKPositionerManager;
+import com.skobbler.ngx.sdktools.onebox.utils.SKToolsUtils;
 import com.skobbler.ngx.search.SKNearbySearchSettings;
 import com.skobbler.ngx.search.SKSearchListener;
 import com.skobbler.ngx.search.SKSearchManager;
@@ -39,7 +42,7 @@ public class ParkingSearch implements SKSearchListener {
         currentCoordinate = currentPosition.getCoordinate();
         searchObject.setLocation(currentCoordinate);
         searchObject.setRadius(radius);
-        searchObject.setSearchResultsNumber(1);
+        searchObject.setSearchResultsNumber(100);
         searchObject.setSearchCategories(searchCategories);
         searchObject.setSearchTerm(""); // all
         searchObject.setSearchMode(SKSearchManager.SKSearchMode.OFFLINE);
@@ -51,10 +54,21 @@ public class ParkingSearch implements SKSearchListener {
 
     @Override
     public void onReceivedSearchResults(final List<SKSearchResult> searchResults) {
+        int closest = 32000;
+        int closestNr = 0;
         if (searchResults.size() > 0) {
-            parkingCoordinate = searchResults.get(0).getLocation();
+            for (int i = 0; i < searchResults.size(); i++) {
+                int distance = (int) SKToolsUtils.distanceBetween(currentCoordinate, searchResults.get(i).getLocation());
+                if (distance < closest) {
+                    closest = distance;
+                    closestNr = i;
+                }
+            }
+            parkingCoordinate = searchResults.get(closestNr).getLocation();
+            Log.d("myTag","parking coord" + parkingCoordinate.toString());
             SKToolsLogicManager skToolsLogicManager = SKToolsLogicManager.getInstance();
             skToolsLogicManager.setParkingCoordinates(parkingCoordinate);
+            skToolsLogicManager.goViaParking();
         }
     }
 

@@ -19,6 +19,7 @@ import com.skobbler.ngx.R;
 import com.skobbler.ngx.SKCategories;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.SKMaps;
+import com.skobbler.ngx.map.SKAnimationSettings;
 import com.skobbler.ngx.map.SKAnnotation;
 import com.skobbler.ngx.map.SKCoordinateRegion;
 import com.skobbler.ngx.map.SKMapCustomPOI;
@@ -142,8 +143,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     private SKCoordinate parkingCoordinates;
 
     private int sth = 0;
-
-    private int messageResponse = 0;
 
     public boolean startPedestrian=false;
 
@@ -898,7 +897,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
 
     public void setHotelCoordinates(SKCoordinate coordinates){
         this.hotelCoordinates = coordinates;
-        Log.d("myTag",coordinates.toString()+ "hotel coordinates");
     }
 
 
@@ -914,91 +912,78 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                 new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
-                        messageResponse = 1;
-
-                        fatigueAlgorithm.takeBreak();
-
                         dialog.cancel();
 
+                        searchHotel();
+
+                        fatigueAlgorithm.takeBreak();
                     }
                 },
                 com.skobbler.sdkdemo.R.string.go_on_parking,
                 new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        parkingCoordinates = null;
-                        ParkingSearch parkingSearch = new ParkingSearch();
-                        parkingSearch.startSearch();
+                        dialog.cancel();
 
-                        while(parkingCoordinates == null){
+                        searchParking();
 
-                        }
-
-                        SKViaPoint viaPoint = new SKViaPoint(VIA_POINT_ICON_ID, parkingCoordinates);
-
-                        SKRouteManager.getInstance().addViaPoint(viaPoint, -1);
-
-                    fatigueAlgorithm.takeBreak();
+                        fatigueAlgorithm.takeBreak();
                     }
                 },
                 com.skobbler.sdkdemo.R.string.dismiss,
                 new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        dialog.cancel();
 
                         fatigueAlgorithm.dismiss();
-
-                        dialog.cancel();
                     }
                 });
 
         dm.showWithTimeout(15000);
-
     }
 
+    private void searchHotel() {
+        hotelCoordinates = null;
+        HotelSearch hotelSearch = new HotelSearch();
+        hotelSearch.startSearch();
+    }
 
+    private void searchParking() {
+        parkingCoordinates = null;
+        ParkingSearch parkingSearch = new ParkingSearch();
+        parkingSearch.startSearch();
+    }
+
+    public void goViaHotel() {
+        SKAnnotation hotelAnnotation = new SKAnnotation(30);
+        hotelAnnotation.setLocation(hotelCoordinates);
+        hotelAnnotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_PURPLE);
+        mapView.addAnnotation(hotelAnnotation, SKAnimationSettings.ANIMATION_NONE);
+        SKViaPoint viaPoint = new SKViaPoint(VIA_POINT_ICON_ID, hotelCoordinates);
+        SKRouteManager.getInstance().addViaPoint(viaPoint, -1);
+    }
+
+    public void goViaParking() {
+        SKAnnotation parkingAnnotation = new SKAnnotation(31);
+        parkingAnnotation.setLocation(parkingCoordinates);
+        parkingAnnotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_PURPLE);
+        mapView.addAnnotation(parkingAnnotation, SKAnimationSettings.ANIMATION_NONE);
+        SKViaPoint viaPoint = new SKViaPoint(VIA_POINT_ICON_ID, parkingCoordinates);
+        SKRouteManager.getInstance().addViaPoint(viaPoint, -1);
+    }
 
     @Override
     public void onUpdateNavigationState(SKNavigationState skNavigationState) {
 
         sth++;
-        if(sth == 10) {
+        if(sth == 5) {
             fatigueMessage();
-            sth = 0;
         }
         if(this.fatigueAlgorithm.getResponse()){
             fatigueMessage();
         }
 
-        if(messageResponse == 1){
-
-            hotelCoordinates = null;
-
-            HotelSearch hotelSearch = new HotelSearch();
-            hotelSearch.startSearch();
-
-            if(Looper.myLooper() == Looper.getMainLooper()) {
-                Log.d("myTag", "SKToolsLOgicManager is main thread");
-
-                // Current Thread is Main Thread.
-            }
-            while(hotelCoordinates == null){
-
-            }
-
-            Log.d("myTag","After while");
-
-            SKViaPoint viaPoint = new SKViaPoint(VIA_POINT_ICON_ID, hotelCoordinates);
-
-            SKRouteManager.getInstance().addViaPoint(viaPoint, -1);
-            messageResponse = 0;
-        }
-
-
-
-        //testingAlertDialog();
         SKLogging.writeLog("SKToolsLogicManager", "NAVIGATION STATE " + skNavigationState.toString(), SKLogging.LOG_DEBUG);
         if(currentUserDisplayMode == SKMapSettings.SKMapDisplayMode.MODE_3D){
             mapView.getMapSettings().setStreetNamePopupsShown(true);

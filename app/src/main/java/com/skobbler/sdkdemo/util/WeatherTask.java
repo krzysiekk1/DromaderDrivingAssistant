@@ -118,11 +118,12 @@ public class WeatherTask extends AsyncTask {
     @Override
     protected void onPostExecute(Object o) {
         JSONObject object;
-        JSONObject objectIcon;
+        JSONArray weatherArray;
         String lat = null;
         String lon = null;
         String icon = null;
-        int annotationId = 10;
+
+        int annotationId = 20;
         SKAnnotationView annotationView1 = new SKAnnotationView();
         customView = (RelativeLayout) (inflater.inflate(R.layout.layout_custom_view, null, false));
         ImageView imgView = (ImageView) view;
@@ -132,20 +133,21 @@ public class WeatherTask extends AsyncTask {
                 List<String> list = new ArrayList<String>();
                 try {
                     object = datum.getJSONObject("coord");
-                    objectIcon = datum.getJSONObject("weather");
-                    lat = object.getString("lon");
-                    lon = object.getString("lat");
-                    icon = objectIcon.getString("icon");
+                    weatherArray = datum.getJSONArray("weather");
+                    icon = weatherArray.getJSONObject(0).getString("icon");
+                    lat = object.getString("lat");
+                    lon = object.getString("lon");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
                 SKCoordinate coordinate = new SKCoordinate(Double.parseDouble(lat), Double.parseDouble(lon));
                 SKAnnotation annotation1 = new SKAnnotation(annotationId);
+                annotationId++;
                 annotation1.setLocation(coordinate);
                 annotation1.setMininumZoomLevel(5);
-                Bitmap bm;
                 String resourceString = "a" + icon;
+                Bitmap bm;
                 bm = BitmapFactory.decodeResource(resources, resources.getIdentifier(resourceString, "drawable", packageName));
                 imgView.setImageBitmap(bm);
                 annotationView1.setView(view);

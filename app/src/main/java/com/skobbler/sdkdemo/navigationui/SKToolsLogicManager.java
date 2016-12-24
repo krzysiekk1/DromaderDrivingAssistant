@@ -1114,7 +1114,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                         SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, cost);
                         LayoutInflater inflater = (LayoutInflater) currentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                         View view = currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
-                       // new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(), mapView, inflater, view, currentActivity.getResources(), currentActivity.getPackageName());
+                        new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(), mapView, inflater, view, currentActivity.getResources(), currentActivity.getPackageName());
 
                     }
 

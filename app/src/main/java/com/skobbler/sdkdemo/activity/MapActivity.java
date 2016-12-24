@@ -20,6 +20,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -45,6 +46,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -1303,9 +1305,28 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 //        mapView.animateToLocation(new SKCoordinate(37.7765, -122.4200), 1000);
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        customView = (RelativeLayout) (inflater.inflate(R.layout.layout_custom_view, null, false));
         View view = findViewById(com.skobbler.sdkdemo.R.id.customView);
-        new WeatherTask().execute(null, mapView, inflater, view, getResources());
-
+        SKAnnotationView annotationView1 = new SKAnnotationView();
+        ImageView imgView = (ImageView) view;
+        String icon = "01d";
+        Bitmap bm;
+//        new WeatherTask().execute(null, mapView, inflater, view, getResources());
+        double i = 0;
+        for (int annotationId = 10; annotationId < 13; annotationId++) {
+            i+=0.3;
+            SKCoordinate coordinate = new SKCoordinate(Double.parseDouble("50"), Double.parseDouble("19")+i);
+            SKAnnotation annotation1 = new SKAnnotation(annotationId);
+            annotationId++;
+            annotation1.setLocation(coordinate);
+            annotation1.setMininumZoomLevel(5);
+            String resourceString = "a" + icon;
+            bm = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier(resourceString, "drawable", getPackageName()));
+            imgView.setImageBitmap(bm);
+            annotationView1.setView(view);
+            annotation1.setAnnotationView(annotationView1);
+            mapView.addAnnotation(annotation1, SKAnimationSettings.ANIMATION_NONE);
+        }
     }
 
     /**

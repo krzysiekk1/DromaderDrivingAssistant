@@ -4,6 +4,10 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -149,12 +153,38 @@ public class WeatherTask extends AsyncTask {
                 String resourceString = "a" + icon;
                 Bitmap bm;
                 bm = BitmapFactory.decodeResource(resources, resources.getIdentifier(resourceString, "drawable", packageName));
+                String textToBitmap = "20"; // TODO change to real number
+                bm = addTextToBitmap(bm, textToBitmap);
                 imgView.setImageBitmap(bm);
                 annotationView1.setView(view);
                 annotation1.setAnnotationView(annotationView1);
                 mapView.addAnnotation(annotation1, SKAnimationSettings.ANIMATION_NONE);
             }
         }
+    }
+
+    private Bitmap addTextToBitmap(Bitmap bm, String textToBitmap) {
+        Bitmap.Config bitmapConfig = bm.getConfig();
+        // set default bitmap config if none
+        if (bitmapConfig == null) {
+            bitmapConfig = Bitmap.Config.ARGB_8888;
+        }
+        // resource bitmaps are imutable, so we need to convert it to mutable one
+        bm = bm.copy(bitmapConfig, true);
+        Canvas canvas = new Canvas(bm);
+        // new antialised Paint
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        // text color
+        paint.setColor(Color.GREEN);
+        // text size in pixels
+        paint.setTextSize(30);
+        // draw text to the Canvas center
+        Rect bounds = new Rect();
+        paint.getTextBounds(textToBitmap, 0, textToBitmap.length(), bounds);
+        int x = (bm.getWidth() - bounds.width())/2;
+        int y = (bm.getHeight() + bounds.height())/2;
+        canvas.drawText(textToBitmap, x, y, paint);
+        return bm;
     }
 
 

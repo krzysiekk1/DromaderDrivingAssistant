@@ -1,5 +1,7 @@
 package com.skobbler.sdkdemo.petrolstations;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -139,6 +141,7 @@ public class DynamicFunction {
 
             if((A[0][i].getVertexCost(0.0)) < bestResult && (A[0][i].getVertexCost(0.0)) >=0){
 
+                Log.d("results", "result: "+A[0][i].getVertexCost(0.0));
                 bestResult = A[0][i].getVertexCost(0.0);
             }
         }

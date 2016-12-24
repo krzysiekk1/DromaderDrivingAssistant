@@ -3,6 +3,7 @@ package com.skobbler.sdkdemo.petrolstations;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.skobbler.ngx.SKCategories;
 import com.skobbler.ngx.SKCoordinate;
@@ -59,6 +60,8 @@ public class FuelAlgorithm implements SKSearchListener{
 
     private double straightDistance;
 
+    private double scaleDistance;
+
     public FuelAlgorithm(SKRouteInfo routeInfo, Context app){
 
 
@@ -69,8 +72,8 @@ public class FuelAlgorithm implements SKSearchListener{
 
 
         this.maxStopsNumber = (int) allDistance/300;
-        if(this.maxStopsNumber == 0){
-            this.maxStopsNumber = 1;
+        if(this.maxStopsNumber == 0 || this.maxStopsNumber == 1){
+            this.maxStopsNumber = 2;
         }
 
         int routeID = routeInfo.getRouteID();
@@ -117,15 +120,14 @@ public class FuelAlgorithm implements SKSearchListener{
             }
         }
 
-
-
-        this.changeLists();
+       // this.changeLists();
 
     }
 
     @Override
     public void onReceivedSearchResults(final List<SKSearchResult> searchResults){
         addToFuelStationList(searchResults);
+        Log.d("myTag", "Found: "+searchResults.size()+" maxStopsNumber: "+maxStopsNumber);
     }
 
 
@@ -183,9 +185,10 @@ public class FuelAlgorithm implements SKSearchListener{
 
         }
 
-        list.add(new GasStation(this.straightDistance, 100.0));
-        list.add(0, new GasStation(0.0, 0.0));
 
+        //adding first and last position to list
+        list.add(new GasStation(this.straightDistance, Double.POSITIVE_INFINITY));
+        list.add(0, new GasStation(0.0, Double.POSITIVE_INFINITY));
 
     }
 
@@ -197,17 +200,45 @@ public class FuelAlgorithm implements SKSearchListener{
 
         double cost = 2.0;
 
-        String startVolume = sharedPreferences.getString(PreferenceTypes.K_FUEL_LEVEL, "10.0");
+        String startVolume = sharedPreferences.getString(PreferenceTypes.K_FUEL_LEVEL, "8.0");
         String tankVolume = sharedPreferences.getString(PreferenceTypes.K_TANK_CAPACITY, "50.0");
         String avg = sharedPreferences.getString(PreferenceTypes.K_FUEL_CONSUMPTION, "7.0");
         double startV = Double.parseDouble(startVolume);
         double tankV = Double.parseDouble(tankVolume);
         double average = Double.parseDouble(avg);
 
+        this.scaleDistance = ((tankV - startV)/average)*100.0;
 
-        int stationNumber = list.size();
+        List<GasStation> list1 = new ArrayList<GasStation>();
+        list1.add(new GasStation(0.0, 0.0));
+        list1.add(new GasStation(123.4, 4.3));
+        list1.add(new GasStation(134.7, 3.8));
+        list1.add(new GasStation(195.8, 4.15));
+        list1.add(new GasStation(223.4, 3.56));
+        list1.add(new GasStation(256.7, 4.35));
+        list1.add(new GasStation(387.2, 4.0));
+        list1.add(new GasStation(547.0, 5.6));
+        list1.add(new GasStation(623.0, 5.3));
+        list1.add(new GasStation(785.2, 7.3));
+        list1.add(new GasStation(843.1, 3.92));
+        list1.add(new GasStation(934.2, 4.16));
+        list1.add(new GasStation(986.4, 4.44));
+        list1.add(new GasStation(1000.7, 4.22));
+        list1.add(new GasStation(1002, 0.24));
+        list1.add(new GasStation(1076.3, 4.13));
+        list1.add(new GasStation(1156.2, 3.98));
+        list1.add(new GasStation(1342.3, 4.03));
+        list1.add(new GasStation(1789.2, 5.65));
+        list1.add(new GasStation(2222.2, 3.23));
+        list1.add(new GasStation(2489.5, 2.45));
+        list1.add(new GasStation(2589.5, 3.85));
+        list1.add(new GasStation(2769.5, 5.43));
+        list1.add(new GasStation(2876.2, 1.23));
+        list1.add(new GasStation(3000.0, 4.87));
+        list1.add(new GasStation(3210.2, 8.00));
+        list1.add(new GasStation(3500.0, 0.00));
 
-        Algorithm algo = new Algorithm(list, average, tankV, startV, stationNumber, maxStopsNumber);
+        Algorithm algo = new Algorithm(list1, average, tankV, startV, 12);
 
         algo.getGVSets();
 

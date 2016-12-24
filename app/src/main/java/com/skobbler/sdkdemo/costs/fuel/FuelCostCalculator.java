@@ -11,7 +11,7 @@ public class FuelCostCalculator {
     public double getFuelCost (SKRouteInfo routeInfo, Context app) {
         double sum = 0.0;
         FuelAlgorithm fuelAlgorithm = new FuelAlgorithm(routeInfo, app);
-        fuelAlgorithm.changeLists();
+
 
         sum += fuelAlgorithm.getMinimalCost(app);
 

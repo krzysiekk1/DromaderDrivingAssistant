@@ -96,6 +96,9 @@ public class FuelAlgorithm implements SKSearchListener{
         startCoordinate = positions.get(0).getCoordinate();
 
         factor = straightDistance/allDistance;
+        Log.d("factor", "factor: "+factor);
+        Log.d("factor", "straightDistance: "+straightDistance);
+        Log.d("factor", "allDistance: "+allDistance);
 
 
         int END_COORDINATE_NR = tempList.size() - 1;
@@ -120,7 +123,7 @@ public class FuelAlgorithm implements SKSearchListener{
             }
         }
 
-       // this.changeLists();
+
 
     }
 
@@ -128,12 +131,20 @@ public class FuelAlgorithm implements SKSearchListener{
     public void onReceivedSearchResults(final List<SKSearchResult> searchResults){
         addToFuelStationList(searchResults);
         Log.d("myTag", "Found: "+searchResults.size()+" maxStopsNumber: "+maxStopsNumber);
+        try{
+            Thread.sleep(1000);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        this.changeLists();
     }
 
 
     private void addToFuelStationList(List<SKSearchResult> searchResults) {
         for (SKSearchResult result : searchResults) {
             stationList.addToList(result.getLocation());
+            Log.d("addToFuelStationList","addToFuelStationList");
         }
 
     }
@@ -146,10 +157,13 @@ public class FuelAlgorithm implements SKSearchListener{
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(app);
         String petrolType = sharedPreferences.getString(PreferenceTypes.K_FUEL_TYPE, "0");
+        Log.d("petrolType", "petrol type is set to: "+petrolType);
+        Log.d("FuelStationStructure","size: "+this.stationList.list.size());
 
 
         for(FuelStationStructure station: this.stationList.list){
 
+            Log.d("for statement", "for statement");
             String countryCode = null;
 
             SKSearchResult searchResult = SKReverseGeocoderManager.getInstance().reverseGeocodePosition(station.getCoordinates());
@@ -169,17 +183,25 @@ public class FuelAlgorithm implements SKSearchListener{
 
 
 
-            double distance = SKToolsUtils.distanceBetween(startCoordinate, station.getCoordinates()) * factor;
+            Log.d("mycoordinates","station: "+station.getCoordinates().toString());
+            Log.d("mycoordinates","start: "+startCoordinate.toString());
+            Log.d("mycoordinates","try: 50,20 -> 50.5,20.5, distance: "+SKToolsUtils.distanceBetween(new SKCoordinate(50.0,20.0), new SKCoordinate(50.5,20.5)));
+            double distance = (SKToolsUtils.distanceBetween(startCoordinate.getLatitude(), startCoordinate.getLongitude(), station.getCoordinates().getLongitude(), station.getCoordinates().getLatitude())/1000.0) * factor;
+            Log.d("mycoordinates","distance: "+(SKToolsUtils.distanceBetween(startCoordinate.getLatitude(), startCoordinate.getLongitude(), station.getCoordinates().getLongitude(), station.getCoordinates().getLatitude())));
             station.setDieselCost(diesel);
             station.setPetrolCost(petrol);
             station.setLpgCost(lpg);
 
+            //switch (petrolType)
             if(petrolType.equals("0")){
                 list.add(new GasStation(distance, petrol));
+                Log.d("petrol", "has to be add station with - distance: "+distance+" petrol: "+petrol);
             } else if (petrolType.equals("1")){
                 list.add(new GasStation(distance, diesel));
+                Log.d("diesel", "has to be add station with - distance: "+distance+" diesel: "+diesel);
             } else if (petrolType.equals("2")){
                 list.add(new GasStation(distance, lpg));
+                Log.d("lpg", "has to be add station with - distance: "+distance+" lpg: "+lpg);
             }
 
 
@@ -189,6 +211,10 @@ public class FuelAlgorithm implements SKSearchListener{
         //adding first and last position to list
         list.add(new GasStation(this.straightDistance, Double.POSITIVE_INFINITY));
         list.add(0, new GasStation(0.0, Double.POSITIVE_INFINITY));
+
+        for(GasStation gs: list){
+            Log.d("list","location: "+gs.getPosition()+" price: "+gs.getFuelCost());
+        }
 
     }
 
@@ -238,7 +264,7 @@ public class FuelAlgorithm implements SKSearchListener{
         list1.add(new GasStation(3210.2, 8.00));
         list1.add(new GasStation(3500.0, 0.00));
 
-        Algorithm algo = new Algorithm(list1, average, tankV, startV, 12);
+        Algorithm algo = new Algorithm(list, average, tankV, startV, maxStopsNumber);
 
         algo.getGVSets();
 

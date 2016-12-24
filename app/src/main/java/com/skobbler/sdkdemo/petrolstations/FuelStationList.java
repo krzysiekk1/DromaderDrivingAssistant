@@ -32,7 +32,7 @@ public class FuelStationList {
             }
         }
 
-        if (!different){
+        if (different){
             list.add(new FuelStationStructure(listSize, coordinate));
             this.listSize++;
         }

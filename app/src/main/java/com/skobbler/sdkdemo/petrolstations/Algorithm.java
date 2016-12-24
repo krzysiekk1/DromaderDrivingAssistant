@@ -1,5 +1,7 @@
 package com.skobbler.sdkdemo.petrolstations;
 
+import android.util.Log;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -42,6 +44,10 @@ public class Algorithm {
 
 
         this.stationList = new GasStationList(this.stations, avgConsumption);
+
+        for(GasStation gs: this.stations){
+            Log.d("list-algo","location: "+gs.getPosition()+" price: "+gs.getFuelCost());
+        }
 
     }
 

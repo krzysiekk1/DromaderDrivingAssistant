@@ -1,11 +1,11 @@
 package com.skobbler.sdkdemo.petrolstations;
 
-/**
- * Created by marcinsendera on 21.12.2016.
- */
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Created by marcinsendera on 06.12.2016.
+ */
 public class GasStation {
 
     private double fuelcost;
@@ -26,6 +26,9 @@ public class GasStation {
     }
 
 
+    public void scalePosition(double scaleValue){
+        this.position +=scaleValue;
+    }
 
     public double getFuelCost(){
         return this.fuelcost;
@@ -37,4 +40,5 @@ public class GasStation {
 
 
 }
+
 

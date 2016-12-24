@@ -1,12 +1,11 @@
 package com.skobbler.sdkdemo.petrolstations;
 
-/**
- * Created by marcinsendera on 21.12.2016.
- */
-
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Created by marcinsendera on 09.12.2016.
+ */
 public class GasStationList {
 
     // average consumption of fuel per 100km
@@ -40,6 +39,4 @@ public class GasStationList {
 
     }
 
-
 }
-

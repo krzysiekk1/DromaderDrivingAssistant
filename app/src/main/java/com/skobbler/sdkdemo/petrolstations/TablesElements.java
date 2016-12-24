@@ -16,6 +16,7 @@ public class TablesElements {
 
     public int size;
 
+
     public TablesElements(List<GVTuple> gv){
 
         this.GV = gv;
@@ -26,7 +27,6 @@ public class TablesElements {
         this.fuel = new double[this.GV.size()];
 
         this.size = this.GV.size();
-       // System.out.println("this.GV.size: "+ this.size);
 
     }
 
@@ -55,6 +55,20 @@ public class TablesElements {
 
     }
 
+
+    public double getVertexCost(double fuelLevel){
+        int vertexNumber = -1;
+
+        for(int i = 0; i < size; i++){
+            if(GV.get(i).getFuelLevel() == fuelLevel){
+                vertexNumber = i;
+            }
+        }
+
+        return costs[vertexNumber];
+    }
+
+
     public void setVertexFuel(double fuelLevel, double settingValue){
         int vertexNumber = -1;
 
@@ -64,7 +78,7 @@ public class TablesElements {
             }
         }
 
-        fuel[vertexNumber] = settingValue;
+        costs[vertexNumber] = settingValue;
 
     }
 
@@ -72,8 +86,6 @@ public class TablesElements {
 
         return GV.size();
     }
-    //public void setFuel(double )
 
 
 }
-

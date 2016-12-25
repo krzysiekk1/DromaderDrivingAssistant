@@ -93,7 +93,7 @@ public class FuelAlgorithm implements SKSearchListener{
         }
 
 
-        straightDistance = SKGeoUtils.calculateAirDistanceBetweenCoordinates(positions.get(0).getCoordinate(), positions.get(positions.size() - 1).getCoordinate()) / 1000.0;
+        straightDistance = SKToolsUtils.distanceBetween(positions.get(0).getCoordinate(), positions.get(positions.size() - 1).getCoordinate()) / 1000.0;
         startCoordinate = positions.get(0).getCoordinate();
 
         factor = straightDistance/allDistance;
@@ -185,7 +185,7 @@ public class FuelAlgorithm implements SKSearchListener{
 
 
 
-            double distance = (SKGeoUtils.calculateAirDistanceBetweenCoordinates(startCoordinate, station.getCoordinates())/1000.0) * factor;
+            double distance = (SKToolsUtils.distanceBetween(startCoordinate, station.getCoordinates())/1000.0) * factor;
             Log.d("station distance", "distance "+distance);
             station.setDieselCost(diesel);
             station.setPetrolCost(petrol);

@@ -76,8 +76,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
 
     private int fillStationResponse = 0;
 
-    private String firstCost;
-    private boolean firstTime = true;
 
     /**
      * Singleton instance for current class
@@ -1147,21 +1145,12 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                         final String distance = SKToolsUtils.convertAndFormatDistance(skRouteInfoList.get(i)
                                         .getDistance(), configuration.getDistanceUnitType(), currentActivity);
                         CostCalculator costCalculator = new CostCalculator();
-                      // if(firstTime) {
                            final String cost = String.format("%.2f", costCalculator.getCost(
                                    skRouteInfoList.get(i), getCurrentActivity().getApplicationContext()));
-                        //   firstCost = cost;
-                        //   firstTime = false;
-                           SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, firstCost);
+                           SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, cost);
                            LayoutInflater inflater = (LayoutInflater) currentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                            View view = currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
                            new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(), mapView, inflater, view, currentActivity.getResources(), currentActivity.getPackageName());
-
-                  /*     } else {
-                           SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, firstCost);
-                           LayoutInflater inflater = (LayoutInflater) currentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                           View view = currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
-                       }*/
                            // new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(), mapView, inflater, view, currentActivity.getResources(), currentActivity.getPackageName());
 
                     }

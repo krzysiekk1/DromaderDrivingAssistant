@@ -2,21 +2,20 @@ package com.skobbler.sdkdemo.navigationui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Build;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.Toast;
 import com.skobbler.ngx.R;
-import com.skobbler.ngx.SKCategories;
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.SKMaps;
 import com.skobbler.ngx.map.SKAnimationSettings;
@@ -49,21 +48,17 @@ import com.skobbler.ngx.routing.SKRouteListener;
 import com.skobbler.ngx.routing.SKRouteManager;
 import com.skobbler.ngx.routing.SKRouteSettings;
 import com.skobbler.ngx.routing.SKViaPoint;
-import com.skobbler.ngx.search.SKNearbySearchSettings;
-import com.skobbler.ngx.search.SKSearchListener;
-import com.skobbler.ngx.search.SKSearchManager;
-import com.skobbler.ngx.search.SKSearchStatus;
+import com.skobbler.ngx.util.SKGeoUtils;
 import com.skobbler.sdkdemo.activity.DialogMessage;
-import com.skobbler.sdkdemo.activity.MapActivity;
 import com.skobbler.sdkdemo.costs.CostCalculator;
 import com.skobbler.sdkdemo.fatigue.FatigueAlgorithm;
 import com.skobbler.sdkdemo.fatigue.HotelSearch;
 import com.skobbler.sdkdemo.fatigue.ParkingSearch;
-import com.skobbler.sdkdemo.fatigue.ParkingSearch2;
 import com.skobbler.sdkdemo.navigationui.autonight.SKToolsAutoNightManager;
 import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.ngx.util.SKLogging;
-import com.skobbler.sdkdemo.costs.tolls.TollsCostCalculator;
+import com.skobbler.sdkdemo.petrolstations.FillStationStructure;
+import com.skobbler.sdkdemo.petrolstations.FuelStationStructure;
 import com.skobbler.sdkdemo.util.WeatherTask;
 
 import static com.skobbler.sdkdemo.activity.MapActivity.VIA_POINT_ICON_ID;
@@ -74,6 +69,13 @@ import static com.skobbler.sdkdemo.activity.MapActivity.VIA_POINT_ICON_ID;
 public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationListener, SKRouteListener,
         SKCurrentPositionListener, SKMapScreenCaptureListener {
 
+
+    private List<FillStationStructure> fillStations = null;
+
+
+    private int fillStationNumber;
+
+    private int fillStationResponse = 0;
 
     private String firstCost;
     private boolean firstTime = true;
@@ -900,6 +902,13 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
 
     }
 
+    public void setFillStations(List<FillStationStructure> list){
+        this.fillStations = list;
+        if(!list.isEmpty()) {
+            this.fillStationNumber = 0;
+        }
+    }
+
 
     public void setHotelCoordinates(SKCoordinate coordinates){
         this.hotelCoordinates = coordinates;
@@ -936,7 +945,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
 
-                        searchCarPark();
+                        searchParking();
 
                         fatigueAlgorithm.takeBreak();
                     }
@@ -954,6 +963,35 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         dm.showWithTimeout(15000);
     }
 
+
+    private void fillStationMessage(FillStationStructure fillStationStructure){
+        DialogMessage dm = new DialogMessage(currentActivity);
+        String s = String.format(Locale.US, "%.2f", fillStationStructure.getAppCost());
+        dm.setMessage("Fill your car with: "+fillStationStructure.getFuelToFill()+" l (about: "+s+" EUR)",
+                com.skobbler.sdkdemo.R.string.go_on_station,
+                new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+
+                        fillStationResponse = 1;
+
+                    }
+                },
+                com.skobbler.sdkdemo.R.string.dismiss,
+                new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+
+                        fillStationResponse = 2;
+                    }
+                });
+
+        dm.showWithTimeout(15000);
+    }
+
+
     private void searchParking() {
         parkingCoordinates = null;
         ParkingSearch parkingSearch = new ParkingSearch();
@@ -966,11 +1004,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         hotelSearch.startSearch();
     }
 
-    private void searchCarPark(){
-        carParkCoordinates = null;
-        ParkingSearch2 parkingSearch2 = new ParkingSearch2();
-        parkingSearch2.startSearch();
-    }
 
 
 
@@ -993,20 +1026,53 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     }
 
 
-    public void goViaCarPark(){
-        SKAnnotation hotelAnnotation = new SKAnnotation(30);
-        hotelAnnotation.setLocation(carParkCoordinates);
-        hotelAnnotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_PURPLE);
-        mapView.addAnnotation(hotelAnnotation, SKAnimationSettings.ANIMATION_NONE);
-        SKViaPoint viaPoint = new SKViaPoint(VIA_POINT_ICON_ID, carParkCoordinates);
+    public void goViaFuelStation(FillStationStructure fillStationStructure){
+        SKAnnotation fillStationAnnotation = new SKAnnotation(30);
+        fillStationAnnotation.setLocation(fillStationStructure.getCoordinates());
+        fillStationAnnotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_PURPLE);
+        mapView.addAnnotation(fillStationAnnotation, SKAnimationSettings.ANIMATION_NONE);
+        SKViaPoint viaPoint = new SKViaPoint(VIA_POINT_ICON_ID, fillStationStructure.getCoordinates());
         SKRouteManager.getInstance().addViaPoint(viaPoint, -1);
+        if((fillStationNumber + 1)<fillStations.size()) {
+            fillStationNumber++;
+        } else{
+            fillStationNumber = -1;
+        }
+        fillStationResponse = 0;
     }
+
 
     @Override
     public void onUpdateNavigationState(SKNavigationState skNavigationState) {
 
+        if(fillStationResponse == 1){
+            goViaFuelStation(fillStations.get(fillStationNumber));
+
+        }
+        if(fillStationResponse == 2){
+            if((fillStationNumber + 1)<fillStations.size()) {
+                fillStationNumber++;
+            }else{
+                fillStationNumber = -1;
+            }
+            fillStationResponse = 0;
+        }
+
+
+        if(fillStationNumber != -1){
+        if(fillStations != null && fillStationResponse == 0){
+            if(fillStationNumber < fillStations.size()){
+            if(SKGeoUtils.calculateAirDistanceBetweenCoordinates(fillStations.get(fillStationNumber).getCoordinates(),SKPositionerManager.getInstance().getCurrentGPSPosition(true).getCoordinate()) < 2000){
+                fillStationMessage(fillStations.get(fillStationNumber));
+            }
+            }
+        }
+        }
+
+
+
         sth++;
-        if(sth == 5) {
+        if(sth == 100) {
             fatigueMessage();
         }
         if(this.fatigueAlgorithm.getResponse()){

@@ -58,7 +58,6 @@ import com.skobbler.sdkdemo.navigationui.autonight.SKToolsAutoNightManager;
 import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.ngx.util.SKLogging;
 import com.skobbler.sdkdemo.petrolstations.FillStationStructure;
-import com.skobbler.sdkdemo.petrolstations.FuelStationStructure;
 import com.skobbler.sdkdemo.util.WeatherTask;
 
 import static com.skobbler.sdkdemo.activity.MapActivity.VIA_POINT_ICON_ID;
@@ -148,9 +147,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
 
     private SKCoordinate hotelCoordinates;
     private SKCoordinate parkingCoordinates;
-    private SKCoordinate carParkCoordinates;
-
-    private int sth = 0;
 
     public boolean startPedestrian=false;
 
@@ -882,26 +878,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     public void onSpeedExceededWithInstruction(String instruction, boolean speedExceeded) {
     }
 
-
-
-
-    private void testingAlertDialog(){
-        DialogMessage dm = new DialogMessage(currentActivity);
-        dm.setMessage("cokolwiek", com.skobbler.sdkdemo.R.string.mes1, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface arg0, int arg1) {
-                Toast.makeText(currentActivity,"You clicked yes button",Toast.LENGTH_LONG).show();
-            }
-        }, com.skobbler.sdkdemo.R.string.mes2, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            } });
-
-        dm.showWithTimeout(5000);
-
-    }
-
     public void setFillStations(List<FillStationStructure> list){
         this.fillStations = list;
         if(!list.isEmpty()) {
@@ -909,20 +885,13 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         }
     }
 
-
     public void setHotelCoordinates(SKCoordinate coordinates){
         this.hotelCoordinates = coordinates;
     }
 
-
     public void setParkingCoordinates(SKCoordinate coordinates){
         this.parkingCoordinates = coordinates;
     }
-
-    public void setCarParkCoordinates(SKCoordinate coordinates){
-        this.carParkCoordinates = coordinates;
-    }
-
 
     private void fatigueMessage(){
         DialogMessage dm = new DialogMessage(currentActivity);
@@ -932,10 +901,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
-
                         searchHotel();
-
-
                         fatigueAlgorithm.takeBreak();
                     }
                 },
@@ -944,9 +910,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
-
                         searchParking();
-
                         fatigueAlgorithm.takeBreak();
                     }
                 },
@@ -955,14 +919,11 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
-
                         fatigueAlgorithm.dismiss();
                     }
                 });
-
         dm.showWithTimeout(15000);
     }
-
 
     private void fillStationMessage(FillStationStructure fillStationStructure){
         DialogMessage dm = new DialogMessage(currentActivity);
@@ -973,9 +934,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
-
                         fillStationResponse = 1;
-
                     }
                 },
                 com.skobbler.sdkdemo.R.string.dismiss,
@@ -983,14 +942,11 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
-
                         fillStationResponse = 2;
                     }
                 });
-
         dm.showWithTimeout(15000);
     }
-
 
     private void searchParking() {
         parkingCoordinates = null;
@@ -1003,9 +959,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         HotelSearch hotelSearch = new HotelSearch();
         hotelSearch.startSearch();
     }
-
-
-
 
     public void goViaHotel() {
         SKAnnotation hotelAnnotation = new SKAnnotation(30);
@@ -1025,7 +978,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         SKRouteManager.getInstance().addViaPoint(viaPoint, -1);
     }
 
-
     public void goViaFuelStation(FillStationStructure fillStationStructure){
         SKAnnotation fillStationAnnotation = new SKAnnotation(30);
         fillStationAnnotation.setLocation(fillStationStructure.getCoordinates());
@@ -1041,13 +993,11 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         fillStationResponse = 0;
     }
 
-
     @Override
     public void onUpdateNavigationState(SKNavigationState skNavigationState) {
 
         if(fillStationResponse == 1){
             goViaFuelStation(fillStations.get(fillStationNumber));
-
         }
         if(fillStationResponse == 2){
             if((fillStationNumber + 1)<fillStations.size()) {
@@ -1057,7 +1007,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
             }
             fillStationResponse = 0;
         }
-
 
         if(fillStationNumber != -1){
         if(fillStations != null && fillStationResponse == 0){
@@ -1069,12 +1018,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         }
         }
 
-
-
-        sth++;
-        if(sth == 100) {
-            fatigueMessage();
-        }
         if(this.fatigueAlgorithm.getResponse()){
             fatigueMessage();
         }

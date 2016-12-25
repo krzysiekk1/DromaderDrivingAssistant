@@ -41,23 +41,21 @@ public class TouristAttractionsActivity extends Activity implements SKSearchList
 
     // the main categories for which the nearby search will be executed
     private static final int[] searchCategories = new int[] {
-            SKCategories.SKPOICategory.SKPOI_CATEGORY_FUEL.getValue()
-//            SKCategories.SKPOICategory.SKPOI_CATEGORY_ATTRACTION.getValue(),
-//            SKCategories.SKPOICategory.SKPOI_CATEGORY_MUSEUM.getValue(),
-//            SKCategories.SKPOICategory.SKPOI_CATEGORY_ZOO.getValue(),
-//            SKCategories.SKPOICategory.SKPOI_CATEGORY_AMUSEMENT_PARK.getValue(),
-//            SKCategories.SKPOICategory.SKPOI_CATEGORY_WATER_PARK.getValue(),
-//            SKCategories.SKPOICategory.SKPOI_CATEGORY_STADIUM2.getValue()
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_ATTRACTION.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_MUSEUM.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_ZOO.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_AMUSEMENT_PARK.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_WATER_PARK.getValue(),
+            SKCategories.SKPOICategory.SKPOI_CATEGORY_STADIUM2.getValue()
     };
 
-    //short radius = 20000;   // 20 km
-    short radius = 2000;
+    short radius = 20000;   // 20 km
 
     private SKCategories.SKPOICategory selectedCategory;
     List<SKCategories.SKPOICategory> viewCategories;
     private ListView listView;
     private TextView operationInProgressLabel;
-    //private ResultsListAdapter adapter;
+    private ResultsListAdapter adapter;
 
     SKSearchManager searchManager;
     SKNearbySearchSettings searchObject;
@@ -69,37 +67,30 @@ public class TouristAttractionsActivity extends Activity implements SKSearchList
     private Map<SKCategories.SKPOICategory, List<SKSearchResult>> results =
             new LinkedHashMap<SKCategories.SKPOICategory, List<SKSearchResult>>();
 
-    List<SKCoordinate> coordinatesList = new ArrayList<SKCoordinate>();
-    int i = 0;
-    List<SKCoordinate> resultList = new ArrayList<SKCoordinate>();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-//        operationInProgressLabel = (TextView) findViewById(R.id.label_operation_in_progress);
-//        listView = (ListView) findViewById(R.id.list_view);
-//        operationInProgressLabel.setText(getResources().getString(R.string.searching));
+        operationInProgressLabel = (TextView) findViewById(R.id.label_operation_in_progress);
+        listView = (ListView) findViewById(R.id.list_view);
+        operationInProgressLabel.setText(getResources().getString(R.string.searching));
 
-        coordinatesList.add(new SKCoordinate(49.880664, 19.488134));
-        coordinatesList.add(new SKCoordinate(49.870659, 19.485129));
-        coordinatesList.add(new SKCoordinate(49.860659, 19.484129));
-        startSearch(0);
+        startSearch();
     }
 
     // initiates a nearby search with the specified categories
-    private void startSearch(int nr) {
-        SKSearchManager searchManager = new SKSearchManager(this);
-        SKNearbySearchSettings searchObject = new SKNearbySearchSettings();
-        SKCoordinate coordinate = coordinatesList.get(nr);
-        searchObject.setLocation(coordinate);
+    private void startSearch() {
+        searchManager = new SKSearchManager(this);
+        searchObject = new SKNearbySearchSettings();
+        currentPosition = SKPositionerManager.getInstance().getCurrentGPSPosition(true);
+        currentCoordinate = currentPosition.getCoordinate();
+        searchObject.setLocation(currentCoordinate);
         searchObject.setRadius(radius);
         searchObject.setSearchResultsNumber(100);
         searchObject.setSearchCategories(searchCategories);
         searchObject.setSearchTerm(""); // all
         searchObject.setSearchMode(SKSearchManager.SKSearchMode.OFFLINE);
-        i++;
         status = searchManager.nearbySearch(searchObject);
         if (status != SKSearchStatus.SK_SEARCH_NO_ERROR) {
             SKLogging.writeLog("SKSearchStatus: ", status.toString(), 0);
@@ -109,50 +100,23 @@ public class TouristAttractionsActivity extends Activity implements SKSearchList
                 Toast.makeText(this, "An unknown error occurred", Toast.LENGTH_SHORT).show();
             }
         }
-//        searchManager = new SKSearchManager(this);
-//        searchObject = new SKNearbySearchSettings();
-//        currentPosition = SKPositionerManager.getInstance().getCurrentGPSPosition(true);
-//        currentCoordinate = currentPosition.getCoordinate();
-//        searchObject.setLocation(currentCoordinate);
-//        searchObject.setRadius(radius);
-//        searchObject.setSearchResultsNumber(100);
-//        searchObject.setSearchCategories(searchCategories);
-//        searchObject.setSearchTerm(""); // all
-//        searchObject.setSearchMode(SKSearchManager.SKSearchMode.OFFLINE);
-//        status = searchManager.nearbySearch(searchObject);
-//        if (status != SKSearchStatus.SK_SEARCH_NO_ERROR) {
-//            SKLogging.writeLog("SKSearchStatus: ", status.toString(), 0);
-//            if (status == SKSearchStatus.SK_SEARCH_NO_MAP_INFORMATION) {
-//                Toast.makeText(this, "Unknown GPS location", Toast.LENGTH_SHORT).show();
-//            } else {
-//                Toast.makeText(this, "An unknown error occurred", Toast.LENGTH_SHORT).show();
-//            }
-//        }
     }
 
-//    private void buildResultsMap(List<SKSearchResult> searchResults) {
-//        viewCategories = new ArrayList<SKCategories.SKPOICategory>();
-//        for (SKSearchResult result : searchResults) {
-//            if (!results.containsKey(result.getCategory())) {
-//                results.put(SKCategories.SKPOICategory.forInt(result.getCategory().getValue()), new ArrayList<SKSearchResult>());
-//                viewCategories.add(result.getCategory());
-//            }
-//            results.get(result.getCategory()).add(result);
-//        }
-//    }
+    private void buildResultsMap(List<SKSearchResult> searchResults) {
+        viewCategories = new ArrayList<SKCategories.SKPOICategory>();
+        for (SKSearchResult result : searchResults) {
+            if (!results.containsKey(result.getCategory())) {
+                results.put(SKCategories.SKPOICategory.forInt(result.getCategory().getValue()), new ArrayList<SKSearchResult>());
+                viewCategories.add(result.getCategory());
+            }
+            results.get(result.getCategory()).add(result);
+        }
+    }
 
     @Override
     public void onReceivedSearchResults(final List<SKSearchResult> searchResults) {
-        Log.d("searchResults size: ", String.valueOf(searchResults.size()));
-        for (SKSearchResult result : searchResults) {
-            resultList.add(result.getLocation());
-        }
-        Log.d("resultList size: ", String.valueOf(resultList.size()));
-        if (i < coordinatesList.size()) {
-            startSearch(i);
-        }
       //  Log.d("myTag","tourist");
-        /*buildResultsMap(searchResults);
+        buildResultsMap(searchResults);
         operationInProgressLabel.setVisibility(View.GONE);
         listView.setVisibility(View.VISIBLE);
         adapter = new ResultsListAdapter();
@@ -190,10 +154,10 @@ public class TouristAttractionsActivity extends Activity implements SKSearchList
                     dm.show();
                 }
             }
-        });*/
+        });
     }
 
-    /*@Override
+    @Override
     public void onBackPressed() {
         if (selectedCategory == null) {
             super.onBackPressed();
@@ -252,5 +216,5 @@ public class TouristAttractionsActivity extends Activity implements SKSearchList
             }
             return view;
         }
-    }*/
+    }
 }

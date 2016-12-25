@@ -63,17 +63,23 @@ public class FuelAlgorithm implements SKSearchListener{
 
     private double scaleDistance;
 
-    public FuelAlgorithm(SKRouteInfo routeInfo, Context app){
+    private int searchNumber;
+
+    private int maxSearchNumber;
+
+    List<SKCoordinate> tempList;
+
+    public FuelAlgorithm(SKRouteInfo routeInfo, Context app) {
 
 
         this.app = app;
         this.routeInfo = routeInfo;
 
-        double allDistance = routeInfo.getDistance()/1000.0;
+        double allDistance = routeInfo.getDistance() / 1000.0;
 
 
-        this.maxStopsNumber = (int) allDistance/300;
-        if(this.maxStopsNumber == 0 || this.maxStopsNumber == 1){
+        this.maxStopsNumber = (int) allDistance / 300;
+        if (this.maxStopsNumber == 0 || this.maxStopsNumber == 1) {
             this.maxStopsNumber = 2;
         }
 
@@ -84,11 +90,11 @@ public class FuelAlgorithm implements SKSearchListener{
         this.stationList = new FuelStationList();
 
         //getting coordinates across whole route
-        List<SKCoordinate> tempList = new ArrayList<SKCoordinate>();
+        this.tempList = new ArrayList<SKCoordinate>();
         List<SKExtendedRoutePosition> positions = SKRouteManager.getInstance().getExtendedRoutePointsForRouteByUniqueId(routeID);
 
 
-        for (SKExtendedRoutePosition pos : positions){
+        for (SKExtendedRoutePosition pos : positions) {
             tempList.add(new SKCoordinate(pos.getCoordinate().getLongitude(), pos.getCoordinate().getLatitude()));
         }
 
@@ -96,16 +102,26 @@ public class FuelAlgorithm implements SKSearchListener{
         straightDistance = SKToolsUtils.distanceBetween(positions.get(0).getCoordinate(), positions.get(positions.size() - 1).getCoordinate()) / 1000.0;
         startCoordinate = positions.get(0).getCoordinate();
 
-        factor = straightDistance/allDistance;
-        Log.d("factor", "factor: "+factor);
-        Log.d("factor", "straightDistance: "+straightDistance);
-        Log.d("factor", "allDistance: "+allDistance);
+        factor = straightDistance / allDistance;
+        Log.d("factor", "factor: " + factor);
+        Log.d("factor", "straightDistance: " + straightDistance);
+        Log.d("factor", "allDistance: " + allDistance);
 
 
         int END_COORDINATE_NR = tempList.size() - 1;
 
-        for (int coordinateNr = START_COORDINATE_NR + 1; coordinateNr < END_COORDINATE_NR; coordinateNr += DENSITY){
+
+        for (int coordinateNr = START_COORDINATE_NR + 1; coordinateNr < END_COORDINATE_NR; coordinateNr += DENSITY) {
             coordinates.add(tempList.get(coordinateNr));
+        }
+
+        this.searchNumber = START_COORDINATE_NR + 1;
+        this.maxSearchNumber = END_COORDINATE_NR;
+
+
+    }
+
+    private void startSearch(int nr){
 
             SKSearchManager searchManager = new SKSearchManager(this);
             SKNearbySearchSettings searchObject = new SKNearbySearchSettings();
@@ -115,46 +131,37 @@ public class FuelAlgorithm implements SKSearchListener{
             searchObject.setSearchTerm("");
             searchObject.setSearchMode(SKSearchManager.SKSearchMode.OFFLINE);
 
-            searchObject.setLocation(tempList.get(coordinateNr));
+            searchObject.setLocation(tempList.get(nr));
 
             SKSearchStatus status = searchManager.nearbySearch(searchObject);
-
+            searchNumber += DENSITY;
             if (status != SKSearchStatus.SK_SEARCH_NO_ERROR) {
                 SKLogging.writeLog("SKSearchStatus: ", status.toString(), 0);
             }
         }
 
-        // this.changeLists();
-
-    }
 
     @Override
     public void onReceivedSearchResults(final List<SKSearchResult> searchResults){
-        addToFuelStationList(searchResults);
-        Log.d("myTag", "Found: "+searchResults.size()+" maxStopsNumber: "+maxStopsNumber);
-        try{
-            Thread.sleep(1000);
-        } catch (Exception e){
-             e.printStackTrace();
-        }
-
-        this.changeLists();
-    }
-
-
-    private void addToFuelStationList(List<SKSearchResult> searchResults) {
         for (SKSearchResult result : searchResults) {
             stationList.addToList(result.getLocation());
-            Log.d("addToFuelStationList","addToFuelStationList");
+        }
+        Log.d("searchResults size: ", String.valueOf(searchResults.size()));
+        Log.d("stationList size: ", String.valueOf(stationList.list.size()));
+        Log.d("results routeID: ",String.valueOf(routeInfo.getRouteID()));
+        if (searchNumber < maxSearchNumber) {
+            startSearch(searchNumber);
         }
 
     }
 
+    public double getMinimalCost(Context app) {
 
-    public void changeLists(){
+        // run first search!
 
+        startSearch(searchNumber);
 
-        //TODO Add first and last point to stationList!!!!!!!!!!
+        //TODO BEGINNING OF THE PREVIOUS CHANGE LISTS
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(app);
         String petrolType = sharedPreferences.getString(PreferenceTypes.K_FUEL_TYPE, "0");
@@ -211,13 +218,7 @@ public class FuelAlgorithm implements SKSearchListener{
             Log.d("list","location: "+gs.getPosition()+" price: "+gs.getFuelCost());
         }
 
-    }
-
-
-    public double getMinimalCost(Context app) {
-
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(app);
+        //TODO ITS THE END OF PREVIOUS CHANGE LISTS
 
         double cost = 2.0;
 

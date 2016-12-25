@@ -1147,21 +1147,21 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                         final String distance = SKToolsUtils.convertAndFormatDistance(skRouteInfoList.get(i)
                                         .getDistance(), configuration.getDistanceUnitType(), currentActivity);
                         CostCalculator costCalculator = new CostCalculator();
-                       if(firstTime) {
+                      // if(firstTime) {
                            final String cost = String.format("%.2f", costCalculator.getCost(
                                    skRouteInfoList.get(i), getCurrentActivity().getApplicationContext()));
-                           firstCost = cost;
-                           firstTime = false;
+                        //   firstCost = cost;
+                        //   firstTime = false;
                            SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, firstCost);
                            LayoutInflater inflater = (LayoutInflater) currentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                            View view = currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
                            new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(), mapView, inflater, view, currentActivity.getResources(), currentActivity.getPackageName());
 
-                       } else {
+                  /*     } else {
                            SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, firstCost);
                            LayoutInflater inflater = (LayoutInflater) currentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                            View view = currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
-                       }
+                       }*/
                            // new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(), mapView, inflater, view, currentActivity.getResources(), currentActivity.getPackageName());
 
                     }

@@ -59,6 +59,7 @@ import com.skobbler.sdkdemo.costs.CostCalculator;
 import com.skobbler.sdkdemo.fatigue.FatigueAlgorithm;
 import com.skobbler.sdkdemo.fatigue.HotelSearch;
 import com.skobbler.sdkdemo.fatigue.ParkingSearch;
+import com.skobbler.sdkdemo.fatigue.ParkingSearch2;
 import com.skobbler.sdkdemo.navigationui.autonight.SKToolsAutoNightManager;
 import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.ngx.util.SKLogging;
@@ -72,6 +73,10 @@ import static com.skobbler.sdkdemo.activity.MapActivity.VIA_POINT_ICON_ID;
  */
 public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationListener, SKRouteListener,
         SKCurrentPositionListener, SKMapScreenCaptureListener {
+
+
+    private String firstCost;
+    private boolean firstTime = true;
 
     /**
      * Singleton instance for current class
@@ -141,6 +146,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
 
     private SKCoordinate hotelCoordinates;
     private SKCoordinate parkingCoordinates;
+    private SKCoordinate carParkCoordinates;
 
     private int sth = 0;
 
@@ -904,10 +910,14 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         this.parkingCoordinates = coordinates;
     }
 
+    public void setCarParkCoordinates(SKCoordinate coordinates){
+        this.carParkCoordinates = coordinates;
+    }
+
 
     private void fatigueMessage(){
         DialogMessage dm = new DialogMessage(currentActivity);
-        dm.setMessage("You are probably tired. What do you want to do?",
+        dm.setMessage("You're probably tired. Where do you want to go?",
                 com.skobbler.sdkdemo.R.string.go_to_hotel,
                 new DialogInterface.OnClickListener(){
                     @Override
@@ -915,6 +925,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                         dialog.cancel();
 
                         searchHotel();
+
 
                         fatigueAlgorithm.takeBreak();
                     }
@@ -925,7 +936,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
 
-                        searchParking();
+                        searchCarPark();
 
                         fatigueAlgorithm.takeBreak();
                     }
@@ -943,17 +954,25 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         dm.showWithTimeout(15000);
     }
 
+    private void searchParking() {
+        parkingCoordinates = null;
+        ParkingSearch parkingSearch = new ParkingSearch();
+        parkingSearch.startSearch();
+    }
+
     private void searchHotel() {
         hotelCoordinates = null;
         HotelSearch hotelSearch = new HotelSearch();
         hotelSearch.startSearch();
     }
 
-    private void searchParking() {
-        parkingCoordinates = null;
-        ParkingSearch parkingSearch = new ParkingSearch();
-        parkingSearch.startSearch();
+    private void searchCarPark(){
+        carParkCoordinates = null;
+        ParkingSearch2 parkingSearch2 = new ParkingSearch2();
+        parkingSearch2.startSearch();
     }
+
+
 
     public void goViaHotel() {
         SKAnnotation hotelAnnotation = new SKAnnotation(30);
@@ -970,6 +989,16 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         parkingAnnotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_PURPLE);
         mapView.addAnnotation(parkingAnnotation, SKAnimationSettings.ANIMATION_NONE);
         SKViaPoint viaPoint = new SKViaPoint(VIA_POINT_ICON_ID, parkingCoordinates);
+        SKRouteManager.getInstance().addViaPoint(viaPoint, -1);
+    }
+
+
+    public void goViaCarPark(){
+        SKAnnotation hotelAnnotation = new SKAnnotation(30);
+        hotelAnnotation.setLocation(carParkCoordinates);
+        hotelAnnotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_PURPLE);
+        mapView.addAnnotation(hotelAnnotation, SKAnimationSettings.ANIMATION_NONE);
+        SKViaPoint viaPoint = new SKViaPoint(VIA_POINT_ICON_ID, carParkCoordinates);
         SKRouteManager.getInstance().addViaPoint(viaPoint, -1);
     }
 
@@ -1109,12 +1138,22 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                         final String distance = SKToolsUtils.convertAndFormatDistance(skRouteInfoList.get(i)
                                         .getDistance(), configuration.getDistanceUnitType(), currentActivity);
                         CostCalculator costCalculator = new CostCalculator();
-                        final String cost = String.format("%.2f", costCalculator.getCost(
-                                skRouteInfoList.get(i), getCurrentActivity().getApplicationContext()));
-                        SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, cost);
-                        LayoutInflater inflater = (LayoutInflater) currentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                        View view = currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
-                        new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(), mapView, inflater, view, currentActivity.getResources(), currentActivity.getPackageName());
+                       if(firstTime) {
+                           final String cost = String.format("%.2f", costCalculator.getCost(
+                                   skRouteInfoList.get(i), getCurrentActivity().getApplicationContext()));
+                           firstCost = cost;
+                           firstTime = false;
+                           SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, firstCost);
+                           LayoutInflater inflater = (LayoutInflater) currentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                           View view = currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
+                           new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(), mapView, inflater, view, currentActivity.getResources(), currentActivity.getPackageName());
+
+                       } else {
+                           SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, firstCost);
+                           LayoutInflater inflater = (LayoutInflater) currentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                           View view = currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
+                       }
+                           // new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(), mapView, inflater, view, currentActivity.getResources(), currentActivity.getPackageName());
 
                     }
 

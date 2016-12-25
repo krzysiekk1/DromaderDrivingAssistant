@@ -18,6 +18,7 @@ import com.skobbler.ngx.search.SKSearchManager;
 import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.ngx.search.SKSearchResultParent;
 import com.skobbler.ngx.search.SKSearchStatus;
+import com.skobbler.ngx.util.SKGeoUtils;
 import com.skobbler.ngx.util.SKLogging;
 import com.skobbler.sdkdemo.util.PreferenceTypes;
 
@@ -78,8 +79,8 @@ public class FuelAlgorithm implements SKSearchListener{
 
         int routeID = routeInfo.getRouteID();
 
-       // this.startCoordinates = startCoordinates;
-        
+        // this.startCoordinates = startCoordinates;
+
         this.stationList = new FuelStationList();
 
         //getting coordinates across whole route
@@ -92,7 +93,7 @@ public class FuelAlgorithm implements SKSearchListener{
         }
 
 
-        straightDistance = SKToolsUtils.distanceBetween(positions.get(0).getCoordinate(), positions.get(positions.size() - 1).getCoordinate()) / 1000.0;
+        straightDistance = SKGeoUtils.calculateAirDistanceBetweenCoordinates(positions.get(0).getCoordinate(), positions.get(positions.size() - 1).getCoordinate()) / 1000.0;
         startCoordinate = positions.get(0).getCoordinate();
 
         factor = straightDistance/allDistance;
@@ -123,7 +124,7 @@ public class FuelAlgorithm implements SKSearchListener{
             }
         }
 
-
+        // this.changeLists();
 
     }
 
@@ -134,7 +135,7 @@ public class FuelAlgorithm implements SKSearchListener{
         try{
             Thread.sleep(1000);
         } catch (Exception e){
-            e.printStackTrace();
+             e.printStackTrace();
         }
 
         this.changeLists();
@@ -157,6 +158,7 @@ public class FuelAlgorithm implements SKSearchListener{
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(app);
         String petrolType = sharedPreferences.getString(PreferenceTypes.K_FUEL_TYPE, "0");
+
         Log.d("petrolType", "petrol type is set to: "+petrolType);
         Log.d("FuelStationStructure","size: "+this.stationList.list.size());
 
@@ -183,25 +185,18 @@ public class FuelAlgorithm implements SKSearchListener{
 
 
 
-            Log.d("mycoordinates","station: "+station.getCoordinates().toString());
-            Log.d("mycoordinates","start: "+startCoordinate.toString());
-            Log.d("mycoordinates","try: 50,20 -> 50.5,20.5, distance: "+SKToolsUtils.distanceBetween(new SKCoordinate(50.0,20.0), new SKCoordinate(50.5,20.5)));
-            double distance = (SKToolsUtils.distanceBetween(startCoordinate.getLatitude(), startCoordinate.getLongitude(), station.getCoordinates().getLongitude(), station.getCoordinates().getLatitude())/1000.0) * factor;
-            Log.d("mycoordinates","distance: "+(SKToolsUtils.distanceBetween(startCoordinate.getLatitude(), startCoordinate.getLongitude(), station.getCoordinates().getLongitude(), station.getCoordinates().getLatitude())));
+            double distance = (SKGeoUtils.calculateAirDistanceBetweenCoordinates(startCoordinate, station.getCoordinates())/1000.0) * factor;
+            Log.d("station distance", "distance "+distance);
             station.setDieselCost(diesel);
             station.setPetrolCost(petrol);
             station.setLpgCost(lpg);
 
-            //switch (petrolType)
             if(petrolType.equals("0")){
                 list.add(new GasStation(distance, petrol));
-                Log.d("petrol", "has to be add station with - distance: "+distance+" petrol: "+petrol);
             } else if (petrolType.equals("1")){
                 list.add(new GasStation(distance, diesel));
-                Log.d("diesel", "has to be add station with - distance: "+distance+" diesel: "+diesel);
             } else if (petrolType.equals("2")){
                 list.add(new GasStation(distance, lpg));
-                Log.d("lpg", "has to be add station with - distance: "+distance+" lpg: "+lpg);
             }
 
 
@@ -264,7 +259,7 @@ public class FuelAlgorithm implements SKSearchListener{
         list1.add(new GasStation(3210.2, 8.00));
         list1.add(new GasStation(3500.0, 0.00));
 
-        Algorithm algo = new Algorithm(list, average, tankV, startV, maxStopsNumber);
+        Algorithm algo = new Algorithm(list1, average, tankV, startV, 12);
 
         algo.getGVSets();
 

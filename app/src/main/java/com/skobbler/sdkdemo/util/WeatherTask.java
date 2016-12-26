@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,6 +52,7 @@ public class WeatherTask extends AsyncTask {
 
     List<JSONObject> data = new ArrayList<JSONObject>();
     List<Bitmap> icons = new ArrayList<Bitmap>();
+    static int annotationId = 20;
     private String packageName;
     private SKMapSurfaceView mapView;
     private RelativeLayout customView;
@@ -123,11 +125,13 @@ public class WeatherTask extends AsyncTask {
     protected void onPostExecute(Object o) {
         JSONObject object;
         JSONArray weatherArray;
+        JSONObject mainArray;
         String lat = null;
         String lon = null;
         String icon = null;
+        String temp = null;
 
-        int annotationId = 20;
+
         SKAnnotationView annotationView1 = new SKAnnotationView();
         customView = (RelativeLayout) (inflater.inflate(R.layout.layout_custom_view, null, false));
         ImageView imgView = (ImageView) view;
@@ -138,7 +142,9 @@ public class WeatherTask extends AsyncTask {
                 try {
                     object = datum.getJSONObject("coord");
                     weatherArray = datum.getJSONArray("weather");
+                    mainArray = datum.getJSONObject("main");
                     icon = weatherArray.getJSONObject(0).getString("icon");
+                    temp = mainArray.getString("temp");
                     lat = object.getString("lat");
                     lon = object.getString("lon");
                 } catch (JSONException e) {
@@ -153,7 +159,8 @@ public class WeatherTask extends AsyncTask {
                 String resourceString = "a" + icon;
                 Bitmap bm;
                 bm = BitmapFactory.decodeResource(resources, resources.getIdentifier(resourceString, "drawable", packageName));
-                String textToBitmap = "20"; // TODO change to real number
+                int tempCelsius = (int) (Double.parseDouble(temp) - 273);
+                String textToBitmap = Integer.toString(tempCelsius) + "°";
                 bm = addTextToBitmap(bm, textToBitmap);
                 imgView.setImageBitmap(bm);
                 annotationView1.setView(view);
@@ -162,6 +169,8 @@ public class WeatherTask extends AsyncTask {
             }
         }
     }
+
+
 
     private Bitmap addTextToBitmap(Bitmap bm, String textToBitmap) {
         Bitmap.Config bitmapConfig = bm.getConfig();
@@ -175,9 +184,10 @@ public class WeatherTask extends AsyncTask {
         // new antialised Paint
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         // text color
-        paint.setColor(Color.GREEN);
+        paint.setColor(Color.BLACK);
         // text size in pixels
-        paint.setTextSize(30);
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        paint.setTextSize(60);
         // draw text to the Canvas center
         Rect bounds = new Rect();
         paint.getTextBounds(textToBitmap, 0, textToBitmap.length(), bounds);

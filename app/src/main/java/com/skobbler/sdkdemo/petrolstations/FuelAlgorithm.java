@@ -1,5 +1,6 @@
 package com.skobbler.sdkdemo.petrolstations;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -18,13 +19,17 @@ import com.skobbler.ngx.search.SKSearchManager;
 import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.ngx.search.SKSearchResultParent;
 import com.skobbler.ngx.search.SKSearchStatus;
-import com.skobbler.ngx.util.SKGeoUtils;
 import com.skobbler.ngx.util.SKLogging;
 import com.skobbler.sdkdemo.util.PreferenceTypes;
 
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Created by marcinsendera on 02.12.2016.
@@ -47,7 +52,7 @@ public class FuelAlgorithm implements SKSearchListener{
 
     private List<GasStation> list = new ArrayList<GasStation>();
 
-    private FuelStationList stationList = new FuelStationList();
+    private volatile FuelStationList stationList = new FuelStationList();
 
     private SKCoordinate startCoordinate;
     private SKRouteInfo routeInfo;
@@ -69,8 +74,11 @@ public class FuelAlgorithm implements SKSearchListener{
 
     List<SKCoordinate> tempList;
 
-    public FuelAlgorithm(SKRouteInfo routeInfo, Context app) {
+    private boolean searchEnded = false;
 
+    private double cost;
+
+    public FuelAlgorithm(SKRouteInfo routeInfo, Context app) {
 
         this.app = app;
         this.routeInfo = routeInfo;
@@ -151,122 +159,263 @@ public class FuelAlgorithm implements SKSearchListener{
         Log.d("results routeID: ",String.valueOf(routeInfo.getRouteID()));
         if (searchNumber < maxSearchNumber) {
             startSearch(searchNumber);
+        } else {
+            Log.d("SEARCH_ENDED ",String.valueOf(routeInfo.getRouteID()));
+            setSearchEnded(true);
         }
-
     }
 
-    public double getMinimalCost(Context app) {
+    private void setSearchEnded(boolean ended) {
+        this.searchEnded = ended;
+    }
+
+    public double getMinimalCost() {
 
         // run first search!
 
         startSearch(searchNumber);
 
-        //TODO BEGINNING OF THE PREVIOUS CHANGE LISTS
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(app);
-        String petrolType = sharedPreferences.getString(PreferenceTypes.K_FUEL_TYPE, "0");
-
-        Log.d("petrolType", "petrol type is set to: "+petrolType);
-        Log.d("FuelStationStructure","size: "+this.stationList.list.size());
-
-
-        for(FuelStationStructure station: this.stationList.list){
-
-            Log.d("for statement", "for statement");
-            String countryCode = null;
-
-            SKSearchResult searchResult = SKReverseGeocoderManager.getInstance().reverseGeocodePosition(station.getCoordinates());
-
-            if (searchResult != null && searchResult.getParentsList() != null) {
-                for (SKSearchResultParent parent : searchResult.getParentsList()) {
-                    countryCode = parent.getParentName();
+        ExecutorService es = Executors.newSingleThreadExecutor();
+        Future<Double> result = es.submit(new Callable<Double>() {
+            public Double call() throws Exception {
+//        Thread alg = new Thread() {
+//            @Override
+//            public void run() {
+                while (!searchEnded) {
+                    try {
+                        Log.d("FUEL_ALGORITHM ", String.valueOf(routeInfo.getRouteID()));
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
+                //TODO BEGINNING OF THE PREVIOUS CHANGE LISTS
+
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(app);
+                String petrolType = sharedPreferences.getString(PreferenceTypes.K_FUEL_TYPE, "0");
+
+                Log.d("petrolType", "petrol type is set to: "+petrolType);
+                Log.d("FuelStationStructure","size: "+ stationList.list.size());
+
+
+                for(FuelStationStructure station: stationList.list){
+
+                    Log.d("for statement", "for statement");
+                    String countryCode = null;
+
+                    SKSearchResult searchResult = SKReverseGeocoderManager.getInstance().reverseGeocodePosition(station.getCoordinates());
+
+                    if (searchResult != null && searchResult.getParentsList() != null) {
+                        for (SKSearchResultParent parent : searchResult.getParentsList()) {
+                            countryCode = parent.getParentName();
+                        }
+                    }
+
+                    FuelCostAtStation fuelCostAtStation = new FuelCostAtStation();
+
+                    fuelCostAtStation.calculateFuelCostAtStation(station.getCoordinates(), countryCode, app);
+                    double diesel = fuelCostAtStation.getDieselLiterCost();
+                    double petrol = fuelCostAtStation.getPetrolLiterCost();
+                    double lpg = fuelCostAtStation.getLPGLiterCost();
+
+
+
+                    double distance = (SKToolsUtils.distanceBetween(startCoordinate, station.getCoordinates())/1000.0) * factor;
+                    Log.d("station distance", "distance "+distance);
+                    station.setDieselCost(diesel);
+                    station.setPetrolCost(petrol);
+                    station.setLpgCost(lpg);
+
+                    if(petrolType.equals("0")){
+                        list.add(new GasStation(distance, petrol));
+                    } else if (petrolType.equals("1")){
+                        list.add(new GasStation(distance, diesel));
+                    } else if (petrolType.equals("2")){
+                        list.add(new GasStation(distance, lpg));
+                    }
+
+
+                }
+
+
+                //adding first and last position to list
+                list.add(new GasStation(straightDistance, Double.POSITIVE_INFINITY));
+                list.add(0, new GasStation(0.0, Double.POSITIVE_INFINITY));
+
+                for(GasStation gs: list){
+                    Log.d("list","location: "+gs.getPosition()+" price: "+gs.getFuelCost());
+                }
+
+                //TODO ITS THE END OF PREVIOUS CHANGE LISTS
+
+                cost = 2.0;
+
+                String startVolume = sharedPreferences.getString(PreferenceTypes.K_FUEL_LEVEL, "8.0");
+                String tankVolume = sharedPreferences.getString(PreferenceTypes.K_TANK_CAPACITY, "50.0");
+                String avg = sharedPreferences.getString(PreferenceTypes.K_FUEL_CONSUMPTION, "7.0");
+                double startV = Double.parseDouble(startVolume);
+                double tankV = Double.parseDouble(tankVolume);
+                double average = Double.parseDouble(avg);
+
+                scaleDistance = ((tankV - startV)/average)*100.0;
+
+                List<GasStation> list1 = new ArrayList<GasStation>();
+                list1.add(new GasStation(0.0, 0.0));
+                list1.add(new GasStation(123.4, 4.3));
+                list1.add(new GasStation(134.7, 3.8));
+                list1.add(new GasStation(195.8, 4.15));
+                list1.add(new GasStation(223.4, 3.56));
+                list1.add(new GasStation(256.7, 4.35));
+                list1.add(new GasStation(387.2, 4.0));
+                list1.add(new GasStation(547.0, 5.6));
+                list1.add(new GasStation(623.0, 5.3));
+                list1.add(new GasStation(785.2, 7.3));
+                list1.add(new GasStation(843.1, 3.92));
+                list1.add(new GasStation(934.2, 4.16));
+                list1.add(new GasStation(986.4, 4.44));
+                list1.add(new GasStation(1000.7, 4.22));
+                list1.add(new GasStation(1002, 0.24));
+                list1.add(new GasStation(1076.3, 4.13));
+                list1.add(new GasStation(1156.2, 3.98));
+                list1.add(new GasStation(1342.3, 4.03));
+                list1.add(new GasStation(1789.2, 5.65));
+                list1.add(new GasStation(2222.2, 3.23));
+                list1.add(new GasStation(2489.5, 2.45));
+                list1.add(new GasStation(2589.5, 3.85));
+                list1.add(new GasStation(2769.5, 5.43));
+                list1.add(new GasStation(2876.2, 1.23));
+                list1.add(new GasStation(3000.0, 4.87));
+                list1.add(new GasStation(3210.2, 8.00));
+                list1.add(new GasStation(3500.0, 0.00));
+
+                Algorithm algo = new Algorithm(list1, average, tankV, startV, 12);
+
+                algo.getGVSets();
+
+                cost = algo.calculateMinimalCost();
+
+                return cost;
+//            }
+//        };
+//        alg.start();
             }
-
-            FuelCostAtStation fuelCostAtStation = new FuelCostAtStation();
-
-            fuelCostAtStation.calculateFuelCostAtStation(station.getCoordinates(), countryCode, app);
-            double diesel = fuelCostAtStation.getDieselLiterCost();
-            double petrol = fuelCostAtStation.getPetrolLiterCost();
-            double lpg = fuelCostAtStation.getLPGLiterCost();
-
-
-
-            double distance = (SKToolsUtils.distanceBetween(startCoordinate, station.getCoordinates())/1000.0) * factor;
-            Log.d("station distance", "distance "+distance);
-            station.setDieselCost(diesel);
-            station.setPetrolCost(petrol);
-            station.setLpgCost(lpg);
-
-            if(petrolType.equals("0")){
-                list.add(new GasStation(distance, petrol));
-            } else if (petrolType.equals("1")){
-                list.add(new GasStation(distance, diesel));
-            } else if (petrolType.equals("2")){
-                list.add(new GasStation(distance, lpg));
-            }
-
-
+        });
+        try {
+            cost = result.get();
+        } catch (Exception e) {
+            Log.d("FAILED", "FAILED");
         }
+        es.shutdown();
 
-
-        //adding first and last position to list
-        list.add(new GasStation(this.straightDistance, Double.POSITIVE_INFINITY));
-        list.add(0, new GasStation(0.0, Double.POSITIVE_INFINITY));
-
-        for(GasStation gs: list){
-            Log.d("list","location: "+gs.getPosition()+" price: "+gs.getFuelCost());
-        }
-
-        //TODO ITS THE END OF PREVIOUS CHANGE LISTS
-
-        double cost = 2.0;
-
-        String startVolume = sharedPreferences.getString(PreferenceTypes.K_FUEL_LEVEL, "8.0");
-        String tankVolume = sharedPreferences.getString(PreferenceTypes.K_TANK_CAPACITY, "50.0");
-        String avg = sharedPreferences.getString(PreferenceTypes.K_FUEL_CONSUMPTION, "7.0");
-        double startV = Double.parseDouble(startVolume);
-        double tankV = Double.parseDouble(tankVolume);
-        double average = Double.parseDouble(avg);
-
-        this.scaleDistance = ((tankV - startV)/average)*100.0;
-
-        List<GasStation> list1 = new ArrayList<GasStation>();
-        list1.add(new GasStation(0.0, 0.0));
-        list1.add(new GasStation(123.4, 4.3));
-        list1.add(new GasStation(134.7, 3.8));
-        list1.add(new GasStation(195.8, 4.15));
-        list1.add(new GasStation(223.4, 3.56));
-        list1.add(new GasStation(256.7, 4.35));
-        list1.add(new GasStation(387.2, 4.0));
-        list1.add(new GasStation(547.0, 5.6));
-        list1.add(new GasStation(623.0, 5.3));
-        list1.add(new GasStation(785.2, 7.3));
-        list1.add(new GasStation(843.1, 3.92));
-        list1.add(new GasStation(934.2, 4.16));
-        list1.add(new GasStation(986.4, 4.44));
-        list1.add(new GasStation(1000.7, 4.22));
-        list1.add(new GasStation(1002, 0.24));
-        list1.add(new GasStation(1076.3, 4.13));
-        list1.add(new GasStation(1156.2, 3.98));
-        list1.add(new GasStation(1342.3, 4.03));
-        list1.add(new GasStation(1789.2, 5.65));
-        list1.add(new GasStation(2222.2, 3.23));
-        list1.add(new GasStation(2489.5, 2.45));
-        list1.add(new GasStation(2589.5, 3.85));
-        list1.add(new GasStation(2769.5, 5.43));
-        list1.add(new GasStation(2876.2, 1.23));
-        list1.add(new GasStation(3000.0, 4.87));
-        list1.add(new GasStation(3210.2, 8.00));
-        list1.add(new GasStation(3500.0, 0.00));
-
-        Algorithm algo = new Algorithm(list1, average, tankV, startV, 12);
-
-        algo.getGVSets();
-
-        cost = algo.calculateMinimalCost();
-
-
+//        //TODO BEGINNING OF THE PREVIOUS CHANGE LISTS
+//
+//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(app);
+//        String petrolType = sharedPreferences.getString(PreferenceTypes.K_FUEL_TYPE, "0");
+//
+//        Log.d("petrolType", "petrol type is set to: "+petrolType);
+//        Log.d("FuelStationStructure","size: "+this.stationList.list.size());
+//
+//
+//        for(FuelStationStructure station: this.stationList.list){
+//
+//            Log.d("for statement", "for statement");
+//            String countryCode = null;
+//
+//            SKSearchResult searchResult = SKReverseGeocoderManager.getInstance().reverseGeocodePosition(station.getCoordinates());
+//
+//            if (searchResult != null && searchResult.getParentsList() != null) {
+//                for (SKSearchResultParent parent : searchResult.getParentsList()) {
+//                    countryCode = parent.getParentName();
+//                }
+//            }
+//
+//            FuelCostAtStation fuelCostAtStation = new FuelCostAtStation();
+//
+//            fuelCostAtStation.calculateFuelCostAtStation(station.getCoordinates(), countryCode, app);
+//            double diesel = fuelCostAtStation.getDieselLiterCost();
+//            double petrol = fuelCostAtStation.getPetrolLiterCost();
+//            double lpg = fuelCostAtStation.getLPGLiterCost();
+//
+//
+//
+//            double distance = (SKToolsUtils.distanceBetween(startCoordinate, station.getCoordinates())/1000.0) * factor;
+//            Log.d("station distance", "distance "+distance);
+//            station.setDieselCost(diesel);
+//            station.setPetrolCost(petrol);
+//            station.setLpgCost(lpg);
+//
+//            if(petrolType.equals("0")){
+//                list.add(new GasStation(distance, petrol));
+//            } else if (petrolType.equals("1")){
+//                list.add(new GasStation(distance, diesel));
+//            } else if (petrolType.equals("2")){
+//                list.add(new GasStation(distance, lpg));
+//            }
+//
+//
+//        }
+//
+//
+//        //adding first and last position to list
+//        list.add(new GasStation(this.straightDistance, Double.POSITIVE_INFINITY));
+//        list.add(0, new GasStation(0.0, Double.POSITIVE_INFINITY));
+//
+//        for(GasStation gs: list){
+//            Log.d("list","location: "+gs.getPosition()+" price: "+gs.getFuelCost());
+//        }
+//
+//        //TODO ITS THE END OF PREVIOUS CHANGE LISTS
+//
+//        double cost = 2.0;
+//
+//        String startVolume = sharedPreferences.getString(PreferenceTypes.K_FUEL_LEVEL, "8.0");
+//        String tankVolume = sharedPreferences.getString(PreferenceTypes.K_TANK_CAPACITY, "50.0");
+//        String avg = sharedPreferences.getString(PreferenceTypes.K_FUEL_CONSUMPTION, "7.0");
+//        double startV = Double.parseDouble(startVolume);
+//        double tankV = Double.parseDouble(tankVolume);
+//        double average = Double.parseDouble(avg);
+//
+//        this.scaleDistance = ((tankV - startV)/average)*100.0;
+//
+//        List<GasStation> list1 = new ArrayList<GasStation>();
+//        list1.add(new GasStation(0.0, 0.0));
+//        list1.add(new GasStation(123.4, 4.3));
+//        list1.add(new GasStation(134.7, 3.8));
+//        list1.add(new GasStation(195.8, 4.15));
+//        list1.add(new GasStation(223.4, 3.56));
+//        list1.add(new GasStation(256.7, 4.35));
+//        list1.add(new GasStation(387.2, 4.0));
+//        list1.add(new GasStation(547.0, 5.6));
+//        list1.add(new GasStation(623.0, 5.3));
+//        list1.add(new GasStation(785.2, 7.3));
+//        list1.add(new GasStation(843.1, 3.92));
+//        list1.add(new GasStation(934.2, 4.16));
+//        list1.add(new GasStation(986.4, 4.44));
+//        list1.add(new GasStation(1000.7, 4.22));
+//        list1.add(new GasStation(1002, 0.24));
+//        list1.add(new GasStation(1076.3, 4.13));
+//        list1.add(new GasStation(1156.2, 3.98));
+//        list1.add(new GasStation(1342.3, 4.03));
+//        list1.add(new GasStation(1789.2, 5.65));
+//        list1.add(new GasStation(2222.2, 3.23));
+//        list1.add(new GasStation(2489.5, 2.45));
+//        list1.add(new GasStation(2589.5, 3.85));
+//        list1.add(new GasStation(2769.5, 5.43));
+//        list1.add(new GasStation(2876.2, 1.23));
+//        list1.add(new GasStation(3000.0, 4.87));
+//        list1.add(new GasStation(3210.2, 8.00));
+//        list1.add(new GasStation(3500.0, 0.00));
+//
+//        Algorithm algo = new Algorithm(list1, average, tankV, startV, 12);
+//
+//        algo.getGVSets();
+//
+//        cost = algo.calculateMinimalCost();
+//
+//
+//        return cost;
+        Log.d("RETURN ", String.valueOf(routeInfo.getRouteID()));
+        Log.d("COST ", String.valueOf(cost));
         return cost;
     }
 

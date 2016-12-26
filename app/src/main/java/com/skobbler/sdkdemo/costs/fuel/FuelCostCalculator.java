@@ -13,13 +13,11 @@ import java.util.List;
 
 public class FuelCostCalculator {
 
-
     public double getFuelCost (SKRouteInfo routeInfo, Context app) {
         double sum = 0.0;
         FuelAlgorithm fuelAlgorithm = new FuelAlgorithm(routeInfo, app);
 
-
-        sum += fuelAlgorithm.getMinimalCost(app);
+        sum += fuelAlgorithm.getMinimalCost();
         List<FillStationStructure> fillStationStructureList = new ArrayList<FillStationStructure>();
         fillStationStructureList.add(new FillStationStructure(new SKCoordinate(49.880664, 19.488134), 2.1, 3.2));
         fillStationStructureList.add(new FillStationStructure(new SKCoordinate(49.880659, 19.488129), 3.4, 5.6));

@@ -3,7 +3,6 @@ package com.skobbler.sdkdemo.navigationui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.CountDownLatch;
 
 import android.app.Activity;
 import android.content.Context;
@@ -1134,7 +1133,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         });
     }
 
-    public void setRouteCalculationsEnded(int i, boolean ended) {
+    private void setRouteCalculationsEnded(int i, boolean ended) {
         this.routeCalculationsEnded[i] = ended;
     }
 
@@ -1209,19 +1208,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                         };
                         route2.start();
                     }
-
-//                    for (int i = 0; i < skRouteInfoList.size(); i++) {
-//                        final String time = SKToolsUtils.formatTime(skRouteInfoList.get(i).getEstimatedTime());
-//                        final String distance = SKToolsUtils.convertAndFormatDistance(skRouteInfoList.get(i)
-//                                .getDistance(), configuration.getDistanceUnitType(), currentActivity);
-//                        CostCalculator costCalculator = new CostCalculator();
-//                        final String cost = String.format("%.2f", costCalculator.getCost(
-//                                skRouteInfoList.get(i), getCurrentActivity().getApplicationContext()));
-//                        SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, cost);
-//                        LayoutInflater inflater = (LayoutInflater) currentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//                        View view = currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
-//                        new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(), mapView, inflater, view, currentActivity.getResources(), currentActivity.getPackageName());
-//                    }
 
                     int routeId = skRouteInfoList.get(0).getRouteID();
                     SKRouteManager.getInstance().setCurrentRouteByUniqueId(routeId);

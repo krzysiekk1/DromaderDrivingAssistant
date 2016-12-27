@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.skobbler.sdkdemo.activity.MapActivity.RED_PIN_ICON_ID;
 import static com.skobbler.sdkdemo.activity.MapActivity.VIA_POINT_ICON_ID;
 
 /**
@@ -102,8 +103,8 @@ public class OneBoxExtFragment extends Fragment implements SKSearchListener, Vie
     private int rankIndex;
     private Activity activity;
 
-    SKAnnotation annotationViaPoint = new SKAnnotation(5);
-    SKAnnotation annotationEndPoint = new SKAnnotation(5);
+    SKAnnotation annotationViaPoint = new SKAnnotation(VIA_POINT_ICON_ID);
+    SKAnnotation annotationEndPoint = new SKAnnotation(RED_PIN_ICON_ID);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

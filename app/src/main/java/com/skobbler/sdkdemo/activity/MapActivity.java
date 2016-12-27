@@ -150,7 +150,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
 
     private static final byte GREEN_PIN_ICON_ID = 0;
 
-    private static final byte RED_PIN_ICON_ID = 1;
+    public static final byte RED_PIN_ICON_ID = 1;
 
     public static final byte VIA_POINT_ICON_ID = 4;
 
@@ -2283,6 +2283,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
         initializeNavigationUI(false);
+        mapView.deleteAnnotation(RED_PIN_ICON_ID);
     }
 
     /**
@@ -2326,6 +2327,7 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         getActionBar().setHomeButtonEnabled(true);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         initializeNavigationUI(false);
+        mapView.deleteAnnotation(RED_PIN_ICON_ID);
     }
 
     @Override

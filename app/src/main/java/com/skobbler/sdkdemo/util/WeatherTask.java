@@ -225,13 +225,13 @@ public class WeatherTask extends AsyncTask {
         int i = 0;
         List<SKExtendedRoutePosition> positions = SKRouteManager.getInstance().getExtendedRoutePointsForRouteByUniqueId(routeID);
         for (SKExtendedRoutePosition pos : positions) {
-            if (i % 3333 == 0) {
+            if (i % 2500 == 0) {
                 coordinates.add(new SKCoordinate(pos.getCoordinate().getLongitude(), pos.getCoordinate().getLatitude()));
             }
             i++;
         }
         i--;
-        if (i % 3333 != 0) {
+        if (i % 2500 != 0) {
             coordinates.add(new SKCoordinate(positions.get(i).getCoordinate().getLongitude(), positions.get(i).getCoordinate().getLatitude()));
         }
         return coordinates;

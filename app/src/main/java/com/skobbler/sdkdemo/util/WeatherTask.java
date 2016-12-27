@@ -52,7 +52,9 @@ public class WeatherTask extends AsyncTask {
 
     List<JSONObject> data = new ArrayList<JSONObject>();
     List<Bitmap> icons = new ArrayList<Bitmap>();
+    int routeId;
     static int annotationId = 20;
+    static int annotationIdPrev = 20;
     private String packageName;
     private SKMapSurfaceView mapView;
     private RelativeLayout customView;
@@ -66,7 +68,7 @@ public class WeatherTask extends AsyncTask {
         URL url = null;
         JSONObject jsonObj = null;
         try {
-            url = new URL("http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&APPID=07c24c31c3d139a6e42c38d0cf05321f");
+            url = new URL("http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&APPID=07c24c31c3d139a6e42c38d0cf05321f");
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -104,7 +106,8 @@ public class WeatherTask extends AsyncTask {
 
     @Override
     protected Object doInBackground(Object[] params) {
-        this.coordinates = getCoordinatesForWeather((int) params[0]);
+        this.routeId = (int) params[0];
+        this.coordinates = getCoordinatesForWeather(routeId);
         this.mapView = (SKMapSurfaceView) params[1];
         this.inflater = (LayoutInflater) params[2];
         this.view = (View) params[3];
@@ -125,31 +128,46 @@ public class WeatherTask extends AsyncTask {
     protected void onPostExecute(Object o) {
         JSONObject object;
         JSONArray weatherArray;
-        JSONObject mainArray;
+        JSONArray listArray;
         String lat = null;
         String lon = null;
         String icon = null;
         String temp = null;
-
-
+        for (int i = annotationIdPrev; i < annotationId;  i++){
+            mapView.deleteAnnotation(i);
+        }
+        annotationIdPrev = annotationId;
         SKAnnotationView annotationView1 = new SKAnnotationView();
         customView = (RelativeLayout) (inflater.inflate(R.layout.layout_custom_view, null, false));
         ImageView imgView = (ImageView) view;
-
+        int time = SKRouteManager.getInstance().getRouteInfo(routeId).getEstimatedTime();
         if (data != null) {
+            int timeInterval = time / data.size();
+            int timeSum = 0;
+            int weatherInterval = 0;
             for (JSONObject datum : data) {
+                timeSum += timeInterval;
+                if (timeSum >= 10800){
+                    weatherInterval++;
+                    timeSum -= 10800;
+                }
                 List<String> list = new ArrayList<String>();
                 try {
-                    object = datum.getJSONObject("coord");
-                    weatherArray = datum.getJSONArray("weather");
-                    mainArray = datum.getJSONObject("main");
+                    object = datum.getJSONObject("city");
+                    JSONObject coordObject = object.getJSONObject("coord");
+                    listArray = datum.getJSONArray("list");
+                    JSONObject obj = listArray.getJSONObject(weatherInterval);
+                    lat = coordObject.getString("lat");
+                    lon = coordObject.getString("lon");
+                    JSONObject mainObject = obj.getJSONObject("main");
+                    temp = mainObject.getString("temp");
+                    weatherArray = obj.getJSONArray("weather");
                     icon = weatherArray.getJSONObject(0).getString("icon");
-                    temp = mainArray.getString("temp");
-                    lat = object.getString("lat");
-                    lon = object.getString("lon");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
+
 
                 SKCoordinate coordinate = new SKCoordinate(Double.parseDouble(lat), Double.parseDouble(lon));
                 SKAnnotation annotation1 = new SKAnnotation(annotationId);

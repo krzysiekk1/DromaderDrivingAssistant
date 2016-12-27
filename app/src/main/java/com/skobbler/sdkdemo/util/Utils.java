@@ -1,12 +1,10 @@
 package com.skobbler.sdkdemo.util;
 
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -20,8 +18,6 @@ import android.net.NetworkInfo;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Surface;
-
-
 
 public class Utils {
 
@@ -146,6 +142,7 @@ public class Utils {
         }
         return false;
     }
+
     /**
      * Checks if the current device has a  NETWORK module (hardware)
      * @return true if the current device has NETWORK
@@ -181,6 +178,7 @@ public class Utils {
 
         alertDialog.show();
     }
+
     public static int getExactScreenOrientation(Activity activity) {
         Display defaultDisplay = activity.getWindowManager().getDefaultDisplay();
         int rotation = defaultDisplay.getRotation();

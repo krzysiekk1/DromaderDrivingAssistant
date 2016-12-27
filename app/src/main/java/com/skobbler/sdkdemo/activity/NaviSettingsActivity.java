@@ -9,6 +9,10 @@ import android.util.Log;
 import com.skobbler.sdkdemo.R;
 import com.skobbler.sdkdemo.util.PreferenceTypes;
 
+/**
+ * Created by Krzysiek
+ */
+
 public class NaviSettingsActivity extends PreferenceActivity {
 
     @Override
@@ -35,7 +39,6 @@ public class NaviSettingsActivity extends PreferenceActivity {
                 return true;
             }
         });
-
     }
 
 }

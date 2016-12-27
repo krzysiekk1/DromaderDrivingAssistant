@@ -1,6 +1,5 @@
 package com.skobbler.sdkdemo.navigationui;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import com.skobbler.ngx.SKCoordinate;
@@ -19,12 +18,10 @@ public class SKToolsNavigationConfiguration {
      * The start coordinate of the route
      */
     private SKCoordinate startCoordinate;
-
     /**
      * The destination coordinate of the route
      */
     private SKCoordinate destinationCoordinate;
-
     /**
      * The via point coordinate list of the route
      */
@@ -34,7 +31,6 @@ public class SKToolsNavigationConfiguration {
      * Desired style to use during the day.
      */
     private SKMapViewStyle dayStyle;
-
     /**
      * Desired style to use during the night.
      */
@@ -54,7 +50,6 @@ public class SKToolsNavigationConfiguration {
      * speed warning in city in m/s
      */
     private double speedWarningThresholdInCity;
-
     /**
      * speed warning outside city in m/s.
      */
@@ -69,12 +64,10 @@ public class SKToolsNavigationConfiguration {
      * Indicates whether to avoid toll roads when calculating the route.
      */
     private boolean tollRoadsAvoided;
-
     /**
      * Indicates whether to avoid highways when calculating the route.
      */
     private boolean highWaysAvoided;
-
     /**
      * Indicates whether to avoid ferries when calculating the route
      */

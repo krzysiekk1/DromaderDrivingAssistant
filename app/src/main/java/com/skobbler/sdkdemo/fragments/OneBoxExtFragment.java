@@ -44,7 +44,6 @@ import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.sdkdemo.R;
 import com.skobbler.sdkdemo.activity.DialogMessage;
 import com.skobbler.sdkdemo.activity.MapActivity;
-import com.skobbler.sdkdemo.activity.TouristAttractionsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +61,6 @@ public class OneBoxExtFragment extends Fragment implements SKSearchListener, Vie
     public static boolean ONEBOX_ACTIVATED = false;
     public static final int STATE_DEFAULT = 0, STATE_SHOWING_CATEGORY_RESULTS = 1, STATE_SHOWING_CATEGORIES_EXPANDED = 2, STATE_SHOWING_RESULTS = 3;
     public static final int HIDE = 0, SHOW_CROSS = 1, SHOW_SORT = 2;
-    public static SKCoordinate result_coordinate;
     /**
      * OneBox state
      */
@@ -83,7 +81,6 @@ public class OneBoxExtFragment extends Fragment implements SKSearchListener, Vie
      * List of categories(Food,Services, etc.)
      */
     List<CategoryListItem> categories = new ArrayList<>();
-
 
     /**
      * Manager for handling search
@@ -115,7 +112,6 @@ public class OneBoxExtFragment extends Fragment implements SKSearchListener, Vie
         recyclerViewCategories = (RecyclerView) view.findViewById(com.skobbler.ngx.R.id.onebox_recycle_view);
         noResultsView = (TextView) view.findViewById(com.skobbler.ngx.R.id.no_results_view);
 
-
         searchFieldEditable.setOnClickListener(this);
         ImageButton backButton = (ImageButton) view.findViewById(com.skobbler.ngx.R.id.search_back_button);
         backButton.setOnClickListener(this);
@@ -131,7 +127,7 @@ public class OneBoxExtFragment extends Fragment implements SKSearchListener, Vie
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-//        initCategories();
+
         searchServiceManager = new SKToolsSearchServiceManager(getActivity());
 
         adapterCategories = new SKCategoriesAdapter(getActivity());
@@ -157,20 +153,6 @@ public class OneBoxExtFragment extends Fragment implements SKSearchListener, Vie
 
             }
         });
-
-//        ((SKCategoriesAdapter) recyclerViewCategories.getAdapter()).setOnSeeMoreListener(new OnSeeMoreListener() {
-//            @Override
-//            public void onSeeMoreClick(View listParent) {
-//                for (CategoryListItem categoryListItem : categories) {
-//                    categoryListItem.setShowItem(true);
-//                }
-//                adapterCategories.updateList(categories);
-//                changeOneBoxState(STATE_SHOWING_CATEGORIES_EXPANDED, "OpenStreetMap");
-//
-//            }
-//        });
-
-
     }
 
     /**
@@ -178,7 +160,7 @@ public class OneBoxExtFragment extends Fragment implements SKSearchListener, Vie
      */
     @Override
     public void onReceivedSearchResults(List<SKSearchResult> list) {
-//        final List<SKOneBoxSearchResult> resultList = new ArrayList<>();
+
         rankIndex = list.size();
         if (list.size() == 0) {
             recyclerViewCategories.setVisibility(View.GONE);
@@ -203,8 +185,6 @@ public class OneBoxExtFragment extends Fragment implements SKSearchListener, Vie
             recyclerViewCategories.setAdapter(adapter);
             hideSoftKeyboard(recyclerViewCategories);
 
-
-
             ((SKSearchResultAdapter) recyclerViewCategories.getAdapter()).setmOnClickListener(new mOnClickListener() {
                 @Override
                 public void onClick(final View view) {
@@ -216,7 +196,6 @@ public class OneBoxExtFragment extends Fragment implements SKSearchListener, Vie
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {
                             ((MapActivity)getActivity()).setDestinationPoint(resultList.get(itemPosition).getSearchResult().getLocation());
-//                            ((MapActivity)getActivity()).calculateRouteFromSKTools();
                             recyclerViewCategories.setVisibility(View.VISIBLE);
                             noResultsView.setVisibility(View.GONE);
                             changeRightButtonState(clearSearchField, HIDE);
@@ -242,7 +221,6 @@ public class OneBoxExtFragment extends Fragment implements SKSearchListener, Vie
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     ((MapActivity)getActivity()).setViaPoint(new SKViaPoint(VIA_POINT_ICON_ID,resultList.get(itemPosition).getSearchResult().getLocation()));
-//                            ((MapActivity)getActivity()).calculateRouteFromSKTools();
                                     recyclerViewCategories.setVisibility(View.VISIBLE);
                                     noResultsView.setVisibility(View.GONE);
                                     changeRightButtonState(clearSearchField, HIDE);
@@ -262,15 +240,11 @@ public class OneBoxExtFragment extends Fragment implements SKSearchListener, Vie
                         });
                     dm.show();
 
-
-
                 }
             });
             System.out.println("wszystko ok");
         }
     }
-
-
 
     /**
      * Handles back button pressed events
@@ -288,8 +262,7 @@ public class OneBoxExtFragment extends Fragment implements SKSearchListener, Vie
             adapterCategories.updateList(categories);
             SKCategoriesAdapter.categoryListExpended = false;
             changeOneBoxState(STATE_DEFAULT, "Search text here");
-        } else
-        if (internalState == STATE_SHOWING_CATEGORY_RESULTS) {
+        } else if (internalState == STATE_SHOWING_CATEGORY_RESULTS) {
             if (previousState == STATE_DEFAULT || previousState == STATE_SHOWING_RESULTS) {
                 recyclerViewCategories.setAdapter(adapterCategories);
                 changeOneBoxState(STATE_DEFAULT, "Search text here");
@@ -347,10 +320,7 @@ public class OneBoxExtFragment extends Fragment implements SKSearchListener, Vie
                 break;
             case STATE_SHOWING_RESULTS:
                 internalState = 3;
-
                 break;
-
-
         }
     }
 
@@ -391,7 +361,6 @@ public class OneBoxExtFragment extends Fragment implements SKSearchListener, Vie
                 break;
             case HIDE:
                 auxButton.setVisibility(View.GONE);
-
                 break;
         }
     }
@@ -418,7 +387,6 @@ public class OneBoxExtFragment extends Fragment implements SKSearchListener, Vie
         });
 
         sortMenu.show();
-
     }
 
     /**
@@ -430,7 +398,6 @@ public class OneBoxExtFragment extends Fragment implements SKSearchListener, Vie
 
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
         }
 
         @Override
@@ -469,10 +436,8 @@ public class OneBoxExtFragment extends Fragment implements SKSearchListener, Vie
         if (!term.isEmpty()){
             SKToolsSearchObject searchObject = new SKToolsSearchObject(term,new SKCoordinate(coordinate[0],coordinate[1]));
             searchServiceManager.nbCategorySearch(searchObject, OneBoxExtFragment.this);
-
         }
         changeOneBoxState(STATE_SHOWING_RESULTS, null);
-
     }
 
     @Override

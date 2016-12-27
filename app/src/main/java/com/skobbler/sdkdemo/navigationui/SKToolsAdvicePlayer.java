@@ -1,6 +1,5 @@
 package com.skobbler.sdkdemo.navigationui;
 
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileDescriptor;
@@ -17,23 +16,18 @@ import android.util.Log;
 import com.skobbler.ngx.SKMaps;
 import com.skobbler.ngx.navigation.SKAdvisorSettings;
 
-
 /**
  * The purpose of this class is to play an advice. An advice basically consists
  * of a series of sound files that combined, represent the advice that should be
  * played to the user.
  */
-
 public class SKToolsAdvicePlayer implements MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener {
 
     private static final String TAG = "SKToolsAdvicePlayer";
 
-    // constants for advice priority - user requested advices have the highest,
-    // speed warnings the lowest
+    // constants for advice priority - user requested advices have the highest, speed warnings the lowest
     public static final int PRIORITY_USER = 0;
-
     public static final int PRIORITY_NAVIGATION = 1;
-
     public static final int PRIORITY_SPEED_WARNING = 2;
 
     /**
@@ -162,8 +156,7 @@ public class SKToolsAdvicePlayer implements MediaPlayer.OnCompletionListener, Me
         }
 
         if (validTokensFound) {
-            // valid tokens were found - set busy state until finishing to play
-            // advice
+            // valid tokens were found - set busy state until finishing to play advice
             isBusy = true;
         } else {
             // valid tokens not found - return without playing anything

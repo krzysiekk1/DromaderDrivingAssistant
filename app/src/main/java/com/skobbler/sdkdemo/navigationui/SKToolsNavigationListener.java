@@ -9,7 +9,6 @@ public interface SKToolsNavigationListener {
      * Called when  navigation was started.
      */
     void onNavigationStarted();
-
     /**
      * Called when navigation has ended.
      */
@@ -19,12 +18,10 @@ public interface SKToolsNavigationListener {
      * Called when the route calculation was started.
      */
     void onRouteCalculationStarted();
-
     /**
      * Called when the route calculation has ended.
      */
     void onRouteCalculationCompleted();
-
     /**
      * Called when the route calculation was canceled.
      */

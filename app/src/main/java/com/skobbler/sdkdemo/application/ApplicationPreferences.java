@@ -12,13 +12,9 @@ import com.skobbler.sdkdemo.database.DownloadResource;
 public class ApplicationPreferences {
 
     public static final String DOWNLOAD_STEP_INDEX_PREF_KEY = "downloadStepIndex";
-
     public static final String DOWNLOAD_QUEUE_PREF_KEY = "downloadQueue";
-
     public static final String CURRENT_VERSION_CODE = "currentVersionCode";
-
     public static final String MAP_RESOURCES_UPDATE_NEEDED = "mapResourcesUpdateNeeded";
-
     /**
      * preference name
      */

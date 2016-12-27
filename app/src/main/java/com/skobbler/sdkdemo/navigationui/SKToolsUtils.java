@@ -1,6 +1,5 @@
 package com.skobbler.sdkdemo.navigationui;
 
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -26,7 +25,6 @@ final class SKToolsUtils {
      * the number of km/h in 1 m/s
      */
     private static final double SPEED_IN_KILOMETRES = 3.6;
-
     /**
      * number of mi/h in 1 m/s
      */
@@ -36,37 +34,30 @@ final class SKToolsUtils {
      * the number of meters in a km
      */
     private static final int METERS_IN_KM = 1000;
-
     /**
      * the number of meters in a mile
      */
     private static final double METERS_IN_MILE = 1609.34;
-
     /**
      * converter from meters to feet
      */
     private static final double METERS_TO_FEET = 3.2808399;
-
     /**
      * converter from meters to yards
      */
     private static final double METERS_TO_YARDS = 1.0936133;
-
     /**
      * the number of yards in a mile
      */
     private static final int YARDS_IN_MILE = 1760;
-
     /**
      * the number of feet in a yard
      */
     private static final int FEET_IN_YARD = 3;
-
     /**
      * the number of feet in a mile
      */
     private static final int FEET_IN_MILE = 5280;
-
     /**
      * the limit of feet where the distance should be converted into miles
      */
@@ -146,7 +137,6 @@ final class SKToolsUtils {
         }
         return currentSpeedUnit;
     }
-
 
     /**
      * Generate a value suitable for use in setId
@@ -248,58 +238,43 @@ final class SKToolsUtils {
             if (distanceValue >= METERS_IN_KM) {
                 distanceValue /= METERS_IN_KM;
                 if (distanceValue >= 10) {
-                    // if distance is >= 10 km => display distance without any
-                    // decimals
-                    distanceValueText =
-                            (Math.round(distanceValue) + " " + activity.getResources().getString(R.string.km_label));
+                    // if distance is >= 10 km => display distance without any decimals
+                    distanceValueText = (Math.round(distanceValue) + " " + activity.getResources().getString(R.string.km_label));
                 } else {
                     // distance displayed in kilometers
-                    distanceValueText =
-                            (((float) Math.round(distanceValue * 10) / 10)) + " "
-                                    + activity.getResources().getString(R.string.km_label);
+                    distanceValueText = (((float) Math.round(distanceValue * 10) / 10)) + " " + activity.getResources().getString(R.string.km_label);
                 }
             } else {
                 // distance displayed in meters
-                distanceValueText =
-                        ((int) distanceValue) + " " + activity.getResources().getString(R.string.meters_label);
+                distanceValueText = ((int) distanceValue) + " " + activity.getResources().getString(R.string.meters_label);
             }
         } else if (distanceUnitType == SKMaps.SKDistanceUnitType.DISTANCE_UNIT_MILES_FEET) {
             // if the distance in feet > 1500 => convert it in miles (FMA-2577)
             if (distanceValue >= LIMIT_TO_MILES) {
                 distanceValue /= FEET_IN_MILE;
                 if (distanceValue >= 10) {
-                    // for routing if the distance is > 10 should be rounded to
-                    // be an int; rounded distance displayed in miles
-                    distanceValueText =
-                            (Math.round(distanceValue) + " " + activity.getResources().getString(R.string.mi_label));
-
+                    // for routing if the distance is > 10 should be rounded to be an int; rounded distance displayed in miles
+                    distanceValueText = (Math.round(distanceValue) + " " + activity.getResources().getString(R.string.mi_label));
                 } else {
                     // distance displayed in miles
-                    distanceValueText =
-                            (((float) Math.round(distanceValue * 10) / 10)) + " "
-                                    + activity.getResources().getString(R.string.mi_label);
+                    distanceValueText = (((float) Math.round(distanceValue * 10) / 10)) + " " + activity.getResources().getString(R.string.mi_label);
                 }
             } else {
                 // distance displayed in feet
-                distanceValueText =
-                        ((int) distanceValue) + " " + activity.getResources().getString(R.string.feet_label);
+                distanceValueText = ((int) distanceValue) + " " + activity.getResources().getString(R.string.feet_label);
             }
         } else {
             if (distanceValue >= METERS_IN_KM) {
                 distanceValue /= YARDS_IN_MILE;
                 if (distanceValue >= 10) {
-                    distanceValueText =
-                            (Math.round(distanceValue) + " " + activity.getResources().getString(R.string.mi_label));
+                    distanceValueText = (Math.round(distanceValue) + " " + activity.getResources().getString(R.string.mi_label));
                 } else {
                     // distance displayed in miles
-                    distanceValueText =
-                            (((float) Math.round(distanceValue * 10) / 10)) + " "
-                                    + activity.getResources().getString(R.string.mi_label);
+                    distanceValueText = (((float) Math.round(distanceValue * 10) / 10)) + " " + activity.getResources().getString(R.string.mi_label);
                 }
             } else {
                 // distance displayed in yards
-                distanceValueText =
-                        ((int) distanceValue) + " " + activity.getResources().getString(R.string.yards_label);
+                distanceValueText = ((int) distanceValue) + " " + activity.getResources().getString(R.string.yards_label);
             }
         }
 
@@ -307,7 +282,6 @@ final class SKToolsUtils {
             return "";
         }
         return distanceValueText;
-
     }
 
     /**
@@ -327,7 +301,6 @@ final class SKToolsUtils {
         }
         return "";
     }
-
 
     /**
      * converts the distance given in feet/yards/miles/km to the according distance in meters

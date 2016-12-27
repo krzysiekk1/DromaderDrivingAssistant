@@ -16,17 +16,14 @@ final class SKToolsDateUtils {
      * the sunset hour (in 24h format) used for auto day / night mode option
      */
     protected static int AUTO_NIGHT_SUNSET_HOUR;
-
     /**
      * the sunrise minute (in 24h format) used for auto day / night mode option
      */
     protected static int AUTO_NIGHT_SUNRISE_MINUTE;
-
     /**
      * the sunset minute (in 24h format) used for auto day / night mode option
      */
     protected static int AUTO_NIGHT_SUNSET_MINUTE;
-
     /**
      * the sunrise hour (in 24h format) used for auto day / night mode option
      */

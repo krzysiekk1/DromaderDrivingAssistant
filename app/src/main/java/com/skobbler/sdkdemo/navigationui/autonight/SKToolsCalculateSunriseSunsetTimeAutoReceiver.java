@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.util.Log;
 import com.skobbler.sdkdemo.navigationui.SKToolsLogicManager;
 
 /**
@@ -13,11 +12,8 @@ import com.skobbler.sdkdemo.navigationui.SKToolsLogicManager;
  */
 public class SKToolsCalculateSunriseSunsetTimeAutoReceiver extends BroadcastReceiver {
 
-    private static final String TAG = "CalculateSunriseSunsetTimeAutoReceiver";
-
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.e(TAG, "Received Broadcast from alarm manager to recalculate the sunrise / sunset hours");
 
         if (SKToolsLogicManager.lastUserPosition != null && !SKToolsLogicManager.getInstance().isNavigationStopped()) {
             SKToolsSunriseSunsetCalculator.calculateSunriseSunsetHours(SKToolsLogicManager.lastUserPosition.getCoordinate(),

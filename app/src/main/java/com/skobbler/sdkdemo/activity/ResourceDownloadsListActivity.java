@@ -30,7 +30,6 @@ import com.skobbler.sdkdemo.database.DownloadResource;
 import com.skobbler.sdkdemo.database.MapDataParser;
 import com.skobbler.sdkdemo.database.MapDownloadResource;
 import com.skobbler.sdkdemo.database.MapsDAO;
-import com.skobbler.sdkdemo.database.ResourcesDAO;
 import com.skobbler.sdkdemo.database.ResourcesDAOHandler;
 import com.skobbler.ngx.versioning.SKVersioningManager;
 import com.skobbler.sdkdemo.util.DownloadFileFromURL;
@@ -58,11 +57,8 @@ public class ResourceDownloadsListActivity extends Activity {
      * Constants
      */
     public static final long KILO = 1024;
-
     public static final long MEGA = KILO * KILO;
-
     public static final long GIGA = MEGA * KILO;
-
     public static final long TERRA = GIGA * KILO;
 
     /**

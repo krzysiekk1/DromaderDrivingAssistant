@@ -2,8 +2,6 @@ package com.skobbler.sdkdemo.fatigue;
 
 import android.content.Context;
 
-import java.io.IOException;
-
 /**
  * Created by marcinsendera on 24.11.2016.
  */
@@ -17,34 +15,22 @@ public class FatigueComputations {
     //private String myLocalTime;
     private double myLocalTime;
 
-
     // changing received data
-
     private double myExecutionTime;
 
-
-
     public FatigueComputations(Context context) {
-
         // handling exception while creating a new instance of a FuzzyLogicClass
         try {
             this.fuzzyLogic = new FuzzyLogicClass(context);
         } catch (FCLFileCannotBeOpenedException e) {
-
             e.printStackTrace();
-
         }
-
     }
-
 
     public boolean onCompute(double localTime, double executionTime){
 
         this.myLocalTime = localTime;
-
         this.myExecutionTime = executionTime;
-
-
 
         double response = this.fuzzyLogic.getValue(this.myLocalTime, this.myExecutionTime);
 
@@ -61,6 +47,5 @@ public class FatigueComputations {
 
         return sendMessage;
     }
-
 
 }

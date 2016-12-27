@@ -3,7 +3,6 @@ package com.skobbler.sdkdemo.navigationui;
 import android.app.Activity;
 import com.skobbler.ngx.map.SKMapViewHolder;
 
-
 public class SKToolsNavigationManager {
 
     public SKToolsNavigationManager(Activity activity, int rootId) {

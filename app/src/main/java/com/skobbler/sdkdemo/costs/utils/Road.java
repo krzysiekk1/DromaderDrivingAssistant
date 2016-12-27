@@ -1,5 +1,9 @@
 package com.skobbler.sdkdemo.costs.utils;
 
+/**
+ * Created by Krzysiek
+ */
+
 public class Road {
 
     private String nr;
@@ -25,4 +29,5 @@ public class Road {
     public void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
     }
+
 }

@@ -9,8 +9,9 @@ import android.view.View;
 import com.skobbler.sdkdemo.R;
 
 /**
- * Class that handles navigation settings
+ * Created by Krzysiek
  */
+
 public class SettingsActivity extends Activity {
 
     @Override

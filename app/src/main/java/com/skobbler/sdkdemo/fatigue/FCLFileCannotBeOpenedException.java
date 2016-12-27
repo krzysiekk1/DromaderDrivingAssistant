@@ -6,7 +6,6 @@ package com.skobbler.sdkdemo.fatigue;
 
 public class FCLFileCannotBeOpenedException extends Exception {
 
-
         public FCLFileCannotBeOpenedException(String message) {
             super(message);
         }

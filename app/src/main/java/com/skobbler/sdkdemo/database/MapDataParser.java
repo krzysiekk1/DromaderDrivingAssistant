@@ -16,71 +16,38 @@ public class MapDataParser {
      * names for maps items tags
      */
     private static final String REGIONS_ID = "regions";
-
     private static final String REGION_CODE_ID = "regionCode";
-
     private static final String SUB_REGIONS_ID = "subRegions";
-
     private static final String SUB_REGION_CODE_ID = "subRegionCode";
-
     private static final String VERSION_ID = "version";
-
     private static final String PACKAGES_ID = "packages";
-
     private static final String PACKAGE_CODE_ID = "packageCode";
-
     private static final String FILE_ID = "file";
-
     private static final String SIZE_ID = "size";
-
     private static final String UNZIP_SIZE_ID = "unzipsize";
-
     private static final String TYPE_ID = "type";
-
     private static final String LANGUAGES_ID = "languages";
-
     private static final String TL_NAME_ID = "tlName";
-
     private static final String LNG_CODE_ID = "lngCode";
-
     private static final String BBOX_ID = "bbox";
-
     private static final String LAT_MIN_ID = "latMin";
-
     private static final String LAT_MAX_ID = "latMax";
-
     private static final String LONG_MIN_ID = "longMin";
-
     private static final String LONG_MAX_ID = "longMax";
-
     private static final String SKM_SIZE_ID = "skmsize";
-
     private static final String NB_ZIP_ID = "nbzip";
-
     private static final String TEXTURE_ID = "texture";
-
     private static final String TEXTURES_BIG_FILE_ID = "texturesbigfile";
-
     private static final String SIZE_BIG_FILE_ID = "sizebigfile";
-
     private static final String XML_VERSION_ID = "xmlVersion";
-
     private static final String WORLD_ID = "world";
-
     private static final String CONTINENTS_ID = "continents";
-
     private static final String COUNTRIES_ID = "countries";
-
     private static final String CONTINENT_CODE_ID = "continentCode";
-
     private static final String COUNTRY_CODE_ID = "countryCode";
-
     private static final String CITY_CODES_ID = "cityCodes";
-
     private static final String CITY_CODE_ID = "cityCode";
-
     private static final String STATE_CODES_ID = "stateCodes";
-
     private static final String STATE_CODE_ID = "stateCode";
 
     /**

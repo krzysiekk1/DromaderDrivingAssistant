@@ -22,6 +22,10 @@ import com.skobbler.sdkdemo.database.ResourcesDAO;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Created by Krzysiek
+ */
+
 public class TollsCostCalculator {
 
     public static double getTollsCost (SKRouteInfo routeInfo, Context app) {

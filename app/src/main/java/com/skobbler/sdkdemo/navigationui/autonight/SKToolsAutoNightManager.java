@@ -69,7 +69,6 @@ public class SKToolsAutoNightManager {
             hourlyAlarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(),
                     SKToolsSunriseSunsetCalculator.NR_OF_MILLISECONDS_IN_A_HOUR,
                     pendingHourlyAlarmIntent);
-
         }
     }
 
@@ -112,8 +111,7 @@ public class SKToolsAutoNightManager {
      * otherwise is set the alarm for calculation of sunrise / sunset hours.
      * @param currentActivity
      */
-    public void setAutoNightAlarmAccordingToUserPosition(SKCoordinate coordinate,
-                                                         Activity currentActivity) {
+    public void setAutoNightAlarmAccordingToUserPosition(SKCoordinate coordinate, Activity currentActivity) {
         SKToolsSunriseSunsetCalculator.calculateSunriseSunsetHours(coordinate, SKToolsSunriseSunsetCalculator.OFFICIAL);
         setAlarmForDayNightModeWithSunriseSunset(currentActivity);
     }
@@ -177,7 +175,6 @@ public class SKToolsAutoNightManager {
             // set the alarm
             alarmManagerForAutoNightForCalculatedSunriseSunsetHours.set(AlarmManager.RTC, mapStyleChangeCalendar.getTimeInMillis(),
                     pendingAlarmIntentForAutoNightForCalculatedSunriseSunsetHours);
-
         }
     }
 

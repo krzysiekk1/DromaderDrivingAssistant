@@ -10,6 +10,10 @@ import android.util.Log;
 import com.skobbler.sdkdemo.R;
 import com.skobbler.sdkdemo.util.PreferenceTypes;
 
+/**
+ * Created by Krzysiek
+ */
+
 public class AppSettingsActivity extends PreferenceActivity {
 
     @Override
@@ -82,7 +86,6 @@ public class AppSettingsActivity extends PreferenceActivity {
                 return false;
             }
         });
-
     }
 
 }

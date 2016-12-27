@@ -1,5 +1,9 @@
 package com.skobbler.sdkdemo.costs.utils;
 
+/**
+ * Created by Krzysiek
+ */
+
 public class TollPoint {
 
     private int id;
@@ -75,4 +79,5 @@ public class TollPoint {
     public void setCost(double cost) {
         this.cost = cost;
     }
+
 }

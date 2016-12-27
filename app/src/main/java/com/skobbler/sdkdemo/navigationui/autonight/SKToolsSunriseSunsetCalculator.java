@@ -16,11 +16,8 @@ class SKToolsSunriseSunsetCalculator {
      * constants for Sun's zenith values for sunrise/sunset
      */
     public static final double OFFICIAL = 90.5;
-
     public static final double CIVIL = 96.0;
-
     public static final double NAUTICAL = 102.0;
-
     public static final double ASTRONOMICAL = 108.0;
 
     public static final int NR_OF_MILLISECONDS_IN_A_HOUR = 3600000;
@@ -95,7 +92,6 @@ class SKToolsSunriseSunsetCalculator {
 
         if (cosLocalHour > 1) {
             return;
-
         }
         if (cosLocalHour < -1) {
             return;

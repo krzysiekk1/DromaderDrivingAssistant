@@ -1,5 +1,9 @@
 package com.skobbler.sdkdemo.costs.utils;
 
+/**
+ * Created by Krzysiek
+ */
+
 public enum Country {
 
     ALBANIA ("Albania", "AL", 1.00),

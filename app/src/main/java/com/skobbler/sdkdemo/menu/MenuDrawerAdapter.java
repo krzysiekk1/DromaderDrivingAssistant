@@ -57,10 +57,8 @@ public class MenuDrawerAdapter extends ArrayAdapter<MenuDrawerItem> {
                         .findViewById(R.id.navmenusection_label);
             }
 
-
             navMenuItemHolder = new MenuItemHolder();
             navMenuItemHolder.labelView = labelView;
-
 
             convertView.setTag(navMenuItemHolder);
         }
@@ -71,10 +69,8 @@ public class MenuDrawerAdapter extends ArrayAdapter<MenuDrawerItem> {
 
         navMenuItemHolder.labelView.setText(menuItem.getLabel());
 
-
         return convertView;
     }
-
 
     @Override
     public int getViewTypeCount() {
@@ -86,11 +82,8 @@ public class MenuDrawerAdapter extends ArrayAdapter<MenuDrawerItem> {
         return this.getItem(position).getItemType();
     }
 
-
     private static class MenuItemHolder {
         private TextView labelView;
-
     }
-
 
 }

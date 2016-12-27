@@ -17,7 +17,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,23 +37,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.skobbler.ngx.R;
-import com.skobbler.ngx.SKCategories;
-import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.SKMaps;
 import com.skobbler.ngx.map.SKMapSettings;
 import com.skobbler.ngx.navigation.SKNavigationManager;
 import com.skobbler.ngx.navigation.SKNavigationState;
 import com.skobbler.ngx.navigation.SKVisualAdviceColor;
-import com.skobbler.ngx.positioner.SKPosition;
-import com.skobbler.ngx.positioner.SKPositionerManager;
 import com.skobbler.ngx.routing.SKRouteListener;
 import com.skobbler.ngx.routing.SKRouteSettings;
-import com.skobbler.ngx.search.SKNearbySearchSettings;
-import com.skobbler.ngx.search.SKSearchListener;
-import com.skobbler.ngx.search.SKSearchManager;
-import com.skobbler.ngx.search.SKSearchResult;
-import com.skobbler.ngx.search.SKSearchStatus;
-import com.skobbler.ngx.util.SKLogging;
 
 /**
  * This class handles the user interface related to the navigation experience.
@@ -70,15 +59,10 @@ class SKToolsNavigationUIManager{
      * OSM street types
      */
     private static final int OSM_STREET_TYPE_MOTORWAY = 9;
-
     private static final int OSM_STREET_TYPE_MOTORWAY_LINK = 10;
-
     private static final int OSM_STREET_TYPE_PRIMARY = 13;
-
     private static final int OSM_STREET_TYPE_PRIMARY_LINK = 14;
-
     private static final int OSM_STREET_TYPE_TRUNK = 24;
-
     private static final int OSM_STREET_TYPE_TRUNK_LINK = 25;
 
     /**
@@ -89,23 +73,14 @@ class SKToolsNavigationUIManager{
 
 
     private enum NavigationMode {
-
         SETTINGS,
-
         ROUTE_INFO,
-
         ROUTE_OVERVIEW,
-
         PANNING,
-
         ROADBLOCK,
-
         FOLLOWER,
-
         PRE_NAVIGATION,
-
         POST_NAVIGATION;
-
     }
 
     private enum CompassStates {
@@ -121,8 +96,8 @@ class SKToolsNavigationUIManager{
     /**
      * the current navigation mode car
      */
-
     private NavigationMode currentNavigationMode;
+
     /**
      * current compass image
      */
@@ -544,9 +519,6 @@ class SKToolsNavigationUIManager{
         rootLayout = (ViewGroup) currentActivity.findViewById(rootId);
     }
 
-
-
-
     /**
      * Inflates navigation relates views.
      *
@@ -566,17 +538,14 @@ class SKToolsNavigationUIManager{
                 android.widget.RelativeLayout.LayoutParams relativeLayoutParams = new RelativeLayout.LayoutParams
                         (RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 
-                backButtonPanel =
-                        (ViewGroup) inflater.inflate(R.layout.element_navigation_back_button, null, false);
+                backButtonPanel = (ViewGroup) inflater.inflate(R.layout.element_navigation_back_button, null, false);
                 rootLayout.addView(backButtonPanel, relativeLayoutParams);
                 backButtonPanel.setId(SKToolsUtils.generateViewId());
                 backButtonPanel.setVisibility(View.GONE);
-                backButtonPanel.findViewById(R.id.navigation_top_back_button).setOnClickListener
-                        (itemsClickListener);
+                backButtonPanel.findViewById(R.id.navigation_top_back_button).setOnClickListener(itemsClickListener);
 
                 android.widget.RelativeLayout.LayoutParams routeOverviewRelativeLayoutParams = new RelativeLayout
-                        .LayoutParams
-                        (RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                        .LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 routeOverviewRelativeLayoutParams.addRule(RelativeLayout.BELOW, backButtonPanel.getId());
 
                 routeOverviewPanel =
@@ -584,16 +553,11 @@ class SKToolsNavigationUIManager{
                 rootLayout.addView(routeOverviewPanel, routeOverviewRelativeLayoutParams);
                 routeOverviewPanel.setVisibility(View.GONE);
 
-                roadBlockPanel = (ViewGroup) inflater.inflate(R.layout.element_navigation_roadblocks_list,
-                        null,
-                        false);
+                roadBlockPanel = (ViewGroup) inflater.inflate(R.layout.element_navigation_roadblocks_list, null, false);
                 rootLayout.addView(roadBlockPanel, routeOverviewRelativeLayoutParams);
                 roadBlockPanel.setVisibility(View.GONE);
 
-
-                reRoutingPanel = (ViewGroup) inflater.inflate(R.layout.element_navigation_rerouting_panel,
-                        null,
-                        false);
+                reRoutingPanel = (ViewGroup) inflater.inflate(R.layout.element_navigation_rerouting_panel, null, false);
                 android.widget.RelativeLayout.LayoutParams reRoutingPanelParams = new RelativeLayout.LayoutParams
                         (RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 reRoutingPanelParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
@@ -601,21 +565,19 @@ class SKToolsNavigationUIManager{
                 reRoutingPanel.setVisibility(View.GONE);
 
                 searchingForGPSPanel = (ViewGroup) inflater.inflate(R.layout.element_navigation_searching_for_gps_panel,
-                        null,
-                        false);
+                        null, false);
                 android.widget.RelativeLayout.LayoutParams searchingForGPSPanelParams = new RelativeLayout.LayoutParams
                         (RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 reRoutingPanelParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
                 rootLayout.addView(searchingForGPSPanel, searchingForGPSPanelParams);
                 searchingForGPSPanel.setVisibility(View.GONE);
 
-                menuOptions = (ViewGroup) inflater.inflate(R.layout.element_navigation_menu_options, null,
-                        false);
+                menuOptions = (ViewGroup) inflater.inflate(R.layout.element_navigation_menu_options, null, false);
                 rootLayout.addView(menuOptions, relativeLayoutParams);
                 menuOptions.setVisibility(View.GONE);
 
-                topCurrentNavigationPanel = (ViewGroup) inflater.inflate(R.layout
-                        .element_navigation_current_advice_panel, null, false);
+                topCurrentNavigationPanel = (ViewGroup) inflater.inflate
+                        (R.layout.element_navigation_current_advice_panel, null, false);
                 android.widget.RelativeLayout.LayoutParams topCurrentAdviceParams = new RelativeLayout.LayoutParams
                         (RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 topCurrentAdviceParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
@@ -624,28 +586,23 @@ class SKToolsNavigationUIManager{
                 topCurrentNavigationPanel.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 topCurrentNavigationPanel.setVisibility(View.GONE);
 
-                topCurrentNavigationDistanceStreetPanel = (LinearLayout) topCurrentNavigationPanel.findViewById(R.id
-                        .current_advice_text_holder);
+                topCurrentNavigationDistanceStreetPanel = (LinearLayout) topCurrentNavigationPanel
+                        .findViewById(R.id.current_advice_text_holder);
                 topCurrentNavigationDistanceStreetPanel.setOnClickListener(itemsClickListener);
                 RelativeLayout topCurrentNavigationImagePanel = (RelativeLayout) topCurrentNavigationPanel
-                        .findViewById(R.id
-                                .current_advice_image_holder);
+                        .findViewById(R.id.current_advice_image_holder);
                 topCurrentNavigationImagePanel.setOnClickListener(itemsClickListener);
-                currentAdviceImage = (ImageView) topCurrentNavigationImagePanel.findViewById(R.id
-                        .current_advice_image_turn);
-                currentAdviceName = (TextView) topCurrentNavigationDistanceStreetPanel.findViewById(R.id
-                        .current_advice_street_text);
+                currentAdviceImage = (ImageView) topCurrentNavigationImagePanel
+                        .findViewById(R.id.current_advice_image_turn);
+                currentAdviceName = (TextView) topCurrentNavigationDistanceStreetPanel
+                        .findViewById(R.id.current_advice_street_text);
                 currentAdviceName.setSelected(true);
-                currentAdviceDistance =
-                        (TextView) topCurrentNavigationDistanceStreetPanel.findViewById(R.id
-                                .current_advice_distance_text);
-
+                currentAdviceDistance = (TextView) topCurrentNavigationDistanceStreetPanel
+                        .findViewById(R.id.current_advice_distance_text);
 
                 // next advice panel
-                topNextNavigationPanel = (ViewGroup) inflater.inflate(R.layout
-                                .element_navigation_next_advice_panel,
-                        null,
-                        false);
+                topNextNavigationPanel = (ViewGroup) inflater.inflate(R.layout.element_navigation_next_advice_panel,
+                        null, false);
                 android.widget.RelativeLayout.LayoutParams nextAdviceParams = new RelativeLayout.LayoutParams
                         (RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 nextAdviceParams.addRule(RelativeLayout.BELOW, topCurrentNavigationPanel.getId());
@@ -653,16 +610,16 @@ class SKToolsNavigationUIManager{
                 topNextNavigationPanel.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 topNextNavigationPanel.setVisibility(View.GONE);
 
-                nextAdviceImageDistancePanel = (RelativeLayout) topNextNavigationPanel.findViewById(R.id
-                        .next_image_turn_advice_distance_layout);
-                nextAdviceImageView = (ImageView) nextAdviceImageDistancePanel.findViewById(R.id
-                        .next_image_turn_advice);
-                nextAdviceDistanceTextView = (TextView) nextAdviceImageDistancePanel.findViewById(R.id
-                        .next_advice_distance_text);
-                nextAdviceStreetNamePanel = (RelativeLayout) topNextNavigationPanel.findViewById(R.id
-                        .next_advice_street_name_text_layout);
-                nextAdviceStreetNameTextView = (TextView) nextAdviceStreetNamePanel.findViewById(R.id
-                        .next_advice_street_name_text);
+                nextAdviceImageDistancePanel = (RelativeLayout) topNextNavigationPanel
+                        .findViewById(R.id.next_image_turn_advice_distance_layout);
+                nextAdviceImageView = (ImageView) nextAdviceImageDistancePanel
+                        .findViewById(R.id.next_image_turn_advice);
+                nextAdviceDistanceTextView = (TextView) nextAdviceImageDistancePanel
+                        .findViewById(R.id.next_advice_distance_text);
+                nextAdviceStreetNamePanel = (RelativeLayout) topNextNavigationPanel
+                        .findViewById(R.id.next_advice_street_name_text_layout);
+                nextAdviceStreetNameTextView = (TextView) nextAdviceStreetNamePanel
+                        .findViewById(R.id.next_advice_street_name_text);
                 nextAdviceStreetNameTextView.setSelected(true);
 
                 freeDriveCurrentStreetPanel =
@@ -676,12 +633,10 @@ class SKToolsNavigationUIManager{
                         (TextView) freeDriveCurrentStreetPanel.findViewById(R.id.free_drive_current_street_text);
                 freeDriveCurrentStreetText.setText("");
 
-                viaPointPanel =
-                        (ViewGroup) inflater.inflate(R.layout.element_navigation_via_point_panel, null, false);
+                viaPointPanel = (ViewGroup) inflater.inflate(R.layout.element_navigation_via_point_panel, null, false);
                 rootLayout.addView(viaPointPanel, freeDrivePanelParams);
                 viaPointPanel.setVisibility(View.GONE);
-                TextView viaPointText =
-                        (TextView) viaPointPanel.findViewById(R.id.via_point_text_view);
+                TextView viaPointText = (TextView) viaPointPanel.findViewById(R.id.via_point_text_view);
                 viaPointText.setText("");
 
                 inflateBottomPanels();
@@ -689,12 +644,9 @@ class SKToolsNavigationUIManager{
         });
     }
 
-
     /**
      * sets the corresponding image for compass panel
      */
-
-
     protected void setTheCorrespondingImageForCompassPanel(SKMapSettings mapSettings) {
 
         if (SKToolsLogicManager.getInstance().startPedestrian) {
@@ -728,7 +680,6 @@ class SKToolsNavigationUIManager{
                     break;
             }
         }
-
     }
 
     /**
@@ -745,9 +696,7 @@ class SKToolsNavigationUIManager{
      */
     private void inflateBottomPanels() {
         LayoutInflater inflater = currentActivity.getLayoutInflater();
-        speedPanel = (ViewGroup) inflater.inflate(R.layout
-                        .element_navigation_speed_panel, null,
-                false);
+        speedPanel = (ViewGroup) inflater.inflate(R.layout.element_navigation_speed_panel, null, false);
         android.widget.RelativeLayout.LayoutParams currentSpeedParams = new RelativeLayout.LayoutParams
                 (RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         currentSpeedParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
@@ -756,13 +705,12 @@ class SKToolsNavigationUIManager{
         speedPanel.setId(SKToolsUtils.generateViewId());
         speedPanel.setVisibility(View.GONE);
         currentSpeedText = (TextView) speedPanel.findViewById(R.id.free_drive_current_speed_text);
-        currentSpeedTextValue = (TextView) speedPanel.findViewById(R.id
-                .free_drive_current_speed_text_value);
+        currentSpeedTextValue = (TextView) speedPanel.findViewById(R.id.free_drive_current_speed_text_value);
         speedPanel.setOnClickListener(null);
 
-
         compassViewPanel = (ViewGroup) inflater.inflate(R.layout.element_pedestrian_compass_panel, null, false);
-        android.widget.RelativeLayout.LayoutParams compassPanelParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        android.widget.RelativeLayout.LayoutParams compassPanelParams = new RelativeLayout.LayoutParams
+                (RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         compassPanelParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         compassPanelParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         rootLayout.addView(compassViewPanel, compassPanelParams);
@@ -771,9 +719,8 @@ class SKToolsNavigationUIManager{
         currentCompasImage = (ImageView) compassViewPanel.findViewById(R.id.pedestrian_compass_panel_image_view);
         compassViewPanel.findViewById(R.id.pedestrian_compass_panel_layout).setOnClickListener(itemsClickListener);
 
-
-        arrivingETATimeGroupPanels = (ViewGroup) inflater.inflate(R.layout
-                .element_navigation_eta_arriving_group_panels, null, false);
+        arrivingETATimeGroupPanels = (ViewGroup) inflater.inflate(R.layout.element_navigation_eta_arriving_group_panels,
+                null, false);
         android.widget.RelativeLayout.LayoutParams etaGroupPanelsParams = new RelativeLayout.LayoutParams
                 (RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         etaGroupPanelsParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
@@ -781,18 +728,17 @@ class SKToolsNavigationUIManager{
         rootLayout.addView(arrivingETATimeGroupPanels, etaGroupPanelsParams);
         arrivingETATimeGroupPanels.setId(SKToolsUtils.generateViewId());
         arrivingETATimeGroupPanels.setVisibility(View.GONE);
-        estimatedTimePanel = (ViewGroup) arrivingETATimeGroupPanels.findViewById(R.id
-                .navigation_bottom_right_estimated_panel);
+        estimatedTimePanel = (ViewGroup) arrivingETATimeGroupPanels
+                .findViewById(R.id.navigation_bottom_right_estimated_panel);
         estimatedTimePanel.setOnClickListener(itemsClickListener);
-        arrivingTimePanel = (ViewGroup) arrivingETATimeGroupPanels.findViewById(R.id
-                .navigation_bottom_right_arriving_panel);
+        arrivingTimePanel = (ViewGroup) arrivingETATimeGroupPanels
+                .findViewById(R.id.navigation_bottom_right_arriving_panel);
         arrivingTimePanel.setOnClickListener(itemsClickListener);
         estimatedTimeText = (TextView) estimatedTimePanel.findViewById(R.id.estimated_navigation_time_text);
         arrivingTimeText = (TextView) arrivingTimePanel.findViewById(R.id.arriving_time_text);
 
         android.widget.RelativeLayout.LayoutParams routeDistanceParams;
-        if (currentActivity.getResources().getConfiguration().orientation == Configuration
-                .ORIENTATION_PORTRAIT) {
+        if (currentActivity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             routeDistanceParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                     RelativeLayout.LayoutParams.WRAP_CONTENT);
             routeDistanceParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
@@ -805,25 +751,19 @@ class SKToolsNavigationUIManager{
             routeDistanceParams.addRule(RelativeLayout.ABOVE, arrivingETATimeGroupPanels.getId());
         }
 
-        routeDistancePanel = (ViewGroup) inflater.inflate(R.layout
-                        .element_navigation_route_distance, null,
-                false);
+        routeDistancePanel = (ViewGroup) inflater.inflate(R.layout.element_navigation_route_distance, null, false);
         rootLayout.addView(routeDistancePanel, routeDistanceParams);
         routeDistancePanel.setVisibility(View.GONE);
         routeDistanceText = (TextView) routeDistancePanel.findViewById(R.id.arriving_distance_text);
-        routeDistanceTextValue = (TextView) routeDistancePanel.findViewById(R.id
-                .arriving_distance_text_value);
+        routeDistanceTextValue = (TextView) routeDistancePanel.findViewById(R.id.arriving_distance_text_value);
         android.widget.RelativeLayout.LayoutParams positionMeParams;
-        positionMeButtonPanel =
-                (ViewGroup) inflater.inflate(R.layout.element_position_me_button, null, false);
+        positionMeButtonPanel = (ViewGroup) inflater.inflate(R.layout.element_position_me_button, null, false);
         positionMeParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT);
         rootLayout.addView(positionMeButtonPanel, positionMeParams);
         positionMeButtonPanel.setVisibility(View.GONE);
-        positionMeButtonPanel.findViewById(R.id.position_me_real_navigation_button).setOnClickListener
-                (itemsClickListener);
-        TextView dayNightText = ((TextView) settingsPanel.findViewById(R.id
-                .navigation_settings_view_mode_text));
+        positionMeButtonPanel.findViewById(R.id.position_me_real_navigation_button).setOnClickListener(itemsClickListener);
+        TextView dayNightText = ((TextView) settingsPanel.findViewById(R.id.navigation_settings_view_mode_text));
     }
 
     /**
@@ -833,12 +773,11 @@ class SKToolsNavigationUIManager{
         LayoutInflater inflater = currentActivity.getLayoutInflater();
         navigationSimulationPanel = (ViewGroup) inflater.inflate(R.layout.element_navigation_simulation_buttons,
                 null, false);
-        RelativeLayout.LayoutParams simulationPanelParams = new RelativeLayout.LayoutParams(RelativeLayout.
-                LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        RelativeLayout.LayoutParams simulationPanelParams = new RelativeLayout.LayoutParams
+                (RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         navigationSimulationPanel.setLayoutParams(simulationPanelParams);
         rootLayout.addView(navigationSimulationPanel, simulationPanelParams);
-        navigationSimulationPanel.findViewById(R.id.menu_back_follower_mode_button).setOnClickListener
-                (itemsClickListener);
+        navigationSimulationPanel.findViewById(R.id.menu_back_follower_mode_button).setOnClickListener(itemsClickListener);
         navigationSimulationPanel.findViewById(R.id.navigation_increase_speed).setOnClickListener(itemsClickListener);
         navigationSimulationPanel.findViewById(R.id.navigation_decrease_speed).setOnClickListener(itemsClickListener);
     }
@@ -850,8 +789,8 @@ class SKToolsNavigationUIManager{
         LayoutInflater inflater = currentActivity.getLayoutInflater();
 
         settingsPanel = (ViewGroup) inflater.inflate(R.layout.element_navigation_settings, null, false);
-        RelativeLayout.LayoutParams settingsPanelParams = new RelativeLayout.LayoutParams(RelativeLayout.
-                LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        RelativeLayout.LayoutParams settingsPanelParams = new RelativeLayout.LayoutParams
+                (RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         rootLayout.addView(settingsPanel, settingsPanelParams);
         settingsPanel.setVisibility(View.GONE);
 
@@ -880,10 +819,9 @@ class SKToolsNavigationUIManager{
      */
     private void inflatePreNavigationViews() {
         LayoutInflater inflater = currentActivity.getLayoutInflater();
-        preNavigationPanel = (ViewGroup) inflater.inflate(R.layout.element_pre_navigation_buttons_panel, null,
-                false);
-        RelativeLayout.LayoutParams preNavigationPanelParams = new RelativeLayout.LayoutParams(RelativeLayout.
-                LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        preNavigationPanel = (ViewGroup) inflater.inflate(R.layout.element_pre_navigation_buttons_panel, null, false);
+        RelativeLayout.LayoutParams preNavigationPanelParams = new RelativeLayout.LayoutParams
+                (RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         rootLayout.addView(preNavigationPanel, preNavigationPanelParams);
         preNavigationPanel.setVisibility(View.GONE);
 
@@ -892,8 +830,7 @@ class SKToolsNavigationUIManager{
         preNavigationPanel.findViewById(R.id.third_route).setOnClickListener(itemsClickListener);
         preNavigationPanel.findViewById(R.id.cancel_pre_navigation_button).setOnClickListener(itemsClickListener);
         preNavigationPanel.findViewById(R.id.menu_back_prenavigation_button).setOnClickListener(itemsClickListener);
-        preNavigationPanel.findViewById(R.id.start_navigation_button).setOnClickListener
-                (itemsClickListener);
+        preNavigationPanel.findViewById(R.id.start_navigation_button).setOnClickListener(itemsClickListener);
     }
 
     /**
@@ -916,8 +853,7 @@ class SKToolsNavigationUIManager{
             final TextView twoRoutes = (TextView) preNavigationPanel.findViewById(R.id.second_route);
             final TextView threeRoutes = (TextView) preNavigationPanel.findViewById(R.id.third_route);
 
-            altRoutesButtons =
-                    new TextView[]{(TextView) preNavigationPanel.findViewById(R.id.first_route),
+            altRoutesButtons = new TextView[]{(TextView) preNavigationPanel.findViewById(R.id.first_route),
                             (TextView) preNavigationPanel.findViewById(R.id.second_route),
                             (TextView) preNavigationPanel.findViewById(R.id.third_route)};
             currentActivity.runOnUiThread(new Runnable() {
@@ -927,20 +863,14 @@ class SKToolsNavigationUIManager{
                         oneRoute.setVisibility(View.VISIBLE);
                         twoRoutes.setVisibility(View.GONE);
                         threeRoutes.setVisibility(View.GONE);
-                        altRoutesButtons[0].setText(time + "\n"
-                                + distance + "\n" + cost + " EUR");
-
+                        altRoutesButtons[0].setText(time + "\n" + distance + "\n" + cost + " EUR");
                     } else if (id == 1) {
                         twoRoutes.setVisibility(View.VISIBLE);
                         threeRoutes.setVisibility(View.GONE);
-                        altRoutesButtons[1].setText(time + "\n"
-                                + distance + "\n" + cost + " EUR");
-
+                        altRoutesButtons[1].setText(time + "\n" + distance + "\n" + cost + " EUR");
                     } else if (id == 2) {
                         threeRoutes.setVisibility(View.VISIBLE);
-                        altRoutesButtons[2].setText(time + "\n"
-                                + distance + "\n" + cost + " EUR");
-
+                        altRoutesButtons[2].setText(time + "\n" + distance + "\n" + cost + " EUR");
                     }
                 }
             });
@@ -988,7 +918,6 @@ class SKToolsNavigationUIManager{
                 altRoutesButtons[2].setBackgroundColor(currentActivity.getResources().getColor(R.color.blue_panel_night_background));
                 altRoutesButtons[2].setSelected(true);
                 break;
-
         }
     }
 
@@ -1009,8 +938,8 @@ class SKToolsNavigationUIManager{
             }
         } else if (currentNavigationMode == NavigationMode.FOLLOWER) {
             Button backFollowerModeButton = (Button) currentActivity.findViewById(R.id.menu_back_follower_mode_button);
-            RelativeLayout increaseDecreaseLayout = (RelativeLayout) currentActivity.findViewById(R.id
-                    .increase_decrease_layout);
+            RelativeLayout increaseDecreaseLayout = (RelativeLayout) currentActivity
+                    .findViewById(R.id.increase_decrease_layout);
             if (backFollowerModeButton.getText().equals(">")) {
                 backFollowerModeButton.setText("<");
                 increaseDecreaseLayout.setVisibility(View.VISIBLE);
@@ -1038,7 +967,6 @@ class SKToolsNavigationUIManager{
             currentActivity.findViewById(R.id.navigation_settings_overview_button).setVisibility(View.GONE);
             currentActivity.findViewById(R.id.navigation_settings_roadblock_info_button).setVisibility(View.GONE);
         }
-
     }
 
     /**
@@ -1080,8 +1008,7 @@ class SKToolsNavigationUIManager{
 
             @Override
             public void run() {
-                final ListView listView = (ListView) roadBlockPanel
-                        .findViewById(R.id.roadblock_list);
+                final ListView listView = (ListView) roadBlockPanel.findViewById(R.id.roadblock_list);
                 listView.setAdapter(listAdapter);
                 listView.setOnItemClickListener(blockRoadsListItemClickListener);
                 roadBlockPanel.setVisibility(View.VISIBLE);
@@ -1140,7 +1067,6 @@ class SKToolsNavigationUIManager{
 
         return sourceList;
     }
-
 
     /**
      * Checks if is in pre navigation mode.
@@ -1255,11 +1181,9 @@ class SKToolsNavigationUIManager{
         hideViewIfVisible(topCurrentNavigationPanel);
         hideBottomAndLeftPanels();
 
-        routeOverviewPanel.findViewById(R.id.navigation_route_overview_starting_position_layout).setVisibility(View
-                .GONE);
+        routeOverviewPanel.findViewById(R.id.navigation_route_overview_starting_position_layout).setVisibility(View.GONE);
 
-        ((TextView) routeOverviewPanel.findViewById(R.id
-                .navigation_route_overview_destination_text)).setText(address);
+        ((TextView) routeOverviewPanel.findViewById(R.id.navigation_route_overview_destination_text)).setText(address);
         routeOverviewPanel.setVisibility(View.VISIBLE);
         backButtonPanel.setVisibility(View.VISIBLE);
     }
@@ -1277,13 +1201,13 @@ class SKToolsNavigationUIManager{
         hideViewIfVisible(topCurrentNavigationPanel);
         hideBottomAndLeftPanels();
 
-        ((TextView) routeOverviewPanel.findViewById(R.id
-                .navigation_route_overview_current_position_text)).setText(startAddress);
-        ((TextView) routeOverviewPanel.findViewById(R.id
-                .navigation_route_overview_destination_text)).setText(destinationAddress);
+        ((TextView) routeOverviewPanel.findViewById(R.id.navigation_route_overview_current_position_text))
+                .setText(startAddress);
+        ((TextView) routeOverviewPanel.findViewById(R.id.navigation_route_overview_destination_text))
+                .setText(destinationAddress);
 
-        routeOverviewPanel.findViewById(R.id.navigation_route_overview_starting_position_layout).setVisibility(View
-                .VISIBLE);
+        routeOverviewPanel.findViewById(R.id.navigation_route_overview_starting_position_layout)
+                .setVisibility(View.VISIBLE);
         routeOverviewPanel.setVisibility(View.VISIBLE);
         backButtonPanel.setVisibility(View.VISIBLE);
     }
@@ -1296,17 +1220,14 @@ class SKToolsNavigationUIManager{
 
         hideViewIfVisible(freeDriveCurrentStreetPanel);
         hideBottomAndLeftPanels();
-        routeOverviewPanel.findViewById(R.id.navigation_route_overview_starting_position_layout).setVisibility(View
-                .GONE);
+        routeOverviewPanel.findViewById(R.id.navigation_route_overview_starting_position_layout).setVisibility(View.GONE);
+        routeOverviewPanel.findViewById(R.id.navigation_route_overview_destination_layout).setVisibility(View.VISIBLE);
 
-        routeOverviewPanel.findViewById(R.id.navigation_route_overview_destination_layout).setVisibility(View
-                .VISIBLE);
-
-        ((TextView) routeOverviewPanel.findViewById(R.id
-                .navigation_route_overview_destination_label)).setText(R.string.
+        ((TextView) routeOverviewPanel.findViewById(R.id.navigation_route_overview_destination_label))
+                .setText(R.string.
                 current_position);
-        ((TextView) routeOverviewPanel.findViewById(R.id
-                .navigation_route_overview_destination_text)).setText(currentStreetNameFreeDriveString);
+        ((TextView) routeOverviewPanel.findViewById(R.id.navigation_route_overview_destination_text))
+                .setText(currentStreetNameFreeDriveString);
 
         routeOverviewPanel.setVisibility(View.VISIBLE);
         backButtonPanel.setVisibility(View.VISIBLE);
@@ -1367,8 +1288,7 @@ class SKToolsNavigationUIManager{
      * Shows the exit navigation dialog.
      */
     public void showExitNavigationDialog() {
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(
-                currentActivity);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(currentActivity);
 
         alertDialog.setTitle(R.string.exit_navigation_dialog_title);
         alertDialog.setMessage(currentActivity.getResources().getString(
@@ -1491,12 +1411,10 @@ class SKToolsNavigationUIManager{
                         showViewIfNotVisible(topCurrentNavigationPanel);
                         showViewIfNotVisible(routeDistancePanel);
                             showViewIfNotVisible(speedPanel);
-
                     }
 
                     currentCountryCode = skNavigationState.getCountryCode();
-                    distanceEstimatedUntilDestination = (int) Math.round(skNavigationState
-                            .getDistanceToDestination());
+                    distanceEstimatedUntilDestination = (int) Math.round(skNavigationState.getDistanceToDestination());
 
                     String currentVisualAdviceImage = skNavigationState.getCurrentAdviceVisualAdviceFile();
 
@@ -1514,8 +1432,7 @@ class SKToolsNavigationUIManager{
                     }
                     String exitNumber = skNavigationState.getCurrentAdviceExitNumber();
                     if (nextStreetName != null) {
-                        nextStreetName =
-                                nextStreetName.replace("\u021B", "\u0163").replace("\u021A", "\u0162")
+                        nextStreetName = nextStreetName.replace("\u021B", "\u0163").replace("\u021A", "\u0162")
                                         .replace("\u0218", "\u015E").replace("\u0219", "\u015F");
                     }
                     String countryCode = skNavigationState.getCountryCode();
@@ -1539,11 +1456,9 @@ class SKToolsNavigationUIManager{
                     // speed values
                     if (currentSpeed == 0 || currentSpeed != skNavigationState.getCurrentSpeed()) {
                         currentSpeed = skNavigationState.getCurrentSpeed();
-                        currentSpeedString = String.valueOf(SKToolsUtils.getSpeedByUnit(currentSpeed,
-                                distanceUnitType));
+                        currentSpeedString = String.valueOf(SKToolsUtils.getSpeedByUnit(currentSpeed, distanceUnitType));
                         currentSpeedText.setText(currentSpeedString);
-                        currentSpeedTextValue.setText(SKToolsUtils.getSpeedTextByUnit(currentActivity,
-                                distanceUnitType));
+                        currentSpeedTextValue.setText(SKToolsUtils.getSpeedTextByUnit(currentActivity, distanceUnitType));
                     }
 
                     if (currentSpeedLimit != skNavigationState.getCurrentSpeedLimit()) {
@@ -1559,15 +1474,13 @@ class SKToolsNavigationUIManager{
                     if (nextVisualAdviceFile != null) {
                         if (nextVisualAdviceDistance != nextDistanceToAdvice) {
                             nextVisualAdviceDistance = nextDistanceToAdvice;
-                            nextAdviceDistanceTextView.setText(SKNavigationManager.getInstance().formatDistance
-                                    (nextDistanceToAdvice));
+                            nextAdviceDistanceTextView.setText(SKNavigationManager.getInstance()
+                                    .formatDistance(nextDistanceToAdvice));
                         }
-                        if (nextVisualAdviceStreetName != null &&
-                                !nextVisualAdviceStreetName.equals
-                                        (nextAdviceNextStreetName)) {
+                        if (nextVisualAdviceStreetName != null
+                                && !nextVisualAdviceStreetName.equals(nextAdviceNextStreetName)) {
                             nextVisualAdviceStreetName = nextAdviceNextStreetName;
-                            nextAdviceStreetNameTextView.setText
-                                    (nextAdviceNextStreetName);
+                            nextAdviceStreetNameTextView.setText(nextAdviceNextStreetName);
                         }
 
                         Bitmap adviceFile = SKToolsUtils.decodeFileToBitmap(nextVisualAdviceFile);
@@ -1598,8 +1511,8 @@ class SKToolsNavigationUIManager{
                     if (currentAdviceDistance != null &&
                             currentVisualAdviceDistance != currentDistanceToAdvice) {
                         currentVisualAdviceDistance = currentDistanceToAdvice;
-                        currentAdviceDistance.setText(SKNavigationManager.getInstance().formatDistance
-                                (currentDistanceToAdvice));
+                        currentAdviceDistance.setText(SKNavigationManager.getInstance()
+                                .formatDistance(currentDistanceToAdvice));
                     }
                     if (currentAdviceName != null && !showDestinationReachedFlag) {
                         if (exitNumber != null && exitNumber.length() > 0) {
@@ -1607,15 +1520,13 @@ class SKToolsNavigationUIManager{
                                     .getResources().getString(
                                             R.string.exit_highway_advice_label) + " " + exitNumber;
                             if (nextStreetName != null && nextStreetName.length() > 0) {
-                                currentAdvice = currentAdvice + " " +
-                                        nextStreetName;
+                                currentAdvice = currentAdvice + " " + nextStreetName;
                             }
                             currentAdviceName.setText(currentAdvice);
                             currentVisualAdviceStreetName = currentAdvice;
                         } else {
-                            if (currentVisualAdviceStreetName != null &&
-                                    !currentVisualAdviceStreetName.equals
-                                            (nextStreetName)) {
+                            if (currentVisualAdviceStreetName != null
+                                    && !currentVisualAdviceStreetName.equals(nextStreetName)) {
                                 currentVisualAdviceStreetName = nextStreetName;
                                 currentAdviceName.setText(nextStreetName);
                             }
@@ -1627,11 +1538,9 @@ class SKToolsNavigationUIManager{
                             currentAdviceImage.setImageResource(R.drawable.ic_destination_advise_black);
                         }
                         if (currentAdviceName != null) {
-                            currentVisualAdviceStreetName =
-                                    currentActivity.getResources().getString(
-                                            R.string.destination_reached_info_text);
-                            currentAdviceName.setText(
-                                    currentVisualAdviceStreetName);
+                            currentVisualAdviceStreetName = currentActivity.getResources()
+                                    .getString(R.string.destination_reached_info_text);
+                            currentAdviceName.setText(currentVisualAdviceStreetName);
                         }
                         if (currentAdviceDistance != null) {
                             currentVisualAdviceDistance = 0;
@@ -1640,11 +1549,10 @@ class SKToolsNavigationUIManager{
                         disableNextAdvice();
                     }
 
-
                     // set estimated/arriving time
                     if ((timeToDestination < 120) || (timeToDestination - 60 >=
-                            skNavigationState.getCurrentAdviceTimeToDestination()) || (timeToDestination + 60 <
-                            skNavigationState.getCurrentAdviceTimeToDestination())) {
+                            skNavigationState.getCurrentAdviceTimeToDestination())
+                            || (timeToDestination + 60 < skNavigationState.getCurrentAdviceTimeToDestination())) {
 
                         timeToDestination = skNavigationState.getCurrentAdviceTimeToDestination();
                         if (estimatedTimePanelVisible) {
@@ -1654,8 +1562,8 @@ class SKToolsNavigationUIManager{
                         }
                     }
 
-                    String[] distanceToDestinationSplit = SKNavigationManager.getInstance().formatDistance
-                            (distanceEstimatedUntilDestination).split(" ");
+                    String[] distanceToDestinationSplit = SKNavigationManager.getInstance()
+                            .formatDistance(distanceEstimatedUntilDestination).split(" ");
                     if (!routeDistanceString.equals(distanceToDestinationSplit[0])) {
                         routeDistanceString = distanceToDestinationSplit[0];
                         if (distanceToDestinationSplit.length > 1) {
@@ -1692,27 +1600,23 @@ class SKToolsNavigationUIManager{
                 }
             });
         }
-
     }
 
     /**
      * sets top panels background colour
      */
-    public void setTopPanelsBackgroundColour(int mapStyle, boolean currentAdviceChanged,
-                                             boolean nextAdviceChanged) {
+    public void setTopPanelsBackgroundColour(int mapStyle, boolean currentAdviceChanged, boolean nextAdviceChanged) {
         if (Arrays.asList(signPostsCountryExceptions).contains(currentCountryCode)) {
             isDefaultTopPanelBackgroundColor = false;
             if (currentAdviceChanged || !nextAdviceChanged) {
                 verifyStreetType(mapStyle, nextStreetType, true);
             }
             if (nextStreetType == secondNextStreetType) {
-                if (nextAdviceChanged && isNextAdviceVisible ||
-                        !currentAdviceChanged && !nextAdviceChanged) {
+                if (nextAdviceChanged && isNextAdviceVisible || !currentAdviceChanged && !nextAdviceChanged) {
                     verifyStreetType(mapStyle, 0, false);
                 }
             } else {
-                if (nextAdviceChanged && isNextAdviceVisible ||
-                        !currentAdviceChanged && !nextAdviceChanged) {
+                if (nextAdviceChanged && isNextAdviceVisible || !currentAdviceChanged && !nextAdviceChanged) {
                     verifyStreetType(mapStyle, secondNextStreetType, false);
                 }
             }
@@ -1722,27 +1626,22 @@ class SKToolsNavigationUIManager{
                     if (currentAdviceChanged || !nextAdviceChanged) {
                         setTopPanelsStyle(R.color.white, R.color.black, true);
                     }
-                    if (nextAdviceChanged && isNextAdviceVisible ||
-                            !currentAdviceChanged && !nextAdviceChanged) {
+                    if (nextAdviceChanged && isNextAdviceVisible || !currentAdviceChanged && !nextAdviceChanged) {
                         setTopPanelsStyle(R.color.white, R.color.black, false);
                     }
 
                 } else {
                     if (currentAdviceChanged || !nextAdviceChanged) {
-                        setTopPanelsStyle(R.color.navigation_style_night,
-                                R.color.gray, true);
+                        setTopPanelsStyle(R.color.navigation_style_night, R.color.gray, true);
                     }
-                    if (nextAdviceChanged && isNextAdviceVisible ||
-                            !currentAdviceChanged && !nextAdviceChanged) {
-                        setTopPanelsStyle(R.color.navigation_style_night,
-                                R.color.gray, false);
+                    if (nextAdviceChanged && isNextAdviceVisible || !currentAdviceChanged && !nextAdviceChanged) {
+                        setTopPanelsStyle(R.color.navigation_style_night, R.color.gray, false);
                     }
                 }
             }
             isDefaultTopPanelBackgroundColor = true;
         }
     }
-
 
     /**
      * verifies the street type and sets the colors for top panels
@@ -1783,8 +1682,7 @@ class SKToolsNavigationUIManager{
                 if (mapStyle == SKToolsMapOperationsManager.DAY_STYLE) {
                     setTopPanelsStyle(R.color.yellow_panel_day_background, R.color.black, forCurrent);
                 } else {
-                    setTopPanelsStyle(R.color.yellow_panel_night_background, R.color.yellow_panel_night_text,
-                            forCurrent);
+                    setTopPanelsStyle(R.color.yellow_panel_night_background, R.color.yellow_panel_night_text, forCurrent);
                 }
             }
         } else if (streetType == OSM_STREET_TYPE_TRUNK || streetType == OSM_STREET_TYPE_TRUNK_LINK) {
@@ -1798,16 +1696,14 @@ class SKToolsNavigationUIManager{
                 if (mapStyle == SKToolsMapOperationsManager.DAY_STYLE) {
                     setTopPanelsStyle(R.color.white, R.color.black, forCurrent);
                 } else {
-                    setTopPanelsStyle(R.color.navigation_style_night,
-                            R.color.gray, forCurrent);
+                    setTopPanelsStyle(R.color.navigation_style_night, R.color.gray, forCurrent);
                 }
             }
         } else {
             if (mapStyle == SKToolsMapOperationsManager.DAY_STYLE) {
                 setTopPanelsStyle(R.color.white, R.color.black, forCurrent);
             } else {
-                setTopPanelsStyle(R.color.navigation_style_night,
-                        R.color.gray, forCurrent);
+                setTopPanelsStyle(R.color.navigation_style_night, R.color.gray, forCurrent);
             }
         }
     }
@@ -1858,11 +1754,10 @@ class SKToolsNavigationUIManager{
                 }
                 if (topCurrentNavigationPanel != null) {
                     RelativeLayout topCurrentNavigationImagePanel = (RelativeLayout) topCurrentNavigationPanel
-                            .findViewById(R.id
-                                    .current_advice_image_holder);
+                            .findViewById(R.id.current_advice_image_holder);
                     if (topCurrentNavigationImagePanel != null) {
-                        topCurrentNavigationImagePanel.setBackgroundColor(currentActivity.getResources().getColor
-                                (drawableId));
+                        topCurrentNavigationImagePanel.setBackgroundColor
+                                (currentActivity.getResources().getColor(drawableId));
                     }
                 }
                 if (currentAdviceDistance != null) {
@@ -1874,12 +1769,10 @@ class SKToolsNavigationUIManager{
                 currentAdviceBackgroundDrawableId = drawableId;
             } else {
                 if (nextAdviceImageDistancePanel != null) {
-                    nextAdviceImageDistancePanel.setBackgroundColor(currentActivity.getResources().getColor
-                            (drawableId));
+                    nextAdviceImageDistancePanel.setBackgroundColor(currentActivity.getResources().getColor(drawableId));
                 }
                 if (nextAdviceStreetNamePanel != null) {
-                    nextAdviceStreetNamePanel.setBackgroundColor(currentActivity.getResources().getColor
-                            (drawableId));
+                    nextAdviceStreetNamePanel.setBackgroundColor(currentActivity.getResources().getColor(drawableId));
                 }
                 if (nextAdviceDistanceTextView != null) {
                     nextAdviceDistanceTextView.setTextColor(currentActivity.getResources().getColor(textColor));
@@ -1891,17 +1784,15 @@ class SKToolsNavigationUIManager{
                 setNextAdviceOverlayVisibility();
             }
         } else {
-            TextView freeDriveCurrentStreetText = (TextView) freeDriveCurrentStreetPanel.findViewById(R.id
-                    .free_drive_current_street_text);
+            TextView freeDriveCurrentStreetText = (TextView) freeDriveCurrentStreetPanel
+                    .findViewById(R.id.free_drive_current_street_text);
             if (freeDriveCurrentStreetText != null) {
-                freeDriveCurrentStreetText.setBackgroundColor(currentActivity.getResources().getColor
-                        (drawableId));
+                freeDriveCurrentStreetText.setBackgroundColor(currentActivity.getResources().getColor(drawableId));
                 freeDriveCurrentStreetText.setTextColor(currentActivity.getResources().getColor(textColor));
             }
             currentAdviceBackgroundDrawableId = drawableId;
         }
     }
-
 
     /**
      * sets the advice overlay semi transparent visibility
@@ -1920,8 +1811,8 @@ class SKToolsNavigationUIManager{
         } else {
             topNextNavigationPanel.findViewById(R.id.navigation_next_advice_image_distance_overlay_background)
                     .setVisibility(View.GONE);
-            topNextNavigationPanel.findViewById(R.id.navigation_next_advice_street_overlay_background).setVisibility
-                    (View.GONE);
+            topNextNavigationPanel.findViewById(R.id.navigation_next_advice_street_overlay_background)
+                    .setVisibility(View.GONE);
         }
     }
 
@@ -2023,15 +1914,13 @@ class SKToolsNavigationUIManager{
                 isDefaultSpeedSign = false;
                 if (speedExceededThread == null) {
                     if (speedLimitImage != null) {
-                        speedLimitImage.setImageResource(R.drawable
-                                .background_speed_sign_us);
+                        speedLimitImage.setImageResource(R.drawable.background_speed_sign_us);
                     }
                 }
             } else {
                 if (!isDefaultSpeedSign) {
                     if (speedLimitImage != null) {
-                        speedLimitImage.setImageResource(R.drawable
-                                .background_speed_sign);
+                        speedLimitImage.setImageResource(R.drawable.background_speed_sign);
                     }
                 }
                 isDefaultSpeedSign = true;
@@ -2040,18 +1929,16 @@ class SKToolsNavigationUIManager{
 
         // speed limit visibility
         if (currentNavigationMode == NavigationMode.FOLLOWER) {
-            if (currentSpeedLimit != 0)//&& gpsIsWorking) {
+            if (currentSpeedLimit != 0)
                 if (!speedLimitAvailable) {
-                    currentActivity.findViewById(R.id.navigation_free_drive_speed_limit_panel).setVisibility(View
-                            .VISIBLE);
+                    currentActivity.findViewById(R.id.navigation_free_drive_speed_limit_panel).setVisibility(View.VISIBLE);
                 }
         }
 
         // set speed limit
         if (currentSpeedLimit != 0) {
             if (speedLimitText != null) {
-                speedLimitText.setText(String.valueOf(SKToolsUtils
-                        .getSpeedByUnit(currentSpeedLimit, distanceUnitType)));
+                speedLimitText.setText(String.valueOf(SKToolsUtils.getSpeedByUnit(currentSpeedLimit, distanceUnitType)));
                 if (!speedLimitExceeded) {
                     speedLimitText.setVisibility(View.VISIBLE);
                     speedLimitImage.setVisibility(View.VISIBLE);
@@ -2064,13 +1951,10 @@ class SKToolsNavigationUIManager{
         } else {
             if (speedLimitAvailable) {
                 currentActivity.findViewById(R.id.navigation_free_drive_speed_limit_panel).setVisibility(View.GONE);
-
                 setCurrentSpeedPanelBackgroundAndTextColour(mapStyle);
-
             }
             speedLimitAvailable = false;
         }
-
     }
 
     /**
@@ -2088,36 +1972,32 @@ class SKToolsNavigationUIManager{
      * @param currentMapStyle
      */
     public void setCurrentSpeedPanelBackgroundAndTextColour(int currentMapStyle) {
-        RelativeLayout currentSpeedPanel = (RelativeLayout) currentActivity.findViewById
-                (R.id.navigation_free_drive_speed_limit_panel);
+        RelativeLayout currentSpeedPanel = (RelativeLayout) currentActivity
+                .findViewById(R.id.navigation_free_drive_speed_limit_panel);
         if (currentMapStyle == SKToolsMapOperationsManager.DAY_STYLE) {
             if (currentSpeedPanel != null) {
-                currentSpeedPanel.setBackgroundColor(currentActivity.getResources().getColor(R.color
-                        .gray));
+                currentSpeedPanel.setBackgroundColor(currentActivity.getResources().getColor(R.color.gray));
             }
-            currentActivity.findViewById(R.id.free_drive_current_speed_linear_layout).setBackgroundColor
-                    (currentActivity.getResources().getColor(R.color.gray));
+            currentActivity.findViewById(R.id.free_drive_current_speed_linear_layout)
+                    .setBackgroundColor(currentActivity.getResources().getColor(R.color.gray));
             if (currentSpeedText != null) {
                 currentSpeedText.setTextColor(currentActivity.getResources().getColor(R.color.black));
             }
             if (currentSpeedTextValue != null) {
-                currentSpeedTextValue.setTextColor(currentActivity.getResources().getColor(R.color
-                        .black));
+                currentSpeedTextValue.setTextColor(currentActivity.getResources().getColor(R.color.black));
             }
         } else if (currentMapStyle == SKToolsMapOperationsManager.NIGHT_STYLE) {
             if (currentSpeedPanel != null) {
-                currentSpeedPanel.setBackgroundColor(currentActivity.getResources().getColor(R.color
-                        .speed_panel_night_background));
+                currentSpeedPanel.setBackgroundColor
+                        (currentActivity.getResources().getColor(R.color.speed_panel_night_background));
             }
             currentActivity.findViewById(R.id.free_drive_current_speed_linear_layout).setBackgroundColor
                     (currentActivity.getResources().getColor(R.color.speed_panel_night_background));
             if (currentSpeedText != null) {
-                currentSpeedText.setTextColor(currentActivity.getResources().getColor(R.color
-                        .gray));
+                currentSpeedText.setTextColor(currentActivity.getResources().getColor(R.color.gray));
             }
             if (currentSpeedTextValue != null) {
-                currentSpeedTextValue.setTextColor(currentActivity.getResources().getColor(R.color
-                        .gray));
+                currentSpeedTextValue.setTextColor(currentActivity.getResources().getColor(R.color.gray));
             }
         }
     }
@@ -2134,8 +2014,7 @@ class SKToolsNavigationUIManager{
      */
     public void handleFreeDriveUpdated(final String countryCode, final String streetName,
                                        final double currentFreeDriveSpeed, final double speedLimit,
-                                       final SKMaps.SKDistanceUnitType distanceUnitType,
-                                       final int mapStyle) {
+                                       final SKMaps.SKDistanceUnitType distanceUnitType, final int mapStyle) {
         currentActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -2144,11 +2023,9 @@ class SKToolsNavigationUIManager{
 
                     if (currentSpeed == 0 || currentSpeed != currentFreeDriveSpeed) {
                         currentSpeed = currentFreeDriveSpeed;
-                        currentSpeedString = String.valueOf(SKToolsUtils.getSpeedByUnit(currentSpeed,
-                                distanceUnitType));
+                        currentSpeedString = String.valueOf(SKToolsUtils.getSpeedByUnit(currentSpeed, distanceUnitType));
                         currentSpeedText.setText(currentSpeedString);
-                        currentSpeedTextValue.setText(SKToolsUtils.getSpeedTextByUnit(currentActivity,
-                                distanceUnitType));
+                        currentSpeedTextValue.setText(SKToolsUtils.getSpeedTextByUnit(currentActivity, distanceUnitType));
                     }
 
                     if (currentSpeedLimit != speedLimit) {
@@ -2167,7 +2044,7 @@ class SKToolsNavigationUIManager{
                     }
                     if (currentNavigationMode == NavigationMode.FOLLOWER && currentStreetNameFreeDriveString != null) {
                         freeDriveCurrentStreetPanel.setVisibility(View.VISIBLE);
-                            showViewIfNotVisible(speedPanel);
+                        showViewIfNotVisible(speedPanel);
                     }
                 }
 
@@ -2182,8 +2059,8 @@ class SKToolsNavigationUIManager{
      * @param displayMode
      */
     public void handleOrientationChanged(final int mapStyle, final SKMapSettings.SKMapDisplayMode displayMode) {
-        if (currentNavigationMode != NavigationMode.PRE_NAVIGATION || currentNavigationMode != NavigationMode
-                .POST_NAVIGATION) {
+        if (currentNavigationMode != NavigationMode.PRE_NAVIGATION
+                || currentNavigationMode != NavigationMode.POST_NAVIGATION) {
             currentActivity.runOnUiThread(new Runnable() {
 
                 @Override
@@ -2205,8 +2082,8 @@ class SKToolsNavigationUIManager{
                     switchMapMode(displayMode);
                     switchDayNightStyle(mapStyle);
 
-                    boolean isLandscape = currentActivity.getResources().getConfiguration().orientation ==
-                            Configuration.ORIENTATION_LANDSCAPE;
+                    boolean isLandscape = currentActivity.getResources()
+                            .getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
                     if (isFreeDrive) {
                         setSettingsMenuForFreeDrive(isLandscape);
                     }
@@ -2241,7 +2118,6 @@ class SKToolsNavigationUIManager{
         }
     }
 
-
     /**
      * sets the current and next advice panels dimensions
      */
@@ -2266,10 +2142,9 @@ class SKToolsNavigationUIManager{
     private void setSpeedLimitFields() {
         TextView speedLimitText = (TextView) speedPanel.findViewById(R.id.speed_limit_value);
         if (speedLimitAvailable && speedLimitText != null && currentSpeedLimit != 0) {
-            speedLimitText.setText(String.valueOf(String.valueOf(SKToolsUtils
-                    .getSpeedByUnit(currentSpeedLimit, distanceUnitType))));
+            speedLimitText.setText(String.valueOf
+                    (String.valueOf(SKToolsUtils.getSpeedByUnit(currentSpeedLimit, distanceUnitType))));
             changeSpeedSigns();
-
             currentActivity.findViewById(R.id.navigation_free_drive_speed_limit_panel).setVisibility(View.VISIBLE);
         }
     }
@@ -2327,7 +2202,6 @@ class SKToolsNavigationUIManager{
         }
     }
 
-
     /**
      * sets route distance fields.
      */
@@ -2344,8 +2218,7 @@ class SKToolsNavigationUIManager{
      * sets next advice street name visibility
      */
     private void setNextAdviceStreetNameVisibility() {
-        if (topNextNavigationPanel != null && nextAdviceStreetNameTextView != null &&
-                nextAdviceStreetNamePanel != null) {
+        if (topNextNavigationPanel != null && nextAdviceStreetNameTextView != null && nextAdviceStreetNamePanel != null) {
             if (nextVisualAdviceStreetName != null) {
                 nextAdviceStreetNamePanel.setVisibility(View.VISIBLE);
             } else {
@@ -2392,11 +2265,9 @@ class SKToolsNavigationUIManager{
         hideViewIfVisible(topNextNavigationPanel);
         showViewIfNotVisible(viaPointPanel);
 
-        TextView viaPointText =
-                (TextView) viaPointPanel.findViewById(R.id.via_point_text_view);
+        TextView viaPointText = (TextView) viaPointPanel.findViewById(R.id.via_point_text_view);
         viaPointText.setText(currentActivity.getResources().getString(R.string.via_point_reached));
         handler.postDelayed(runnable, 2000);
-
     }
 
     /**
@@ -2405,8 +2276,7 @@ class SKToolsNavigationUIManager{
     public void initialiseVolumeSeekBar() {
         int currentVolume = SKToolsAdvicePlayer.getCurrentDeviceVolume(currentActivity);
         int maxVolume = SKToolsAdvicePlayer.getMaximAudioLevel(currentActivity);
-        SeekBar volumeBar = (SeekBar) settingsPanel.findViewById(R.id
-                .navigation_settings_volume);
+        SeekBar volumeBar = (SeekBar) settingsPanel.findViewById(R.id.navigation_settings_volume);
         volumeBar.setMax(maxVolume);
         volumeBar.setProgress(currentVolume);
         volumeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -2421,22 +2291,17 @@ class SKToolsNavigationUIManager{
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                final AudioManager audioManager =
-                        (AudioManager) currentActivity.getSystemService(Context.AUDIO_SERVICE);
-                audioManager.setStreamVolume(
-                        AudioManager.STREAM_MUSIC, progress,
-                        AudioManager.FLAG_SHOW_UI);
+                final AudioManager audioManager = (AudioManager) currentActivity.getSystemService(Context.AUDIO_SERVICE);
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, AudioManager.FLAG_SHOW_UI);
             }
         });
-
     }
 
     /**
      * Changes audio settings menu item panels.
      */
     public void loadAudioSettings() {
-        TextView audioText = ((TextView) settingsPanel.findViewById(R.id
-                .navigation_settings_audio_text));
+        TextView audioText = ((TextView) settingsPanel.findViewById(R.id.navigation_settings_audio_text));
         Integer audioImageTag = (Integer) audioText.getTag();
         audioImageTag = audioImageTag == null ? 0 : audioImageTag;
 
@@ -2454,7 +2319,6 @@ class SKToolsNavigationUIManager{
             audioText.setTag(R.drawable.ic_audio_on);
             audioText.setText(res.getString(R.string.navigate_settings_audio_on));
         }
-        
     }
 
     /**
@@ -2486,8 +2350,7 @@ class SKToolsNavigationUIManager{
     public void switchDayNightStyle(int mapStyle) {
         if (settingsPanel != null) {
 
-            TextView dayNightText = ((TextView) settingsPanel.findViewById(R.id
-                    .navigation_settings_day_night_mode_text));
+            TextView dayNightText = ((TextView) settingsPanel.findViewById(R.id.navigation_settings_day_night_mode_text));
             if (mapStyle == SKToolsMapOperationsManager.DAY_STYLE) {
                 dayNightText.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_nightmode, 0, 0);
                 dayNightText.setText(currentActivity.getResources().getString(R.string
@@ -2501,7 +2364,6 @@ class SKToolsNavigationUIManager{
             isDefaultTopPanelBackgroundColor = false;
             changePanelsBackgroundAndTextViewsColour(mapStyle);
             setTopPanelsBackgroundColour(mapStyle, false, false);
-
         }
     }
 
@@ -2558,8 +2420,8 @@ class SKToolsNavigationUIManager{
             setPanelBackgroundAndTextColour(roadBlockPanel.findViewById(R.id.road_block_relative_layout), null,
                     currentMapStyle);
 
-            ViewGroup routeOverviewPanel = (ViewGroup) currentActivity.findViewById(R.id
-                    .navigation_route_overview_linear_layout);
+            ViewGroup routeOverviewPanel = (ViewGroup) currentActivity
+                    .findViewById(R.id.navigation_route_overview_linear_layout);
             setPanelBackgroundAndTextColour(routeOverviewPanel, null, currentMapStyle);
             setPanelBackgroundAndTextColour(viaPointPanel, null, currentMapStyle);
 
@@ -2596,7 +2458,6 @@ class SKToolsNavigationUIManager{
                 currentMapStyle);
     }
 
-
     /**
      * sets the background and text view colours for eta group panels
      *
@@ -2604,18 +2465,17 @@ class SKToolsNavigationUIManager{
      */
     public void setEtaTimeGroupPanelsBackgroundAndTextViewColour(int currentMapStyle) {
         TextView arrivingTimeAmPm = ((TextView) arrivingTimePanel.findViewById(R.id.arriving_time_text_ampm));
-        TextView estimatedTimeTextValue = ((TextView) estimatedTimePanel.findViewById(R.id
-                .estimated_navigation_time_text_value));
+        TextView estimatedTimeTextValue = ((TextView) estimatedTimePanel
+                .findViewById(R.id.estimated_navigation_time_text_value));
 
-        setPanelBackgroundAndTextColour(arrivingTimePanel, arrivingTimeText,
-                currentMapStyle);
+        setPanelBackgroundAndTextColour(arrivingTimePanel, arrivingTimeText, currentMapStyle);
         setPanelBackgroundAndTextColour(null, arrivingTimeAmPm, currentMapStyle);
         arrivingTimeAmPm.setCompoundDrawablesWithIntrinsicBounds(R.drawable.bullet_gray, 0, R.drawable.bullet_green, 0);
 
         setPanelBackgroundAndTextColour(estimatedTimePanel, estimatedTimeText, currentMapStyle);
         setPanelBackgroundAndTextColour(null, estimatedTimeTextValue, currentMapStyle);
-        estimatedTimeTextValue.setCompoundDrawablesWithIntrinsicBounds(R.drawable.bullet_green, 0,
-                R.drawable.bullet_gray, 0);
+        estimatedTimeTextValue.setCompoundDrawablesWithIntrinsicBounds
+                (R.drawable.bullet_green, 0, R.drawable.bullet_gray, 0);
     }
 
     /**
@@ -2625,25 +2485,20 @@ class SKToolsNavigationUIManager{
 
         if (currentMapStyle == SKToolsMapOperationsManager.DAY_STYLE) {
             if (panel != null) {
-                panel.setBackgroundColor(currentActivity.getResources().getColor(R.color
-                        .navigation_style_day));
+                panel.setBackgroundColor(currentActivity.getResources().getColor(R.color.navigation_style_day));
             }
             if (textView != null) {
                 textView.setTextColor(currentActivity.getResources().getColor(R.color.white));
             }
         } else if (currentMapStyle == SKToolsMapOperationsManager.NIGHT_STYLE) {
             if (panel != null) {
-                panel.setBackgroundColor(currentActivity.getResources().getColor(R.color
-                        .navigation_style_night));
+                panel.setBackgroundColor(currentActivity.getResources().getColor(R.color.navigation_style_night));
             }
             if (textView != null) {
-                textView.setTextColor(currentActivity.getResources().getColor(R.color
-                        .gray));
+                textView.setTextColor(currentActivity.getResources().getColor(R.color.gray));
             }
         }
-
     }
-
 
     /**
      * removes views for pre navigation
@@ -2729,7 +2584,6 @@ class SKToolsNavigationUIManager{
         }
     }
 
-
     /**
      * speed exceeded thread
      */
@@ -2744,8 +2598,7 @@ class SKToolsNavigationUIManager{
         public void run() {
 
             final ImageView speedLimitImage = (ImageView) speedPanel.findViewById(R.id.navigation_speed_sign_image);
-            final ImageView speedAlertImage = (ImageView) speedPanel.findViewById(R.id
-                    .navigation_alert_sign_image);
+            final ImageView speedAlertImage = (ImageView) speedPanel.findViewById(R.id.navigation_alert_sign_image);
             final TextView speedLimitText = (TextView) speedPanel.findViewById(R.id.speed_limit_value);
 
             while (speedExceeded) {

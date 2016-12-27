@@ -1,13 +1,9 @@
 package com.skobbler.sdkdemo.activity;
 
-
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -18,7 +14,6 @@ import com.skobbler.debugkit.activity.DebugMapActivity;
 import com.skobbler.debugkit.util.DebugKitConfig;
 import com.skobbler.ngx.SKDeveloperKeyException;
 import com.skobbler.ngx.SKMaps;
-import com.skobbler.ngx.SKMapsInitSettings;
 import com.skobbler.ngx.SKMapsInitializationListener;
 
 import com.skobbler.ngx.map.SKMapSurfaceView;
@@ -31,8 +26,7 @@ import com.skobbler.sdkdemo.application.DDAApplication;
 import com.skobbler.sdkdemo.util.Utils;
 
 /**
- * Activity that installs required resources (from assets/MapResources.zip) to
- * the device
+ * Activity that installs required resources (from assets/MapResources.zip) to the device
  */
 public class SplashActivity extends Activity implements SKMapsInitializationListener, SKMapVersioningListener {
 
@@ -41,6 +35,7 @@ public class SplashActivity extends Activity implements SKMapsInitializationList
 
     private boolean update = false;
     private long startLibInitTime;
+
     /**
      * flag that shows whether the debug kit is enabled or not
      */
@@ -72,18 +67,12 @@ public class SplashActivity extends Activity implements SKMapsInitializationList
             SKLogging.writeLog(TAG, "Initialize SKMaps", SKLogging.LOG_DEBUG);
             startLibInitTime = System.currentTimeMillis();
             checkForSDKUpdate();
-//            SKMapsInitSettings mapsInitSettings = new SKMapsInitSettings();
-//            mapsInitSettings.setMapResourcesPath(getExternalFilesDir(null).toString()+"/SKMaps/");
-          //  mapsInitSettings.setConnectivityMode(SKMaps.CONNECTIVITY_MODE_OFFLINE);
-          //  mapsInitSettings.setPreinstalledMapsPath(getExternalFilesDir(null).toString()+"/SKMaps/PreinstalledMaps/");
             SKMaps.getInstance().initializeSKMaps(getApplication(), this);
         } catch (SKDeveloperKeyException exception) {
             exception.printStackTrace();
             Utils.showApiKeyErrorDialog(this);
         }
-
     }
-
 
     @Override
     public void onLibraryInitialized(boolean isSuccessful) {
@@ -102,6 +91,7 @@ public class SplashActivity extends Activity implements SKMapsInitializationList
             finish();
         }
     }
+
     private void goToMap() {
         finish();
         if (!debugKitEnabled) {
@@ -112,6 +102,7 @@ public class SplashActivity extends Activity implements SKMapsInitializationList
             startActivity(intent);
         }
     }
+
     /**
      * Copy some additional resources from assets
      */
@@ -165,8 +156,6 @@ public class SplashActivity extends Activity implements SKMapsInitializationList
                         app.setMapCreatorFilePath(mapCreatorFolderPath + "/mapcreatorFile.json");
                         Utils.copyAsset(getAssets(), "MapCreator", mapCreatorFolderPath, "mapcreatorFile.json");
                     }
-
-                 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -174,7 +163,6 @@ public class SplashActivity extends Activity implements SKMapsInitializationList
         });
         prepareGPXFileThread.start();
     }
-
 
     /**
      * Checks if the current version code is grater than the previous and performs an SDK update.
@@ -216,16 +204,13 @@ public class SplashActivity extends Activity implements SKMapsInitializationList
 
     @Override
     public void onMapVersionSet(int i) {
-
     }
 
     @Override
     public void onVersionFileDownloadTimeout() {
-
     }
 
     @Override
     public void onNoNewVersionDetected() {
-
     }
 }

@@ -1,6 +1,5 @@
 package com.skobbler.sdkdemo.application;
 
-
 import android.app.Application;
 import android.content.Context;
 

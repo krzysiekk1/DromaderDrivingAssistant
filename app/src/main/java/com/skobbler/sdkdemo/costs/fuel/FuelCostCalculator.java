@@ -11,6 +11,10 @@ import com.skobbler.sdkdemo.petrolstations.FuelAlgorithm;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Created by Krzysiek
+ */
+
 public class FuelCostCalculator {
 
     public double getFuelCost (SKRouteInfo routeInfo, Context app) {

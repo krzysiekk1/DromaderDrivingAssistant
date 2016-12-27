@@ -11,9 +11,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-
 
 /**
  * Class responsible for creating and upgrading the application's database.
@@ -25,12 +22,11 @@ public class ResourcesDAO extends SQLiteOpenHelper {
     /**
      * the name of the database
      */
-    public static final String DATABASE_NAME = "application_database";
-
+    private static final String DATABASE_NAME = "application_database";
     /**
      * the database version
      */
-    public static final byte DATABASE_VERSION = 1;
+    private static final byte DATABASE_VERSION = 1;
 
     /**
      * tag associated with current class
@@ -41,7 +37,6 @@ public class ResourcesDAO extends SQLiteOpenHelper {
      * an instance of this class
      */
     private static ResourcesDAO databaseInstance;
-
     /**
      * SQLITE database instance
      */
@@ -81,12 +76,11 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         fillTable(db, context.getResources().openRawResource(R.raw.tolls), "tolls");
         fillTable(db, context.getResources().openRawResource(R.raw.vignette_highways), "vignette");
         fillTable(db, context.getResources().openRawResource(R.raw.avg_fuel_costs), "fuel");
-
     }
 
     public void updateDatabase (final SQLiteDatabase db, InputStream tollsStream, InputStream vignetteStream, InputStream fuelStream) {
         db.beginTransaction();
-        db.execSQL(dropFuelTableQuery());
+        db.execSQL(dropTollsTableQuery());
         db.setTransactionSuccessful();
         db.endTransaction();
 
@@ -96,17 +90,17 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         db.endTransaction();
 
         db.beginTransaction();
-        db.execSQL(dropTollsTableQuery());
+        db.execSQL(dropFuelTableQuery());
         db.setTransactionSuccessful();
         db.endTransaction();
 
         createTables(db);
+        fillTable(db, tollsStream, "tolls");
         fillTable(db, vignetteStream, "vignette");
         fillTable(db, fuelStream, "fuel");
-        fillTable(db, tollsStream, "tolls");
     }
 
-    public void createTables (final SQLiteDatabase db){
+    private void createTables (final SQLiteDatabase db){
         db.beginTransaction();
         db.execSQL(createTollsTable());
         db.setTransactionSuccessful();
@@ -121,10 +115,9 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         db.execSQL(createAvgFuelCostsTable());
         db.setTransactionSuccessful();
         db.endTransaction();
-
     }
 
-    public void fillTable(final SQLiteDatabase db, InputStream is, String tableName) {
+    private void fillTable(final SQLiteDatabase db, InputStream is, String tableName) {
         InputStreamReader r = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(r);
         String line = null;
@@ -166,31 +159,26 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         }
     }
 
-
-    public String createMapResourcesTable() {
+    private String createMapResourcesTable() {
         String createMapResourcesTable =
-                new StringBuilder("CREATE TABLE IF NOT EXISTS ").append(MapsDAO.MAPS_TABLE).append(" (")
-                        .append(MapsDAO.KEY).append(" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
-                        "").append(MapsDAO.CODE).append(" TEXT, ").append(MapsDAO.PARENT_CODE)
-                        .append(" TEXT, ").append(MapsDAO.REGION).append(" TEXT, ").append(MapsDAO.NAMES).append(" TEXT, " +
-                        "").append(MapsDAO.SKM_FILE_PATH).append(" TEXT, ").append(MapsDAO.ZIP_FILE_PATH)
-                        .append(" TEXT, ").append(MapsDAO.TXG_FILE_PATH).append(" TEXT, ")
-                        .append(MapsDAO.TXG_FILE_SIZE).append(" INTEGER, " +
-                        "").append(MapsDAO.SKM_AND_ZIP_FILES_SIZE)
-                        .append(" INTEGER, ").append(MapsDAO.SKM_FILE_SIZE).append(" INTEGER, " +
-                        "").append(MapsDAO.UNZIPPED_FILE_SIZE)
-                        .append(" INTEGER, ").append(MapsDAO.BOUNDING_BOX_LATITUDE_MAX).append(" DOUBLE, ")
-                        .append(MapsDAO.BOUNDING_BOX_LATITUDE_MIN).append(" DOUBLE, ")
+                new StringBuilder("CREATE TABLE IF NOT EXISTS ").append(MapsDAO.MAPS_TABLE).append(" (").append(MapsDAO.KEY)
+                        .append(" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " + "").append(MapsDAO.CODE).append(" TEXT, ")
+                        .append(MapsDAO.PARENT_CODE).append(" TEXT, ").append(MapsDAO.REGION).append(" TEXT, ")
+                        .append(MapsDAO.NAMES).append(" TEXT, " + "").append(MapsDAO.SKM_FILE_PATH).append(" TEXT, ")
+                        .append(MapsDAO.ZIP_FILE_PATH).append(" TEXT, ").append(MapsDAO.TXG_FILE_PATH).append(" TEXT, ")
+                        .append(MapsDAO.TXG_FILE_SIZE).append(" INTEGER, " + "").append(MapsDAO.SKM_AND_ZIP_FILES_SIZE)
+                        .append(" INTEGER, ").append(MapsDAO.SKM_FILE_SIZE).append(" INTEGER, " + "")
+                        .append(MapsDAO.UNZIPPED_FILE_SIZE).append(" INTEGER, ").append(MapsDAO.BOUNDING_BOX_LATITUDE_MAX)
+                        .append(" DOUBLE, ").append(MapsDAO.BOUNDING_BOX_LATITUDE_MIN).append(" DOUBLE, ")
                         .append(MapsDAO.BOUNDING_BOX_LONGITUDE_MAX).append(" DOUBLE, ")
-                        .append(MapsDAO.BOUNDING_BOX_LONGITUDE_MIN).append(" DOUBLE, " +
-                        "").append(MapsDAO.SUBTYPE)
-                        .append(" TEXT, ").append(MapsDAO.STATE).append(" INTEGER, ")
-                        .append(MapsDAO.NO_DOWNLOADED_BYTES).append(" INTEGER, ").append(MapsDAO.FLAG_ID)
-                        .append(" INTEGER, ").append(MapsDAO.DOWNLOAD_PATH).append(" TEXT)").toString();
+                        .append(MapsDAO.BOUNDING_BOX_LONGITUDE_MIN).append(" DOUBLE, " + "").append(MapsDAO.SUBTYPE)
+                        .append(" TEXT, ").append(MapsDAO.STATE).append(" INTEGER, ").append(MapsDAO.NO_DOWNLOADED_BYTES)
+                        .append(" INTEGER, ").append(MapsDAO.FLAG_ID).append(" INTEGER, ").append(MapsDAO.DOWNLOAD_PATH)
+                        .append(" TEXT)").toString();
         return createMapResourcesTable;
     }
 
-    public String createTollsTable() {
+    private String createTollsTable() {
         String create = new StringBuilder("CREATE TABLE IF NOT EXISTS ").append("Tolls").append(" (")
                 .append("Id").append(" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ").append("Name")
                 .append(" TEXT, ").append("RoadNr").append(" TEXT, ").append("Latitude").append(" TEXT, ")
@@ -199,14 +187,14 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         return create;
     }
 
-    public String createVignetteHighwaysTable() {
+    private String createVignetteHighwaysTable() {
         String create = new StringBuilder("CREATE TABLE IF NOT EXISTS ").append("VignetteHighways").append(" (")
                 .append("Id").append(" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ").append("RoadNr")
                 .append(" TEXT, ").append("CountryCode").append(" TEXT)").toString();
         return create;
     }
 
-    public String createAvgFuelCostsTable() {
+    private String createAvgFuelCostsTable() {
         String create = new StringBuilder("CREATE TABLE IF NOT EXISTS ").append("AvgFuelCosts").append(" (")
                 .append("Id").append(" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ")
                 .append("CountryCode").append(" TEXT, ").append("PetrolCost").append(" REAL, ")
@@ -215,24 +203,22 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         return create;
     }
 
-    public String dropFuelTableQuery() {
-        String drop = new StringBuilder("DROP TABLE IF EXISTS ").append("AvgFuelCosts;").toString();
-        return drop;
-    }
-
-    public String dropTollsTableQuery() {
+    private String dropTollsTableQuery() {
         String drop = new StringBuilder("DROP TABLE IF EXISTS ").append("Tolls;").toString();
         return drop;
     }
 
-    public String dropVignetteTableQuery() {
+    private String dropVignetteTableQuery() {
         String drop = new StringBuilder("DROP TABLE IF EXISTS ").append("VignetteHighways;").toString();
         return drop;
     }
 
+    private String dropFuelTableQuery() {
+        String drop = new StringBuilder("DROP TABLE IF EXISTS ").append("AvgFuelCosts;").toString();
+        return drop;
+    }
 
-
-    public String fillTollsTable(String[] values) {
+    private String fillTollsTable(String[] values) {
         int id = Integer.parseInt(values[0].substring(1, values[0].length()-1));
         String name = values[1];
         String road_nr = values[2];
@@ -247,7 +233,7 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         return fill;
     }
 
-    public String fillVignetteHighwaysTable(String[] values) {
+    private String fillVignetteHighwaysTable(String[] values) {
         int id = Integer.parseInt(values[0].substring(1, values[0].length()-1));
         String road_nr = values[1];
         String country_code = values[2];
@@ -256,7 +242,7 @@ public class ResourcesDAO extends SQLiteOpenHelper {
         return fill;
     }
 
-    public String fillAvgFuelCostsTable(String[] values) {
+    private String fillAvgFuelCostsTable(String[] values) {
         int id = Integer.parseInt(values[0].substring(1, values[0].length()-1));
         String country_code = values[1];
         Double petrolCost = Double.parseDouble(values[2].substring(1, values[2].length()-1));

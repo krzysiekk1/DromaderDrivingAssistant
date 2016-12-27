@@ -1,6 +1,5 @@
 package com.skobbler.sdkdemo.fatigue;
 
-
 import android.content.Context;
 import android.os.Handler;
 
@@ -11,7 +10,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by marcinsendera on 23.11.2016.
@@ -33,11 +31,9 @@ import java.util.concurrent.TimeUnit;
 
 public class FatigueAlgorithm {
 
-
     //initialization taking most important arguments
 
     private FatigueComputations fatigueComputations;
-    private MapActivity mapActivityInstance;
 
     // Handlers stuff
     private boolean repeat = true;
@@ -68,30 +64,22 @@ public class FatigueAlgorithm {
     private long executionEndTime;
     private long execution;
 
-    private int hours;
     private int minutes;
 
     private double executionTime;
 
-
-
     private boolean response;
     private boolean pause;
-
-
 
     /*
     * Initializing FatigueAlgorithm from MapActivity with its instance
     * */
-
     public FatigueAlgorithm(Context context){
         executionStartTime = System.currentTimeMillis();
         pause = false;
 
         fatigueComputations = new FatigueComputations(context);
-        //this.mapActivityInstance = myMapActivity;
     }
-
 
     private Runnable mRunnable = new Runnable() {
 
@@ -105,11 +93,6 @@ public class FatigueAlgorithm {
 
             localTime = (double) hourOfDay;
             localTime += (double) ((minuteOfDay * 5) / 3);
-            /*
-            currentLocalTime = cal.getTime();
-            localTime = date.format(currentLocalTime);
-            */
-
 
             // time from beginning measure
             executionEndTime = System.currentTimeMillis();
@@ -118,20 +101,8 @@ public class FatigueAlgorithm {
             // take minutes
             minutes = (int) execution/60000;
 
-            /* hours = 0;
-
-            while(minutes >= 60){
-                minutes -= 60;
-                hours++;
-            }
-
-            executionTime = (double) hours;
-
-            executionTime += (double) ((minutes * 5) / 3);
-            */
             executionTime = (double) minutes;
             // take weather near location - i have to take our coordinates and after that find the nearest place
-
 
             if(pause){
                 try {
@@ -145,14 +116,11 @@ public class FatigueAlgorithm {
             //getting response if we should show information about fatigue!!!
             response = fatigueComputations.onCompute(localTime, executionTime);
 
-            
-
             myHandler.postDelayed(mRunnable, MEASUREMENT_DELAY_TIME);
         }
     };
 
     //initializing Handler and boolean repeat -> if repeat == false -> delaying FatigueAlgorithm at all
-
 
     public boolean getResponse(){
         return this.response;
@@ -163,7 +131,6 @@ public class FatigueAlgorithm {
     }
 
     public void takeBreak(){
-
         executionStartTime = System.currentTimeMillis();
         response = false;
     }
@@ -172,9 +139,7 @@ public class FatigueAlgorithm {
         executionStartTime = System.currentTimeMillis();
         pause = true;
         response = false;
-
     }
-
 
     public void startMeasurement() {
 
@@ -190,6 +155,5 @@ public class FatigueAlgorithm {
             myHandler.removeCallbacks(mRunnable);
         }
     }
-
 
 }

@@ -44,23 +44,7 @@
             android:name=".activity.MapActivity"
             android:configChanges="orientation|screenSize"></activity>
         <activity
-            android:name=".activity.ReverseGeocodingActivity"
-            android:configChanges="orientation|screenSize"></activity>
-        <activity
-            android:name=".activity.NearbySearchActivity"
-            android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="adjustPan"></activity>
-        <activity
-            android:name=".activity.NearbySearchResultsActivity"
-            android:configChanges="orientation|screenSize"></activity>
-        <activity
             android:name=".activity.TouristAttractionsActivity"
-            android:configChanges="orientation|screenSize"></activity>
-        <activity
-            android:name=".activity.OfflineAddressSearchActivity"
-            android:configChanges="orientation|screenSize"></activity>
-        <activity
-            android:name=".activity.POICategoriesListActivity"
             android:configChanges="orientation|screenSize"></activity>
         <activity
             android:name=".activity.SettingsActivity"
@@ -74,8 +58,7 @@
         <activity
             android:name=".activity.ResourceDownloadsListActivity"
             android:configChanges="orientation|screenSize"></activity>
-        <activity android:name=".activity.MapCacheActivity" android:configChanges="orientation"  >
-        </activity>
+
         <receiver android:name=".navigationui.autonight.SKToolsCalculateSunriseSunsetTimeAutoReceiver" />
         <receiver android:name=".navigationui.autonight.SKToolsChangeMapStyleAutoReceiver" />
         <meta-data android:name="provideMultipleMapSupport" android:value="false" />

@@ -22,7 +22,6 @@ public class MapsDAO {
      * US country code
      */
     public static final String US_CODE = "US";
-
     /**
      * ENGLISH language code
      */
@@ -32,83 +31,65 @@ public class MapsDAO {
      * name of the maps data table
      */
     public static final String MAPS_TABLE = "Maps";
-
     /**
      * map code column key
      */
     public static final String CODE = "Code";
-
     /**
      * map parent code column key
      */
     public static final String PARENT_CODE = "ParentCode";
-
     /**
      * region column key (has a value only for state column)
      */
     public static final String REGION = "Region";
-
     /**
      * map names column key
      */
     public static final String NAMES = "Names";
-
     /**
      * map SKM file path column key
      */
     public static final String SKM_FILE_PATH = "SkmFilePath";
-
     /**
      * map ZIP file path column key
      */
     public static final String ZIP_FILE_PATH = "ZipFilePath";
-
     /**
      * map TXG file path column key
      */
     public static final String TXG_FILE_PATH = "TxgFilePath";
-
     /**
      * map TXG file size column key
      */
     public static final String TXG_FILE_SIZE = "TxgFileSize";
-
     /**
      * map total size(SKM + ZIP) files size column key
      */
     public static final String SKM_AND_ZIP_FILES_SIZE = "SkmAndZipFilesSize";
-
     /**
      * map SKM file size column key
      */
     public static final String SKM_FILE_SIZE = "SkmFileSize";
-
     /**
      * map UNZIPPED file size column key
      */
     public static final String UNZIPPED_FILE_SIZE = "UnzippedFileSize";
-
     /**
      * map sub-type column key
      */
     public static final String SUBTYPE = "SubType";
-
     /**
      * map state column key
      */
     public static final String STATE = "State";
-
     /**
      * Bounding box column keys
      */
     public static final String BOUNDING_BOX_LONGITUDE_MIN = "LongMin";
-
     public static final String BOUNDING_BOX_LONGITUDE_MAX = "LongMax";
-
     public static final String BOUNDING_BOX_LATITUDE_MIN = "LatMin";
-
     public static final String BOUNDING_BOX_LATITUDE_MAX = "LatMax";
-
     /**
      * map no bytes column key
      */
@@ -118,12 +99,10 @@ public class MapsDAO {
      * flag ID
      */
     public static final String FLAG_ID = "FlagID";
-
     /**
      * download path
      */
     public static final String DOWNLOAD_PATH = "DownloadPath";
-
     /**
      * Prefix for the flag image resources
      */
@@ -133,13 +112,9 @@ public class MapsDAO {
      * map type column values
      */
     public static final String CONTINENT_TYPE = "continent";
-
     public static final String COUNTRY_TYPE = "country";
-
     public static final String REGION_TYPE = "region";
-
     public static final String CITY_TYPE = "city";
-
     public static final String STATE_TYPE = "state";
 
     /**
@@ -259,18 +234,15 @@ public class MapsDAO {
      */
     public Map<String, MapDownloadResource> getAvailableMapsForACertainType(String... mapType) {
         final StringBuilder query =
-                new StringBuilder("SELECT ").append(CODE).append(", ").append(PARENT_CODE).append(", ").append(REGION).append(", ")
-                        .append(NAMES).append(", ").append(SKM_FILE_PATH).append(", " +
-                        "").append(ZIP_FILE_PATH).append(", ")
-                        .append(TXG_FILE_PATH).append(", ").append(TXG_FILE_SIZE).append(", ")
-                        .append(SKM_AND_ZIP_FILES_SIZE).append(", ").append(SKM_FILE_SIZE).append(", " +
-                        "").append(UNZIPPED_FILE_SIZE)
-                        .append(", ").append(BOUNDING_BOX_LATITUDE_MAX).append(", ").append(BOUNDING_BOX_LATITUDE_MIN)
-                        .append(", ").append(BOUNDING_BOX_LONGITUDE_MAX).append(", ").append(BOUNDING_BOX_LONGITUDE_MIN)
-                        .append(", ").append(SUBTYPE).append(", ").append(STATE).append(", " +
-                        "").append(NO_DOWNLOADED_BYTES)
-                        .append(", ").append(FLAG_ID).append(", ").append(DOWNLOAD_PATH).append(" FROM ").append
-                        (MAPS_TABLE);
+                new StringBuilder("SELECT ").append(CODE).append(", ").append(PARENT_CODE).append(", ")
+                        .append(REGION).append(", ").append(NAMES).append(", ").append(SKM_FILE_PATH).append(", " + "")
+                        .append(ZIP_FILE_PATH).append(", ").append(TXG_FILE_PATH).append(", ").append(TXG_FILE_SIZE)
+                        .append(", ").append(SKM_AND_ZIP_FILES_SIZE).append(", ").append(SKM_FILE_SIZE).append(", " + "")
+                        .append(UNZIPPED_FILE_SIZE).append(", ").append(BOUNDING_BOX_LATITUDE_MAX).append(", ")
+                        .append(BOUNDING_BOX_LATITUDE_MIN).append(", ").append(BOUNDING_BOX_LONGITUDE_MAX).append(", ")
+                        .append(BOUNDING_BOX_LONGITUDE_MIN).append(", ").append(SUBTYPE).append(", ").append(STATE)
+                        .append(", " + "").append(NO_DOWNLOADED_BYTES).append(", ").append(FLAG_ID).append(", ")
+                        .append(DOWNLOAD_PATH).append(" FROM ").append(MAPS_TABLE);
         if ((mapType != null) && (mapType.length > 0)) {
             query.append(" WHERE ").append(SUBTYPE).append("=?");
             for (int i = 1; i < mapType.length; i++) {

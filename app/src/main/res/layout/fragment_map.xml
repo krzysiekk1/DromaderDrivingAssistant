@@ -38,27 +38,11 @@
             </FrameLayout>
 
             <include
-                android:id="@+id/real_reach_time_layout"
-                layout="@layout/element_real_reach_time"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_alignParentTop="true"
-                android:visibility="gone" />
-
-            <include
                 android:id="@+id/alt_routes"
                 layout="@layout/layout_alternative_routes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:visibility="gone" />
-
-            <include
-                android:id="@+id/map_styles"
-                layout="@layout/layout_map_styles"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
                 android:visibility="gone" />
 
             <include

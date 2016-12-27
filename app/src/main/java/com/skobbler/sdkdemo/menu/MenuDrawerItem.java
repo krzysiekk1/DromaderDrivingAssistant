@@ -1,7 +1,5 @@
 package com.skobbler.sdkdemo.menu;
 
-import android.content.Context;
-
 import com.skobbler.sdkdemo.activity.MapActivity;
 
 /**
@@ -45,10 +43,5 @@ public class MenuDrawerItem {
     public void setLabel(String label) {
         this.label = label;
     }
-
-
-
-
-
 
 }

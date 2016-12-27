@@ -2,23 +2,16 @@ package com.skobbler.sdkdemo.util;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Environment;
-import android.util.Log;
 
 import com.skobbler.sdkdemo.database.ResourcesDAO;
 
-import java.io.BufferedInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import javax.xml.transform.Result;
 
 /**
  * Created by Jakub Solawa on 11.12.2016.
@@ -46,7 +39,6 @@ public class DownloadFileFromURL extends AsyncTask {
         }
         return input;
     }
-
 
     @Override
     protected Object doInBackground(Object[] params) {

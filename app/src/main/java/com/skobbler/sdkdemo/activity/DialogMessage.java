@@ -6,32 +6,14 @@ package com.skobbler.sdkdemo.activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
-
 
 public class DialogMessage {
 
-    //private View dmView;
     private AlertDialog.Builder alertDialogBuilder;
     private Context context;
 
-    /*
-    * Tutaj mamy taką klasę DialogMessage - tworzymy obiekt, wywołujemy na nim setMessage
-    * a następnie wywołujemy show
-    * Dołożę jeszcze setMessageWithImage, jeżeli ktoś będzie potrzebował,
-    * ewentualnie możecie jeszcze wysyłać mi info jakie dokładnie dodatkowe rzeczy chcecie w powiadomieniach, to coś pomyślimy
-    *
-    * użycie jest pokazane w funkcji testingAlertDialog() w MapActivity, obczajcie i róbcie tak samo
-    * */
-
     public DialogMessage(Context context) {
-        //this.dmView = view;
         this.context = context;
         this.alertDialogBuilder = new AlertDialog.Builder(context);
     }
@@ -53,8 +35,6 @@ public class DialogMessage {
         this.alertDialogBuilder.setNeutralButton(seq2, listener2);
         this.alertDialogBuilder.setNegativeButton(seq3, listener3);
     }
-
-
 
     public void show() {
         AlertDialog alertDialog = this.alertDialogBuilder.create();

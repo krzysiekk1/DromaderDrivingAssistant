@@ -1,6 +1,5 @@
 package com.skobbler.sdkdemo.navigationui;
 
-
 import android.app.Activity;
 import android.content.res.Configuration;
 import com.skobbler.ngx.SKCoordinate;
@@ -13,7 +12,6 @@ import com.skobbler.ngx.positioner.SKPosition;
 import com.skobbler.ngx.positioner.SKPositionerManager;
 import com.skobbler.ngx.routing.SKRouteManager;
 import com.skobbler.sdkdemo.navigationui.autonight.SKToolsAutoNightManager;
-
 
 /**
  * Singleton class that provides various methods for changing the state of the
@@ -30,12 +28,10 @@ class SKToolsMapOperationsManager {
      * Day style
      */
     public static final byte DAY_STYLE = 0;
-
     /**
      * Night style
      */
     public static final byte NIGHT_STYLE = 1;
-
     /**
      * Other style
      */
@@ -45,9 +41,7 @@ class SKToolsMapOperationsManager {
      * Ids for annotations
      */
     public static final byte GREEN_PIN_ICON_ID = 0;
-
     public static final byte RED_PIN_ICON_ID = 1;
-
     public static final byte GREY_PIN_ICON_ID = 3;
 
     /**
@@ -171,7 +165,7 @@ class SKToolsMapOperationsManager {
         mapSettings.setInertiaPanningEnabled(true);
         mapSettings.setMapZoomingEnabled(true);
         mapSettings.setMapRotationEnabled(true);
-      //  mapView.getMapSettings().setCompassPosition(new SKScreenPoint(5, 5));
+
         mapView.getMapSettings().setCompassShown(true);
         mapView.getMapSettings().setFollowPositions(false);
         mapView.getMapSettings().setHeadingMode(SKMapSettings.SKHeadingMode.ROUTE);
@@ -186,8 +180,7 @@ class SKToolsMapOperationsManager {
         mapView.setZoom(zoomBeforeSwitch);
         mapView.getMapSettings().setMapZoomingEnabled(false);
         mapView.getMapSettings().setHeadingMode(SKMapSettings.SKHeadingMode.ROUTE);
-          mapView.getMapSettings().setFollowPositions(true);
-
+        mapView.getMapSettings().setFollowPositions(true);
 
         final SKPosition naviPosition = SKPositionerManager.getInstance().getCurrentGPSPosition(true);
         if (naviPosition != null) {
@@ -205,14 +198,10 @@ class SKToolsMapOperationsManager {
         } else {
             fastSwitchStyleIndex = 1;
         }
-        mapView.getMapSettings().setMapStyle(
-                new SKMapViewStyle(SKToolsUtils
-                        .getMapStyleFilesFolderPath(configuration, mapStyle),
-                        SKToolsUtils.getStyleFileName(mapStyle)));
-
+        mapView.getMapSettings().setMapStyle(new SKMapViewStyle
+                (SKToolsUtils.getMapStyleFilesFolderPath(configuration, mapStyle), SKToolsUtils.getStyleFileName(mapStyle)));
         mapView.setFastSwitchStyle(fastSwitchStyleIndex);
     }
-
 
     /**
      * Changes the map display from 3d-> 2d and vice versa
@@ -302,6 +291,5 @@ class SKToolsMapOperationsManager {
             }
         }
     }
-
 
 }

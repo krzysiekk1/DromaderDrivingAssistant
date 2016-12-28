@@ -7,8 +7,10 @@ import java.util.Locale;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,6 +61,7 @@ import com.skobbler.sdkdemo.navigationui.autonight.SKToolsAutoNightManager;
 import com.skobbler.ngx.search.SKSearchResult;
 import com.skobbler.ngx.util.SKLogging;
 import com.skobbler.sdkdemo.petrolstations.FillStationStructure;
+import com.skobbler.sdkdemo.util.PreferenceTypes;
 import com.skobbler.sdkdemo.util.WeatherTask;
 
 import static com.skobbler.sdkdemo.activity.MapActivity.VIA_POINT_ICON_ID;
@@ -70,9 +73,15 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         SKCurrentPositionListener, SKMapScreenCaptureListener {
 
 
+    private boolean rerouting = false;
+    private List<FillStationStructure> fillStations0 = null;
+    private List<FillStationStructure> fillStations1 = null;
+    private List<FillStationStructure> fillStations2 = null;
     private List<FillStationStructure> fillStations = null;
 
-
+    private int fillStationNumber0;
+    private int fillStationNumber1;
+    private int fillStationNumber2;
     private int fillStationNumber;
 
     private int fillStationResponse = 0;
@@ -80,7 +89,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     private static int annotationIDroute1 = ANNOTATION_ID_DEFAULT;
     private static int annotationIDroute2 = ANNOTATION_ID_DEFAULT;
     private static int annotationIDroute3 = ANNOTATION_ID_DEFAULT;
-
 
     /**
      * Singleton instance for current class
@@ -345,8 +353,20 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         }
 
 
+        // sprawdzenie ustawień aplikacji: czy włączać algorytm zmęczenia i czy włączać powiadomienia o stacjach benzynowych (jeśli nie to: fillStationsNumber = -2)
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity().getApplicationContext());
+        boolean fatiguePreferences = sharedPreferences.getBoolean(PreferenceTypes.K_FATIGUE_ALERTS, true);
+        boolean fuelStationPreferences = sharedPreferences.getBoolean(PreferenceTypes.K_PETROL_STATIONS_ALERTS, true);
+
         fatigueAlgorithm = new FatigueAlgorithm(currentActivity.getApplicationContext());
-        fatigueAlgorithm.startMeasurement();
+        if(fatiguePreferences){
+            fatigueAlgorithm.startMeasurement();
+        }
+
+        if(!fuelStationPreferences){
+            fillStationNumber = -2;
+        }
+
     }
 
     /**
@@ -475,17 +495,27 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     protected void handleItemsClick(View v) {
         int id = v.getId();
 
+        this.fillStations = fillStations0;
+        this.fillStationNumber = fillStationNumber0;
+        
         if (id == R.id.first_route || id == R.id.second_route || id == R.id.third_route) {
 
             int routeIndex = 0;
+
             if (id == R.id.first_route) {
                 routeIndex = 0;
+                this.fillStations = fillStations0;
+                this.fillStationNumber = fillStationNumber0;
 
             } else if (id == R.id.second_route) {
                 routeIndex = 1;
+                this.fillStations = fillStations1;
+                this.fillStationNumber = fillStationNumber1;
 
             } else if (id == R.id.third_route) {
                 routeIndex = 2;
+                this.fillStations = fillStations2;
+                this.fillStationNumber = fillStationNumber2;
 
             }
 
@@ -883,11 +913,32 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     public void onSpeedExceededWithInstruction(String instruction, boolean speedExceeded) {
     }
 
-    public void setFillStations(List<FillStationStructure> list){
-        this.fillStations = list;
-        if(!list.isEmpty()) {
-            this.fillStationNumber = 0;
+    public void setFillStations(List<FillStationStructure> list, int number){
+
+        switch (number) {
+            case 0: this.fillStations0 = list;
+                    if(!list.isEmpty()) {
+                        this.fillStationNumber0 = 0;
+                    } else {
+                        this.fillStationNumber0 = -2;
+                    }
+                break;
+            case 1: this.fillStations1 = list;
+                    if(!list.isEmpty()) {
+                        this.fillStationNumber1 = 0;
+                    } else {
+                        this.fillStationNumber1 = -2;
+                    }
+                break;
+            case 2: this.fillStations2 = list;
+                    if(!list.isEmpty()) {
+                        this.fillStationNumber2 = 0;
+                    } else {
+                        this.fillStationNumber2 = -2;
+                    }
+                break;
         }
+
     }
 
     public void setHotelCoordinates(SKCoordinate coordinates){
@@ -972,6 +1023,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         mapView.addAnnotation(hotelAnnotation, SKAnimationSettings.ANIMATION_NONE);
         SKViaPoint viaPoint = new SKViaPoint(VIA_POINT_ICON_ID, hotelCoordinates);
         SKRouteManager.getInstance().addViaPoint(viaPoint, -1);
+        rerouting = true;
     }
 
     public void goViaParking() {
@@ -981,6 +1033,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         mapView.addAnnotation(parkingAnnotation, SKAnimationSettings.ANIMATION_NONE);
         SKViaPoint viaPoint = new SKViaPoint(VIA_POINT_ICON_ID, parkingCoordinates);
         SKRouteManager.getInstance().addViaPoint(viaPoint, -1);
+        rerouting = true;
     }
 
     public void goViaFuelStation(FillStationStructure fillStationStructure){
@@ -990,6 +1043,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         mapView.addAnnotation(fillStationAnnotation, SKAnimationSettings.ANIMATION_NONE);
         SKViaPoint viaPoint = new SKViaPoint(VIA_POINT_ICON_ID, fillStationStructure.getCoordinates());
         SKRouteManager.getInstance().addViaPoint(viaPoint, -1);
+        rerouting = true;
         if((fillStationNumber + 1)<fillStations.size()) {
             fillStationNumber++;
         } else{
@@ -1001,28 +1055,31 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     @Override
     public void onUpdateNavigationState(SKNavigationState skNavigationState) {
 
-        if(fillStationResponse == 1){
-            goViaFuelStation(fillStations.get(fillStationNumber));
-        }
-        if(fillStationResponse == 2){
-            if((fillStationNumber + 1)<fillStations.size()) {
-                fillStationNumber++;
-            }else{
-                fillStationNumber = -1;
+        if(fillStationNumber != -2) {
+            if (fillStationResponse == 1) {
+                goViaFuelStation(fillStations.get(fillStationNumber));
             }
-            fillStationResponse = 0;
-        }
+            if (fillStationResponse == 2) {
+                if ((fillStationNumber + 1) < fillStations.size()) {
+                    fillStationNumber++;
+                } else {
+                    fillStationNumber = -1;
+                }
+                fillStationResponse = 0;
+            }
 
-        if(fillStationNumber != -1){
-            if(fillStations != null && fillStationResponse == 0){
-                if(fillStationNumber < fillStations.size()){
-                    if(SKGeoUtils.calculateAirDistanceBetweenCoordinates(fillStations.get(fillStationNumber).getCoordinates(),SKPositionerManager.getInstance().getCurrentGPSPosition(true).getCoordinate()) < 2000){
-                        fillStationMessage(fillStations.get(fillStationNumber));
+            if (fillStationNumber != -1) {
+                if (fillStations != null && fillStationResponse == 0) {
+                    if (fillStationNumber < fillStations.size()) {
+                        if (SKGeoUtils.calculateAirDistanceBetweenCoordinates(fillStations.get(fillStationNumber).getCoordinates(), SKPositionerManager.getInstance().getCurrentGPSPosition(true).getCoordinate()) < 2000) {
+                            fillStationMessage(fillStations.get(fillStationNumber));
+                        }
                     }
                 }
             }
         }
 
+        
         if(this.fatigueAlgorithm.getResponse()){
             fatigueMessage();
         }
@@ -1166,7 +1223,8 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                 .getDistance(), configuration.getDistanceUnitType(), currentActivity);
         CostCalculator costCalculator = new CostCalculator();
         final String cost = String.format("%.2f", costCalculator.getCost(
-                skRouteInfoList.get(i), getCurrentActivity().getApplicationContext()));
+                skRouteInfoList.get(i), getCurrentActivity().getApplicationContext(), i));
+        Log.d("onallroutes", "cost");
         SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, cost);
         LayoutInflater inflater = (LayoutInflater) currentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
@@ -1177,9 +1235,12 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
 
     @Override
     public void onAllRoutesCompleted() {
+        Log.d("onallroutes", "completed");
+
         for (int j = 0; j < 3; j++) {
             routeCalculationsEnded[j] = false;
         }
+
         if (!skRouteInfoList.isEmpty()) {
             currentActivity.runOnUiThread(new Runnable() {
                 @Override
@@ -1191,49 +1252,51 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                     if (SKToolsNavigationUIManager.getInstance().isPreNavigationMode()) {
                         SKToolsNavigationUIManager.getInstance().showStartNavigationPanel();
                     }
-                    if (skRouteInfoList.size() > 0) {
-                        Thread route0 = new Thread() {
-                            @Override
-                            public void run() {
-                                Log.d("LOGIC_MANAGER ", "0");
-                                displayRouteInfo(0);
-                            }
-                        };
-                        route0.start();
-                    }
-                    if (skRouteInfoList.size() > 1) {
-                        Thread route1 = new Thread() {
-                            @Override
-                            public void run() {
-                                while(!routeCalculationsEnded[0]) {
-                                    try {
-                                        Log.d("LOGIC_MANAGER ", "1");
-                                        Thread.sleep(1000);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
+                    if (!rerouting) {
+                        if (skRouteInfoList.size() > 0) {
+                            Thread route0 = new Thread() {
+                                @Override
+                                public void run() {
+                                    Log.d("LOGIC_MANAGER ", "0");
+                                    displayRouteInfo(0);
                                 }
-                                displayRouteInfo(1);
-                            }
-                        };
-                        route1.start();
-                    }
-                    if (skRouteInfoList.size() > 2) {
-                        Thread route2 = new Thread() {
-                            @Override
-                            public void run() {
-                                while(!routeCalculationsEnded[1]) {
-                                    try {
-                                        Log.d("LOGIC_MANAGER ", "2");
-                                        Thread.sleep(1000);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
+                            };
+                            route0.start();
+                        }
+                        if (skRouteInfoList.size() > 1) {
+                            Thread route1 = new Thread() {
+                                @Override
+                                public void run() {
+                                    while (!routeCalculationsEnded[0]) {
+                                        try {
+                                            Log.d("LOGIC_MANAGER ", "1");
+                                            Thread.sleep(1000);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
                                     }
+                                    displayRouteInfo(1);
                                 }
-                                displayRouteInfo(2);
-                            }
-                        };
-                        route2.start();
+                            };
+                            route1.start();
+                        }
+                        if (skRouteInfoList.size() > 2) {
+                            Thread route2 = new Thread() {
+                                @Override
+                                public void run() {
+                                    while (!routeCalculationsEnded[1]) {
+                                        try {
+                                            Log.d("LOGIC_MANAGER ", "2");
+                                            Thread.sleep(1000);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    displayRouteInfo(2);
+                                }
+                            };
+                            route2.start();
+                        }
                     }
 
                     int routeId = skRouteInfoList.get(0).getRouteID();
@@ -1249,6 +1312,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         if (navigationListener != null) {
             navigationListener.onRouteCalculationCompleted();
         }
+        rerouting = false;
     }
 
     @Override

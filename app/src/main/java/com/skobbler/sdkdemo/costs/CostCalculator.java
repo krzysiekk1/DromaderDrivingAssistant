@@ -12,11 +12,11 @@ import com.skobbler.sdkdemo.costs.tolls.TollsCostCalculator;
 
 public class CostCalculator {
 
-    public double getCost (SKRouteInfo routeInfo, Context app) {
+    public double getCost (SKRouteInfo routeInfo, Context app, int number) {
         double sum = 0.0;
 
         FuelCostCalculator fuelCostCalculator = new FuelCostCalculator();
-        sum += fuelCostCalculator.getFuelCost(routeInfo, app);
+        sum += fuelCostCalculator.getFuelCost(routeInfo, app, number);
 
         sum += TollsCostCalculator.getTollsCost(routeInfo, app);
 

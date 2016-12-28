@@ -94,7 +94,7 @@ public class Algorithm {
     }
 
 
-    public double calculateMinimalCost(){
+    public FuelAlgorithmResult calculateMinimalCost(){
 
         this.dynamic = new DynamicFunction(this.tankVolume, this.stationList, this.maxStops);
 

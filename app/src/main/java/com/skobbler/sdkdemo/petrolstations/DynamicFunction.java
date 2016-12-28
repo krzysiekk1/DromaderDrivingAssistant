@@ -133,7 +133,7 @@ public class DynamicFunction {
     }
 
 
-    public double getBestResult(){
+    public FuelAlgorithmResult getBestResult(){
 
         double bestResult = Double.POSITIVE_INFINITY;
 
@@ -145,8 +145,9 @@ public class DynamicFunction {
                 bestResult = A[0][i].getVertexCost(0.0);
             }
         }
-        return bestResult;
+        FuelAlgorithmResult result = new FuelAlgorithmResult(bestResult, new ArrayList<FillStationStructure>());
 
+        return result;
     }
 
 }

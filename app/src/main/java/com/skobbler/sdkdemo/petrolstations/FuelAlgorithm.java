@@ -91,9 +91,10 @@ public class FuelAlgorithm implements SKSearchListener{
 
         this.maxStopsNumber = (int) (allDistance / 300.0);
         if (this.maxStopsNumber == 0) {
-            this.maxStopsNumber = 1;
+            this.maxStopsNumber = 2;
         }
-        if(((allDistance / 300.0) - ((double) this.maxStopsNumber)) >= 0.5){
+
+        if(((allDistance / 300.0) - ((double) this.maxStopsNumber)) >= 0.0){
             this.maxSearchNumber++;
         }
 
@@ -235,11 +236,11 @@ public class FuelAlgorithm implements SKSearchListener{
                     station.setLpgCost(lpg);
 
                     if(petrolType.equals("0")){
-                        list.add(new GasStation(distance, petrol));
+                        list.add(new GasStation(distance, petrol, station.getCoordinates()));
                     } else if (petrolType.equals("1")){
-                        list.add(new GasStation(distance, diesel));
+                        list.add(new GasStation(distance, diesel, station.getCoordinates()));
                     } else if (petrolType.equals("2")){
-                        list.add(new GasStation(distance, lpg));
+                        list.add(new GasStation(distance, lpg, station.getCoordinates()));
                     }
 
                 }
@@ -255,8 +256,8 @@ public class FuelAlgorithm implements SKSearchListener{
 
 
                 //adding first and last position to list
-                list.add(new GasStation(straightDistance * factor, Double.POSITIVE_INFINITY));
-                list.add(0, new GasStation(0.0, Double.POSITIVE_INFINITY));
+                list.add(new GasStation(straightDistance * factor, Double.POSITIVE_INFINITY, tempList.get(tempList.size()-1)));
+                list.add(0, new GasStation(0.0, Double.POSITIVE_INFINITY, startCoordinate));
 
                 for(GasStation gs: list){
                     Log.d("list","location: "+gs.getPosition()+" price: "+gs.getFuelCost());
@@ -277,7 +278,8 @@ public class FuelAlgorithm implements SKSearchListener{
 
                 scaleDistance = ((tankV - startV)/average)*100.0;
 
-                Algorithm algo = new Algorithm(list, average, tankV, startV, 12);
+                Log.d("maxstopsnumber", "stops: "+maxStopsNumber);
+                Algorithm algo = new Algorithm(list, average, tankV, startV, maxStopsNumber);
 
                 algo.getGVSets();
 

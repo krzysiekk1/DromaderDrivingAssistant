@@ -15,7 +15,7 @@ public class FillStationStructure {
     public FillStationStructure(SKCoordinate skCoordinate, double fuel, double price){
         this.coordinates = skCoordinate;
         this.fuelToFill = fuel;
-        this.appCost = price * fuel;
+        this.appCost = price;
     }
 
     public SKCoordinate getCoordinates(){

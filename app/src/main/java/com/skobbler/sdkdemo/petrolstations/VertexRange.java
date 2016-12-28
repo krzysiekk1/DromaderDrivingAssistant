@@ -8,6 +8,8 @@ public class VertexRange {
     public int vertexNumber;
 
     public double value;
+    public double nextFuelLevel;
+    public int nextVertex;
 
 
     public VertexRange(int number){
@@ -16,6 +18,22 @@ public class VertexRange {
 
     public void indep(double value){
         this.value = value;
+    }
+    
+    public void setNextFuelLevel(double nextFuelLevel){
+        this.nextFuelLevel = nextFuelLevel;
+    }
+
+    public void setNextVertex(int nextVertex){
+        this.nextVertex = nextVertex;
+    }
+
+    public int getNextVertex(){
+        return this.nextVertex;
+    }
+
+    public double getNextFuelLevel(){
+        return this.nextFuelLevel;
     }
 
     public double getValue(){

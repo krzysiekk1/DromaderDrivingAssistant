@@ -22,12 +22,15 @@ public class DynamicFunction {
 
     public int listSize;
 
+    private double avg;
 
-    public DynamicFunction(double tankVolume, GasStationList list, int fillStops) {
+
+    public DynamicFunction(double tankVolume, GasStationList list, int fillStops, double average) {
 
         this.tankVolume = tankVolume;
         this.list = list;
         this.fillStops = fillStops;
+        this.avg = average;
 
         this.listSize = this.list.list.size();
         this.A = new TablesElements[listSize][fillStops];
@@ -56,8 +59,12 @@ public class DynamicFunction {
 
                 if (distance <= this.tankVolume && g.getFuelLevel() <= this.tankVolume) {
                     A[i][0].setVertexFuel(g.getFuelLevel(), ((distance - g.getFuelLevel()) * (this.list.costFunction.get(i))));
+                    A[i][0].setNextVertex(listSize - 1, g.getFuelLevel());
+                    A[i][0].setNextFuelLevel((distance - g.getFuelLevel()), g.getFuelLevel());
                 } else {
                     A[i][0].setVertexFuel(g.getFuelLevel(), Double.POSITIVE_INFINITY);
+                    A[i][0].setNextVertex(- 1, g.getFuelLevel());
+                    A[i][0].setNextFuelLevel(-1.0, g.getFuelLevel());
                 }
             }
 
@@ -85,15 +92,23 @@ public class DynamicFunction {
             if((list.costFunction.get(v.vertexNumber) <= costU) || (stopsLeftQ == 1)  ){
                 if(A[v.vertexNumber][stopsLeftQ -1].getVertexCost(0.0) == Double.POSITIVE_INFINITY){
                     v.indep(Double.POSITIVE_INFINITY);
+                    v.setNextVertex(-1);
+                    v.setNextFuelLevel(-1.0);
                 } else {
                     v.indep(((A[v.vertexNumber][stopsLeftQ - 1].getVertexCost(0.0)) + (d*costU)));
+                    v.setNextVertex(v.vertexNumber);
+                    v.setNextFuelLevel(0.0);
                 }
 
             } else {
                 if(A[v.vertexNumber][stopsLeftQ - 1].getVertexCost(tankVolume - d) == Double.POSITIVE_INFINITY){
                     v.indep(Double.POSITIVE_INFINITY);
+                    v.setNextVertex(-1);
+                    v.setNextFuelLevel(-1.0);
                 } else{
                     v.indep(((A[v.vertexNumber][stopsLeftQ - 1].getVertexCost(tankVolume - d)) + (tankVolume*costU)));
+                    v.setNextVertex(v.vertexNumber);
+                    v.setNextFuelLevel(tankVolume - d);
                 }
 
             }
@@ -125,7 +140,8 @@ public class DynamicFunction {
 
                 A[vertexU][stopsLeftQ].setVertexFuel(GV.getFuelLevel(), (vertexListR.get(vertexInR).getValue() - (GV.getFuelLevel() * costU)));
                 // A[vertexU][stopsLeftQ].fillTupleLists[A[vertexU][stopsLeftQ].getVertexNumber(GV.getFuelLevel())] = vertexListR.get(vertexInR).getFillTupleList();
-
+                A[vertexU][stopsLeftQ].setNextFuelLevel(vertexListR.get(vertexInR).getNextFuelLevel(), GV.getFuelLevel());
+                A[vertexU][stopsLeftQ].setNextVertex(vertexListR.get(vertexInR).getNextVertex(), GV.getFuelLevel());
             }
 
         }
@@ -136,6 +152,9 @@ public class DynamicFunction {
     public FuelAlgorithmResult getBestResult(){
 
         double bestResult = Double.POSITIVE_INFINITY;
+        int bestRoute = -1;
+        List<Integer> vertices = new ArrayList<Integer>();
+        List<Double> fuels = new ArrayList<Double>();
 
         for (int i = 1; i<fillStops; i++){
 
@@ -143,10 +162,29 @@ public class DynamicFunction {
 
                 Log.d("results", "result: "+A[0][i].getVertexCost(0.0));
                 bestResult = A[0][i].getVertexCost(0.0);
+                bestRoute = i;
             }
         }
-        FuelAlgorithmResult result = new FuelAlgorithmResult(bestResult, new ArrayList<FillStationStructure>());
+        if(bestRoute != -1){
+            int nextVert = A[0][bestRoute].getNextVertex(0.0);
+            double nextFuel = A[0][bestRoute].getNextFuelLevel(0.0);
+            vertices.add(nextVert);
+            fuels.add(nextFuel);
+            //PETLA!!!!
+            bestRoute--;
+            while(bestRoute >= 0 && A[nextVert][bestRoute].getVertexNumber(nextFuel) != -1){
+                int nextVert1 = A[nextVert][bestRoute].getNextVertex(nextFuel);
+                double nextFuel1 = A[nextVert][bestRoute].getNextFuelLevel(nextFuel);
+                vertices.add(nextVert1);
+                fuels.add(nextFuel1);
 
+                nextVert = nextVert1;
+                nextFuel = nextFuel1;
+                bestRoute--;
+            }
+        }
+
+        FuelAlgorithmResult result = new FuelAlgorithmResult(bestResult, vertices, fuels, list, avg);
         return result;
     }
 

@@ -1,6 +1,7 @@
 package com.skobbler.sdkdemo.costs.fuel;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.skobbler.ngx.SKCoordinate;
 import com.skobbler.ngx.routing.SKRouteInfo;
@@ -26,6 +27,10 @@ public class FuelCostCalculator {
         sum += fuelAlgorithmResult.getCost();
         List<FillStationStructure> fillStationStructureList = fuelAlgorithmResult.getList();
 
+        for(FillStationStructure fss: fillStationStructureList){
+            Log.d("fillstationstructure","coordinates: "+fss.getCoordinates().toString()+" fuel: "+fss.getFuelToFill()+" price: "+fss.getAppCost());
+        }
+/*
         if(number == 0) {
             fillStationStructureList.add(new FillStationStructure(new SKCoordinate(49.880664, 19.488134), 2.1, 3.2));
             fillStationStructureList.add(new FillStationStructure(new SKCoordinate(49.880659, 19.488129), 3.4, 5.6));
@@ -36,6 +41,8 @@ public class FuelCostCalculator {
         } else if(number == 2){
 
         }
+        */
+        
         SKToolsLogicManager skToolsLogicManager = SKToolsLogicManager.getInstance();
         skToolsLogicManager.setFillStations(fillStationStructureList, number);
 

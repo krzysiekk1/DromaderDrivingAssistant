@@ -2,6 +2,8 @@ package com.skobbler.sdkdemo.petrolstations;
 
 import android.util.Log;
 
+import com.skobbler.ngx.SKCoordinate;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -40,7 +42,7 @@ public class Algorithm {
             station.scalePosition(scaleDistance);
         }
 
-        this.stations.add(0, new GasStation(0.0, 0.0));
+        this.stations.add(0, new GasStation(0.0, 0.0, new SKCoordinate(0.000000, 0.000000)));
 
 
         this.stationList = new GasStationList(this.stations, avgConsumption);
@@ -96,7 +98,7 @@ public class Algorithm {
 
     public FuelAlgorithmResult calculateMinimalCost(){
 
-        this.dynamic = new DynamicFunction(this.tankVolume, this.stationList, this.maxStops);
+        this.dynamic = new DynamicFunction(this.tankVolume, this.stationList, this.maxStops, avgConsumption);
 
         for(int j = 1; j <maxStops; j++){
             for(int i = 0; i < stationList.list.size(); i++){
@@ -108,7 +110,6 @@ public class Algorithm {
         return dynamic.getBestResult();
 
     }
-
 
 
 }

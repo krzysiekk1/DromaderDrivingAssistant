@@ -16,6 +16,10 @@ public class TablesElements {
 
     public int size;
 
+    public double[] nextFuelLevel;
+    public int[] nextVertex;
+    public double[] tankFuel;
+
 
     public TablesElements(List<GVTuple> gv){
 
@@ -28,7 +32,61 @@ public class TablesElements {
 
         this.size = this.GV.size();
 
+        this.nextFuelLevel = new double[this.size];
+        this.nextVertex = new int[this.size];
+        this.tankFuel = new double[this.size];
+
     }
+
+    public void setNextVertex(int vertexNumber, double fuelLevel){
+        int result = -1;
+
+        for(int i = 0; i < size; i++){
+            if(GV.get(i).getFuelLevel() == fuelLevel){
+                result = i;
+            }
+        }
+        nextVertex[result] = vertexNumber;
+    }
+
+    public void setNextFuelLevel(double nextFuelLevel , double fuelLevel){
+        int result = -1;
+
+        for(int i = 0; i < size; i++){
+            if(GV.get(i).getFuelLevel() == fuelLevel){
+                result = i;
+            }
+        }
+        this.nextFuelLevel[result] = nextFuelLevel;
+    }
+
+    public int getNextVertex(double fuelLevel){
+        int result = -1;
+        int nextVert;
+
+        for(int i = 0; i < size; i++){
+            if(GV.get(i).getFuelLevel() == fuelLevel){
+                result = i;
+            }
+        }
+        nextVert = nextVertex[result];
+        return nextVert;
+    }
+
+    public double getNextFuelLevel(double fuelLevel){
+        int result = -1;
+        double nextFuelLevel;
+
+        for(int i = 0; i < size; i++){
+            if(GV.get(i).getFuelLevel() == fuelLevel){
+                result = i;
+            }
+        }
+        nextFuelLevel = this.nextFuelLevel[result];
+
+        return nextFuelLevel;
+    }
+
 
     public int getVertexNumber(double fuelLevel){
         int result = -1;

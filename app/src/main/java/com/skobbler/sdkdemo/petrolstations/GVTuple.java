@@ -3,6 +3,7 @@ package com.skobbler.sdkdemo.petrolstations;
 /**
  * Created by marcinsendera on 13.12.2016.
  */
+
 public class GVTuple {
 
     private double fuelLevel;
@@ -14,7 +15,6 @@ public class GVTuple {
         this.previousStation = previousStation;
     }
 
-
     public double getFuelLevel(){
         return this.fuelLevel;
     }
@@ -22,6 +22,5 @@ public class GVTuple {
     public int getPreviousStationPosition(){
         return this.previousStation;
     }
-
 
 }

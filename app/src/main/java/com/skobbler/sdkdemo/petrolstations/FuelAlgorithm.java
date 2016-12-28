@@ -23,7 +23,6 @@ import com.skobbler.sdkdemo.util.PreferenceTypes;
 
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -42,10 +41,8 @@ public class FuelAlgorithm implements SKSearchListener{
     private static final int[] SEARCH_CATEGORY = new int[] {SKCategories.SKPOICategory.SKPOI_CATEGORY_FUEL.getValue()};
 
     /*
-    density of taking the coordinates across route
-    67 it's about coordinate every ~ 2km
+    density of taking the coordinates across route 67 it's about coordinate every ~ 2km
      */
-
     private static final int DENSITY = 67;
     private static final int START_COORDINATE_NR = 0;
 
@@ -58,7 +55,6 @@ public class FuelAlgorithm implements SKSearchListener{
     private SKCoordinate startCoordinate;
     private SKRouteInfo routeInfo;
 
-
     private double factor;
 
     private Context app;
@@ -66,18 +62,14 @@ public class FuelAlgorithm implements SKSearchListener{
     private int maxStopsNumber;
 
     private double straightDistance;
-
     private double scaleDistance;
 
     private int searchNumber;
-
     private int maxSearchNumber;
 
-    List<SKCoordinate> tempList;
+    private List<SKCoordinate> tempList;
 
     private boolean searchEnded = false;
-
-//    private double cost;
 
     private FuelAlgorithmResult fuelResult;
 
@@ -87,7 +79,6 @@ public class FuelAlgorithm implements SKSearchListener{
         this.routeInfo = routeInfo;
 
         double allDistance = routeInfo.getDistance() / 1000.0;
-
 
         this.maxStopsNumber = (int) (allDistance / 300.0);
         if (this.maxStopsNumber == 0) {
@@ -100,36 +91,29 @@ public class FuelAlgorithm implements SKSearchListener{
 
         int routeID = routeInfo.getRouteID();
 
-        // this.startCoordinates = startCoordinates;
-
         this.stationList = new FuelStationList();
 
         //getting coordinates across whole route
         this.tempList = new ArrayList<SKCoordinate>();
         List<SKExtendedRoutePosition> positions = SKRouteManager.getInstance().getExtendedRoutePointsForRouteByUniqueId(routeID);
 
-        Log.d("myRouteID","this is fuelalgo for: "+routeID);
-
         for (SKExtendedRoutePosition pos : positions) {
             tempList.add(new SKCoordinate(pos.getCoordinate().getLongitude(), pos.getCoordinate().getLatitude()));
         }
 
-        Log.d("myRouteID","this is fuelalgo for: "+routeID+" positions size: "+positions.size()+" last coord: "+positions.get(positions.size() - 1).getCoordinate());
+        Log.d("myRouteID","this is fuelalgo for: "+routeID+" positions size: "+positions.size()
+                            +" last coord: "+positions.get(positions.size() - 1).getCoordinate());
 
-
-        straightDistance = SKToolsUtils.distanceBetween(positions.get(0).getCoordinate(), positions.get(positions.size() - 1).getCoordinate()) / 1000.0;
+        straightDistance = SKToolsUtils.distanceBetween(positions.get(0).getCoordinate(),
+                                positions.get(positions.size() - 1).getCoordinate()) / 1000.0;
         startCoordinate = positions.get(0).getCoordinate();
-
-
 
         factor = straightDistance / allDistance;
         Log.d("factor", "factor: " + factor);
         Log.d("factor", "straightDistance: " + straightDistance);
         Log.d("factor", "allDistance: " + allDistance);
 
-
         int END_COORDINATE_NR = tempList.size() - 1;
-
 
         for (int coordinateNr = START_COORDINATE_NR + 1; coordinateNr < END_COORDINATE_NR; coordinateNr += DENSITY) {
             coordinates.add(tempList.get(coordinateNr));
@@ -138,11 +122,9 @@ public class FuelAlgorithm implements SKSearchListener{
         this.searchNumber = START_COORDINATE_NR + 1;
         this.maxSearchNumber = END_COORDINATE_NR;
 
-
     }
 
     private void startSearch(int nr){
-
             SKSearchManager searchManager = new SKSearchManager(this);
             SKNearbySearchSettings searchObject = new SKNearbySearchSettings();
             searchObject.setRadius(this.RADIUS);
@@ -150,16 +132,13 @@ public class FuelAlgorithm implements SKSearchListener{
             searchObject.setSearchResultsNumber(100);
             searchObject.setSearchTerm("");
             searchObject.setSearchMode(SKSearchManager.SKSearchMode.OFFLINE);
-
             searchObject.setLocation(tempList.get(nr));
-
             SKSearchStatus status = searchManager.nearbySearch(searchObject);
             searchNumber += DENSITY;
             if (status != SKSearchStatus.SK_SEARCH_NO_ERROR) {
                 SKLogging.writeLog("SKSearchStatus: ", status.toString(), 0);
             }
-        }
-
+    }
 
     @Override
     public void onReceivedSearchResults(final List<SKSearchResult> searchResults){
@@ -198,8 +177,6 @@ public class FuelAlgorithm implements SKSearchListener{
                     }
                 }
 
-                //TODO BEGINNING OF THE PREVIOUS CHANGE LISTS
-
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(app);
                 String petrolType = sharedPreferences.getString(PreferenceTypes.K_FUEL_TYPE, "0");
 
@@ -211,8 +188,8 @@ public class FuelAlgorithm implements SKSearchListener{
                     Log.d("for statement", "for statement");
                     String countryCode = null;
 
-                    SKSearchResult searchResult = SKReverseGeocoderManager.getInstance().reverseGeocodePosition(station.getCoordinates());
-
+                    SKSearchResult searchResult = SKReverseGeocoderManager.getInstance()
+                                                    .reverseGeocodePosition(station.getCoordinates());
                     if (searchResult != null && searchResult.getParentsList() != null) {
                         for (SKSearchResultParent parent : searchResult.getParentsList()) {
                             countryCode = parent.getParentName();
@@ -226,34 +203,39 @@ public class FuelAlgorithm implements SKSearchListener{
                     double petrol = fuelCostAtStation.getPetrolLiterCost();
                     double lpg = fuelCostAtStation.getLPGLiterCost();
 
-                    //double distance = (SKToolsUtils.distanceBetween(startCoordinate, station.getCoordinates())/1000.0) * factor;
-                    double distance = ((SKToolsUtils.distanceBetween(startCoordinate.getLatitude(), startCoordinate.getLongitude(), station.getCoordinates().getLongitude(), station.getCoordinates().getLatitude()))/1000.0) * factor;
-                    Log.d("station distance", "startCoord: "+startCoordinate.toString()+" stationCoord: "+station.getCoordinates().toString());
-                    Log.d("longlati","startLong: "+ startCoordinate.getLongitude()+" startLati: "+startCoordinate.getLatitude()+" stationLong: "+station.getCoordinates().getLongitude()+" stationLati: "+station.getCoordinates().getLatitude());
+                    double distance = ((SKToolsUtils.distanceBetween(startCoordinate.getLatitude(),
+                                        startCoordinate.getLongitude(), station.getCoordinates().getLongitude(),
+                                                            station.getCoordinates().getLatitude()))/1000.0) * factor;
+                    Log.d("station distance", "startCoord: "+startCoordinate.toString()
+                                            +" stationCoord: " +station.getCoordinates().toString());
+                    Log.d("longlati","startLong: "+ startCoordinate.getLongitude()+" startLati: "+startCoordinate.getLatitude()
+                                                                    +" stationLong: "+station.getCoordinates().getLongitude()
+                                                                    +" stationLati: "+station.getCoordinates().getLatitude());
                     Log.d("station distance", "distance "+distance);
                     station.setDieselCost(diesel);
                     station.setPetrolCost(petrol);
                     station.setLpgCost(lpg);
 
-                    if(petrolType.equals("0")){
-                        list.add(new GasStation(distance, petrol, station.getCoordinates()));
-                    } else if (petrolType.equals("1")){
-                        list.add(new GasStation(distance, diesel, station.getCoordinates()));
-                    } else if (petrolType.equals("2")){
-                        list.add(new GasStation(distance, lpg, station.getCoordinates()));
+                    switch (petrolType) {
+                        case "0":
+                            list.add(new GasStation(distance, petrol, station.getCoordinates()));
+                            break;
+                        case "1":
+                            list.add(new GasStation(distance, diesel, station.getCoordinates()));
+                            break;
+                        case "2":
+                            list.add(new GasStation(distance, lpg, station.getCoordinates()));
+                            break;
                     }
-
                 }
 
                 //sorting list
-
                 Collections.sort(list, new Comparator<GasStation>() {
                     @Override
                     public int compare(GasStation gs1, GasStation gs2) {
                         return Double.compare(gs1.getPosition(), gs2.getPosition());
                     }
                 });
-
 
                 //adding first and last position to list
                 list.add(new GasStation(straightDistance * factor, Double.POSITIVE_INFINITY, tempList.get(tempList.size()-1)));
@@ -262,12 +244,6 @@ public class FuelAlgorithm implements SKSearchListener{
                 for(GasStation gs: list){
                     Log.d("list","location: "+gs.getPosition()+" price: "+gs.getFuelCost());
                 }
-
-
-
-                //TODO ITS THE END OF PREVIOUS CHANGE LISTS
-
-                //FuelAlgorithmResult result = new FuelAlgorithmResult(2.0, new ArrayList<FillStationStructure>());
 
                 String startVolume = sharedPreferences.getString(PreferenceTypes.K_FUEL_LEVEL, "8.0");
                 String tankVolume = sharedPreferences.getString(PreferenceTypes.K_TANK_CAPACITY, "50.0");

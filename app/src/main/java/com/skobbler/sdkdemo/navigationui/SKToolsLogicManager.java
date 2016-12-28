@@ -72,7 +72,6 @@ import static com.skobbler.sdkdemo.activity.MapActivity.VIA_POINT_ICON_ID;
 public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationListener, SKRouteListener,
         SKCurrentPositionListener, SKMapScreenCaptureListener {
 
-
     private boolean rerouting = false;
     private List<FillStationStructure> fillStations0 = null;
     private List<FillStationStructure> fillStations1 = null;
@@ -161,7 +160,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
 
     private volatile boolean[] routeCalculationsEnded = new boolean[3];
 
-    public boolean startPedestrian=false;
+    public boolean startPedestrian = false;
 
     /**
      * Creates a single instance of {@link SKToolsNavigationUIManager}
@@ -178,8 +177,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         }
         return instance;
     }
-
-
 
     private SKToolsLogicManager() {
         naviManager = SKNavigationManager.getInstance();
@@ -201,8 +198,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         }
         currentPositionProvider.setCurrentPositionListener(this);
         SKToolsNavigationUIManager.getInstance().setActivity(currentActivity, rootId);
-
-
     }
 
     /**
@@ -231,8 +226,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         route.setStartCoordinate(configuration.getStartCoordinate());
         route.setDestinationCoordinate(configuration.getDestinationCoordinate());
         SKToolsMapOperationsManager.getInstance().drawDestinationNavigationFlag(configuration
-                        .getDestinationCoordinate().getLongitude(),
-                configuration.getDestinationCoordinate().getLatitude());
+                        .getDestinationCoordinate().getLongitude(), configuration.getDestinationCoordinate().getLatitude());
         List<SKViaPoint> viaPointList;
         viaPointList = configuration.getViaPointCoordinateList();
         if (viaPointList != null) {
@@ -260,8 +254,8 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         SKToolsNavigationUIManager.getInstance().showPreNavigationScreen();
 
         if (configuration.isAutomaticDayNight() && lastUserPosition != null) {
-            SKToolsAutoNightManager.getInstance().setAutoNightAlarmAccordingToUserPosition(lastUserPosition.getCoordinate(), currentActivity);
-
+            SKToolsAutoNightManager.getInstance().setAutoNightAlarmAccordingToUserPosition
+                                                (lastUserPosition.getCoordinate(), currentActivity);
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 SKToolsAutoNightManager.getInstance().setAlarmForHourlyNotificationAfterKitKat(currentActivity, true);
             } else {
@@ -284,8 +278,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
      * @param mapHolder
      * @param isFreeDrive
      */
-    public void startNavigation(SKToolsNavigationConfiguration configuration,
-                                SKMapViewHolder mapHolder, boolean isFreeDrive) {
+    public void startNavigation(SKToolsNavigationConfiguration configuration, SKMapViewHolder mapHolder, boolean isFreeDrive) {
 
         SKNavigationSettings navigationSettings = new SKNavigationSettings();
         reRoutingInProgress = false;
@@ -332,11 +325,11 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         Log.d("", "lastUserPosition = " + lastUserPosition);
         if (configuration.isAutomaticDayNight() && lastUserPosition != null) {
             if (isFreeDrive) {
-                SKToolsAutoNightManager.getInstance().setAutoNightAlarmAccordingToUserPosition(lastUserPosition.getCoordinate(), currentActivity);
+                SKToolsAutoNightManager.getInstance().setAutoNightAlarmAccordingToUserPosition
+                                                    (lastUserPosition.getCoordinate(), currentActivity);
 
                 if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    SKToolsAutoNightManager.getInstance().setAlarmForHourlyNotificationAfterKitKat(currentActivity,
-                            true);
+                    SKToolsAutoNightManager.getInstance().setAlarmForHourlyNotificationAfterKitKat(currentActivity, true);
                 } else {
                     SKToolsAutoNightManager.getInstance().setAlarmForHourlyNotification(currentActivity);
                 }
@@ -345,16 +338,17 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
             }
         }
         SKToolsNavigationUIManager.getInstance().switchDayNightStyle(SKToolsMapOperationsManager
-                .getInstance().getCurrentMapStyle());
+                                                                .getInstance().getCurrentMapStyle());
         navigationStopped = false;
 
         if (navigationListener != null) {
             navigationListener.onNavigationStarted();
         }
 
-
-        // sprawdzenie ustawień aplikacji: czy włączać algorytm zmęczenia i czy włączać powiadomienia o stacjach benzynowych (jeśli nie to: fillStationsNumber = -2)
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity().getApplicationContext());
+        // sprawdzenie ustawień aplikacji: czy włączać algorytm zmęczenia i czy włączać powiadomienia o stacjach benzynowych
+        // (jeśli nie to: fillStationsNumber = -2)
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences
+                                                            (getCurrentActivity().getApplicationContext());
         boolean fatiguePreferences = sharedPreferences.getBoolean(PreferenceTypes.K_FATIGUE_ALERTS, true);
         boolean fuelStationPreferences = sharedPreferences.getBoolean(PreferenceTypes.K_PETROL_STATIONS_ALERTS, true);
 
@@ -366,7 +360,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         if(!fuelStationPreferences){
             fillStationNumber = -2;
         }
-
     }
 
     /**
@@ -381,9 +374,10 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         currentPositionProvider.stopLocationUpdates();
         mapHolder.setMapSurfaceListener(previousMapSurfaceListener);
         navigationStopped = true;
-        startPedestrian=false;
+        startPedestrian = false;
         if (configuration.getDestinationCoordinate() != null) {
-            SKToolsMapOperationsManager.getInstance().drawDestinationPoint(configuration.getDestinationCoordinate().getLongitude(), configuration.getDestinationCoordinate().getLatitude());
+            SKToolsMapOperationsManager.getInstance().drawDestinationPoint(configuration
+                    .getDestinationCoordinate().getLongitude(), configuration.getDestinationCoordinate().getLatitude());
         }
         currentActivity.runOnUiThread(new Runnable() {
             @Override
@@ -406,13 +400,12 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
      */
     private void checkCorrectMapStyle() {
         int currentMapStyle = SKToolsMapOperationsManager.getInstance().getCurrentMapStyle();
-        int correctMapStyle = SKToolsMapOperationsManager.getInstance().getMapStyleBeforeStartDriveMode(configuration
-                .isAutomaticDayNight());
+        int correctMapStyle = SKToolsMapOperationsManager.getInstance().getMapStyleBeforeStartDriveMode
+                                                                    (configuration.isAutomaticDayNight());
         if (currentMapStyle != correctMapStyle) {
             SKToolsMapOperationsManager.getInstance().switchDayNightStyle(configuration, correctMapStyle);
             SKToolsNavigationUIManager.getInstance().changePanelsBackgroundAndTextViewsColour
-                    (SKToolsMapOperationsManager
-                            .getInstance().getCurrentMapStyle());
+                                        (SKToolsMapOperationsManager.getInstance().getCurrentMapStyle());
         }
     }
 
@@ -452,12 +445,11 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     protected void handleBlockRoadsItemsClick(AdapterView<?> parent, int position) {
 
         SKToolsNavigationUIManager.getInstance().setFollowerMode();
-        SKToolsNavigationUIManager.getInstance().showFollowerModePanels(configuration.getNavigationType() ==
-                SKNavigationSettings.SKNavigationType.SIMULATION);
+        SKToolsNavigationUIManager.getInstance().showFollowerModePanels
+                (configuration.getNavigationType() == SKNavigationSettings.SKNavigationType.SIMULATION);
 
         String item = (String) parent.getItemAtPosition(position);
-        if (item.equals(currentActivity.getResources().getString(
-                R.string.unblock_all))) {
+        if (item.equals(currentActivity.getResources().getString(R.string.unblock_all))) {
             naviManager.unblockAllRoads();
             roadBlocked = false;
         } else {
@@ -506,17 +498,14 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                 routeIndex = 0;
                 this.fillStations = fillStations0;
                 this.fillStationNumber = fillStationNumber0;
-
             } else if (id == R.id.second_route) {
                 routeIndex = 1;
                 this.fillStations = fillStations1;
                 this.fillStationNumber = fillStationNumber1;
-
             } else if (id == R.id.third_route) {
                 routeIndex = 2;
                 this.fillStations = fillStations2;
                 this.fillStationNumber = fillStationNumber2;
-
             }
 
             SKToolsMapOperationsManager.getInstance().zoomToRoute(currentActivity);
@@ -533,8 +522,8 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         } else if (id == R.id.navigation_top_back_button) {
             SKToolsMapOperationsManager.getInstance().setMapInNavigationMode();
             SKToolsNavigationUIManager.getInstance().setFollowerMode();
-            SKToolsNavigationUIManager.getInstance().showFollowerModePanels(configuration.getNavigationType() ==
-                    SKNavigationSettings.SKNavigationType.SIMULATION);
+            SKToolsNavigationUIManager.getInstance().showFollowerModePanels
+                    (configuration.getNavigationType() == SKNavigationSettings.SKNavigationType.SIMULATION);
             mapView.getMapSettings().setCompassShown(false);
             mapView.getMapSettings().setMapZoomingEnabled(false);
             if (currentUserDisplayMode != null) {
@@ -550,23 +539,20 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
             SKNavigationManager.getInstance().decreaseSimulationSpeed(3);
         } else if (id == R.id.menu_back_follower_mode_button) {
             SKToolsNavigationUIManager.getInstance().handleNavigationBackButton();
-        } else if (id == R.id.navigation_bottom_right_estimated_panel || id == R.id
-                .navigation_bottom_right_arriving_panel) {
+        } else if (id == R.id.navigation_bottom_right_estimated_panel || id == R.id.navigation_bottom_right_arriving_panel) {
             SKToolsNavigationUIManager.getInstance().switchEstimatedTime();
         } else if (id == R.id.pedestrian_compass_panel_layout) {
             SKToolsNavigationUIManager.getInstance().setTheCorrespondingImageForCompassPanel(mapView.getMapSettings());
-
         } else if (id == R.id.position_me_real_navigation_button) {
             if (lastUserPosition != null) {
                 mapView.centerOnCurrentPosition(15,true,1000);
             } else {
-                Toast.makeText(currentActivity, currentActivity.getResources().getString(R.string
-                        .no_position_available), Toast.LENGTH_SHORT).show();
+                Toast.makeText(currentActivity, currentActivity.getResources()
+                        .getString(R.string.no_position_available), Toast.LENGTH_SHORT).show();
             }
         } else if (id == R.id.current_advice_image_holder || id == R.id.current_advice_text_holder) {
             playLastAdvice();
         }
-
     }
 
     /**
@@ -579,7 +565,8 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         skRouteInfoList.clear();
         mapView.getMapSettings().setMapStyle(currentMapStyle);
         SKToolsAutoNightManager.getInstance().cancelAlarmForForHourlyNotification();
-        SKToolsMapOperationsManager.getInstance().drawDestinationPoint(configuration.getDestinationCoordinate().getLongitude(), configuration.getDestinationCoordinate().getLatitude());
+        SKToolsMapOperationsManager.getInstance().drawDestinationPoint(configuration
+                .getDestinationCoordinate().getLongitude(), configuration.getDestinationCoordinate().getLatitude());
         if (navigationListener != null) {
             navigationListener.onRouteCalculationCanceled();
         }
@@ -605,25 +592,23 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                 loadDayNightSettings(configuration);
             }
         } else if (id == R.id.navigation_settings_overview_button) {
-            final SKSearchResult destination = SKReverseGeocoderManager
-                    .getInstance().reverseGeocodePosition(configuration.getDestinationCoordinate());
+            final SKSearchResult destination = SKReverseGeocoderManager.getInstance()
+                        .reverseGeocodePosition(configuration.getDestinationCoordinate());
             if (destination != null) {
                 SKToolsMapOperationsManager.getInstance().switchToOverViewMode(currentActivity, configuration);
-                SKToolsNavigationUIManager.getInstance().showOverviewMode(SKToolsUtils.getFormattedAddress
-                        (destination.getParentsList()));
+                SKToolsNavigationUIManager.getInstance()
+                        .showOverviewMode(SKToolsUtils.getFormattedAddress(destination.getParentsList()));
                 naviScreenSet = true;
             }
         } else if (id == R.id.navigation_settings_route_info_button) {
             numberOfSettingsOptionsPressed++;
             if (numberOfSettingsOptionsPressed == 1) {
-                final SKSearchResult startCoord = SKReverseGeocoderManager
-                        .getInstance().reverseGeocodePosition(configuration.getStartCoordinate());
-                final SKSearchResult destCoord = SKReverseGeocoderManager
-                        .getInstance().reverseGeocodePosition(configuration.getDestinationCoordinate());
-                String startAdd = SKToolsUtils.getFormattedAddress
-                        (startCoord.getParentsList());
-                String destAdd = SKToolsUtils.getFormattedAddress
-                        (destCoord.getParentsList());
+                final SKSearchResult startCoord = SKReverseGeocoderManager.getInstance()
+                                .reverseGeocodePosition(configuration.getStartCoordinate());
+                final SKSearchResult destCoord = SKReverseGeocoderManager.getInstance()
+                            .reverseGeocodePosition(configuration.getDestinationCoordinate());
+                String startAdd = SKToolsUtils.getFormattedAddress(startCoord.getParentsList());
+                String destAdd = SKToolsUtils.getFormattedAddress(destCoord.getParentsList());
                 SKToolsNavigationUIManager.getInstance().showRouteInfoScreen(startAdd, destAdd);
                 naviScreenSet = true;
             }
@@ -631,16 +616,16 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
             naviScreenSet = true;
 
             if (!SKToolsNavigationUIManager.getInstance().isFreeDriveMode()) {
-                SKToolsNavigationUIManager.getInstance().showRoadBlockMode(configuration.getDistanceUnitType(),
-                        navigationCurrentDistance);
+                SKToolsNavigationUIManager.getInstance()
+                        .showRoadBlockMode(configuration.getDistanceUnitType(), navigationCurrentDistance);
             } else {
                 SKToolsNavigationUIManager.getInstance().showRouteInfoFreeDriveScreen();
             }
 
         } else if (id == R.id.navigation_settings_panning_button) {
             SKToolsMapOperationsManager.getInstance().startPanningMode();
-            SKToolsNavigationUIManager.getInstance().showPanningMode(configuration.getNavigationType() ==
-                    SKNavigationSettings.SKNavigationType.REAL);
+            SKToolsNavigationUIManager.getInstance()
+                    .showPanningMode(configuration.getNavigationType() == SKNavigationSettings.SKNavigationType.REAL);
             naviScreenSet = true;
         } else if (id == R.id.navigation_settings_view_mode_button) {
             loadMapDisplayMode();
@@ -657,16 +642,16 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
 
         if (!naviScreenSet) {
             SKToolsNavigationUIManager.getInstance().setFollowerMode();
-            SKToolsNavigationUIManager.getInstance().showFollowerModePanels(configuration.getNavigationType() ==
-                    SKNavigationSettings.SKNavigationType.SIMULATION);
+            SKToolsNavigationUIManager.getInstance().showFollowerModePanels
+                    (configuration.getNavigationType() == SKNavigationSettings.SKNavigationType.SIMULATION);
         }
     }
 
     private void switchToPanningMode() {
         if (!SKToolsNavigationUIManager.getInstance().isPanningMode()) {
             SKToolsMapOperationsManager.getInstance().startPanningMode();
-            SKToolsNavigationUIManager.getInstance().showPanningMode(configuration.getNavigationType() ==
-                    SKNavigationSettings.SKNavigationType.REAL);
+            SKToolsNavigationUIManager.getInstance()
+                    .showPanningMode(configuration.getNavigationType() == SKNavigationSettings.SKNavigationType.REAL);
         }
     }
 
@@ -702,7 +687,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         SKToolsMapOperationsManager.getInstance().switchDayNightStyle(configuration, newStyle);
     }
 
-
     /**
      * Decides the style in which the map needs to be changed next.
      */
@@ -717,7 +701,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         SKToolsNavigationUIManager.getInstance().switchDayNightStyle(mapStyle);
         SKToolsMapOperationsManager.getInstance().switchDayNightStyle(configuration, mapStyle);
     }
-
 
     /**
      * Changes the map display from 3d-> 2d and vice versa
@@ -787,7 +770,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
 
     @Override
     public void onLongPress(SKScreenPoint skScreenPoint) {
-
         SKAnnotation annotation = new SKAnnotation(19);
         annotation.setUniqueID(19);
         annotation.setAnnotationType(SKAnnotation.SK_ANNOTATION_TYPE_PURPLE);
@@ -841,24 +823,20 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
 
     @Override
     public void onBoundingBoxImageRendered(int i) {
-
     }
 
     @Override
     public void onGLInitializationError(String messsage) {
-
     }
 
     @Override
     public void onScreenshotReady(Bitmap bitmap) {
-
     }
 
     @Override
     public void onDestinationReached() {
-
-        if (configuration.getNavigationType() == SKNavigationSettings.SKNavigationType.REAL && configuration
-                .isContinueFreeDriveAfterNavigationEnd()) {
+        if (configuration.getNavigationType() == SKNavigationSettings.SKNavigationType.REAL
+                                    && configuration.isContinueFreeDriveAfterNavigationEnd()) {
             currentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -895,13 +873,10 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     private void playSoundWhenSpeedIsExceeded(final String[] adviceList, final boolean speedExceeded) {
         if (!navigationStopped) {
             currentActivity.runOnUiThread(new Runnable() {
-
                 @Override
                 public void run() {
-
                     if (speedExceeded) {
-                        SKToolsAdvicePlayer.getInstance()
-                                .playAdvice(adviceList, SKToolsAdvicePlayer.PRIORITY_SPEED_WARNING);
+                        SKToolsAdvicePlayer.getInstance().playAdvice(adviceList, SKToolsAdvicePlayer.PRIORITY_SPEED_WARNING);
                     }
                     SKToolsNavigationUIManager.getInstance().handleSpeedExceeded(speedExceeded);
                 }
@@ -914,7 +889,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     }
 
     public void setFillStations(List<FillStationStructure> list, int number){
-
         switch (number) {
             case 0: this.fillStations0 = list;
                     if(!list.isEmpty()) {
@@ -938,7 +912,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                     }
                 break;
         }
-
     }
 
     public void setHotelCoordinates(SKCoordinate coordinates){
@@ -984,7 +957,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     private void fillStationMessage(FillStationStructure fillStationStructure){
         DialogMessage dm = new DialogMessage(currentActivity);
         String s = String.format(Locale.US, "%.2f", fillStationStructure.getAppCost());
-        dm.setMessage("Fill your car with: "+fillStationStructure.getFuelToFill()+" l (about: "+s+" EUR)",
+        dm.setMessage("Fill your car with: " + fillStationStructure.getFuelToFill() + " l (about: " + s + " EUR)",
                 com.skobbler.sdkdemo.R.string.go_on_station,
                 new DialogInterface.OnClickListener(){
                     @Override
@@ -1067,11 +1040,12 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                 }
                 fillStationResponse = 0;
             }
-
             if (fillStationNumber != -1) {
                 if (fillStations != null && fillStationResponse == 0) {
                     if (fillStationNumber < fillStations.size()) {
-                        if (SKGeoUtils.calculateAirDistanceBetweenCoordinates(fillStations.get(fillStationNumber).getCoordinates(), SKPositionerManager.getInstance().getCurrentGPSPosition(true).getCoordinate()) < 2000) {
+                        if (SKGeoUtils.calculateAirDistanceBetweenCoordinates
+                                (fillStations.get(fillStationNumber).getCoordinates(),
+                                        SKPositionerManager.getInstance().getCurrentGPSPosition(true).getCoordinate()) < 2000) {
                             fillStationMessage(fillStations.get(fillStationNumber));
                         }
                     }
@@ -1079,7 +1053,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
             }
         }
 
-        
         if(this.fatigueAlgorithm.getResponse()){
             fatigueMessage();
         }
@@ -1093,11 +1066,9 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
 
         if (reRoutingInProgress) {
             reRoutingInProgress = false;
-
             currentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-
                     boolean followerMode = SKToolsNavigationUIManager.getInstance().isFollowerMode();
                     if (followerMode) {
                         SKToolsNavigationUIManager.getInstance().showFollowerModePanels(configuration
@@ -1126,30 +1097,29 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     }
 
     @Override
-    public void onFreeDriveUpdated(String countryCode, String streetName, String referenceName, SKNavigationState.SKStreetType streetType,
-                                   double currentSpeed, double speedLimit) {
+    public void onFreeDriveUpdated(String countryCode, String streetName, String referenceName,
+                                   SKNavigationState.SKStreetType streetType, double currentSpeed, double speedLimit) {
         if (SKToolsNavigationUIManager.getInstance().isFollowerMode()) {
             int mapStyle = SKToolsMapOperationsManager.getInstance().getCurrentMapStyle();
-            SKToolsNavigationUIManager.getInstance().handleFreeDriveUpdated(countryCode, streetName,
-                    currentSpeed, speedLimit, configuration.getDistanceUnitType(), mapStyle);
+            SKToolsNavigationUIManager.getInstance().handleFreeDriveUpdated(countryCode, streetName, currentSpeed,
+                                                        speedLimit, configuration.getDistanceUnitType(), mapStyle);
         }
     }
 
     @Override
     public void onVisualAdviceChanged(final boolean firstVisualAdviceChanged, final boolean secondVisualAdviceChanged,
-                                      final SKNavigationState skNavigationState) {
-
+                                                                            final SKNavigationState skNavigationState) {
         final int mapStyle = SKToolsMapOperationsManager.getInstance().getCurrentMapStyle();
         currentActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 SKToolsNavigationUIManager.getInstance().setTopPanelsBackgroundColour(mapStyle,
-                        firstVisualAdviceChanged, secondVisualAdviceChanged);
-                SKNavigationManager.getInstance().renderVisualAdviceImage(skNavigationState.getFirstCrossingDescriptor(), skNavigationState.getCurrentAdviceVisualAdviceFile(),
-                        SKToolsNavigationUIManager.getInstance().getVisualAdviceColorAccordingToBackgroundsDrawableColor(false));
+                                                            firstVisualAdviceChanged, secondVisualAdviceChanged);
+                SKNavigationManager.getInstance().renderVisualAdviceImage(skNavigationState.getFirstCrossingDescriptor(),
+                    skNavigationState.getCurrentAdviceVisualAdviceFile(),
+                    SKToolsNavigationUIManager.getInstance().getVisualAdviceColorAccordingToBackgroundsDrawableColor(false));
             }
         });
-
     }
 
     @Override
@@ -1166,20 +1136,20 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
             SKToolsMapOperationsManager.getInstance().zoomToRoute(currentActivity);
         }
 
-
-        final List<SKRouteAdvice> advices = SKRouteManager.getInstance().getAdviceListForRouteByUniqueId(skRouteInfo.getRouteID(), SKMaps.SKDistanceUnitType.DISTANCE_UNIT_KILOMETER_METERS);
+        final List<SKRouteAdvice> advices = SKRouteManager.getInstance().getAdviceListForRouteByUniqueId
+                            (skRouteInfo.getRouteID(), SKMaps.SKDistanceUnitType.DISTANCE_UNIT_KILOMETER_METERS);
         if (advices != null){
-            for (SKRouteAdvice advice : advices){
+            for (SKRouteAdvice advice : advices) {
                 SKLogging.writeLog("SKToolsLogicManager", " Route advice is " + advice.toString(), SKLogging.LOG_DEBUG);
             }
         }
 
         final String[] routeSummary = skRouteInfo.getRouteSummary();
-        if (routeSummary != null){
-            for( String street :routeSummary){
+        if (routeSummary != null) {
+            for (String street :routeSummary) {
                 SKLogging.writeLog("SKToolsLogicManager" , " Route Summary street = " + street , SKLogging.LOG_ERROR);
             }
-        }else{
+        } else {
             SKLogging.writeLog("SKToolsLogicManager", "Route summary is null " , SKLogging.LOG_ERROR);
         }
     }
@@ -1228,8 +1198,8 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         SKToolsNavigationUIManager.getInstance().sePreNavigationButtons(i, time, distance, cost);
         LayoutInflater inflater = (LayoutInflater) currentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
-        new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(),
-                mapView, inflater, view, currentActivity.getResources(), currentActivity.getPackageName(), coordinateList, annotationIdStart);
+        new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(), mapView, inflater, view,
+                currentActivity.getResources(), currentActivity.getPackageName(), coordinateList, annotationIdStart);
         setRouteCalculationsEnded(i, true);
     }
 
@@ -1245,7 +1215,8 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
             currentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    for (int i = ANNOTATION_ID_DEFAULT; i < annotationIDroute3 || i < annotationIDroute2 || i < annotationIDroute1; i++){
+                    for (int i = ANNOTATION_ID_DEFAULT; i < annotationIDroute1 || i < annotationIDroute2
+                                                                                || i < annotationIDroute3; i++){
                         mapView.deleteAnnotation(i);
                     }
 
@@ -1312,6 +1283,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         if (navigationListener != null) {
             navigationListener.onRouteCalculationCompleted();
         }
+
         rerouting = false;
     }
 
@@ -1343,13 +1315,13 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
 
     @Override
     public void onNewMapScreenAvailable(int width, int height, String dirPath) {
-
     }
 
     private static List<SKCoordinate> getCoordinatesForWeather (int routeID) {
         List<SKCoordinate> coordinates = new ArrayList<SKCoordinate>();
         int i = 0;
-        List<SKExtendedRoutePosition> positions = SKRouteManager.getInstance().getExtendedRoutePointsForRouteByUniqueId(routeID);
+        List<SKExtendedRoutePosition> positions = SKRouteManager.getInstance()
+                                                    .getExtendedRoutePointsForRouteByUniqueId(routeID);
         for (SKExtendedRoutePosition pos : positions) {
             if (i % 2500 == 0) {
                 coordinates.add(new SKCoordinate(pos.getCoordinate().getLongitude(), pos.getCoordinate().getLatitude()));
@@ -1358,32 +1330,34 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         }
         i--;
         if (i % 2500 != 0) {
-            coordinates.add(new SKCoordinate(positions.get(i).getCoordinate().getLongitude(), positions.get(i).getCoordinate().getLatitude()));
+            coordinates.add(new SKCoordinate(positions.get(i).getCoordinate().getLongitude(),
+                                                positions.get(i).getCoordinate().getLatitude()));
         }
         return coordinates;
     }
 
-    public static int getAnnotationIDroute1() {
+    private static int getAnnotationIDroute1() {
         return annotationIDroute1;
     }
 
-    public static void setAnnotationIDroute1(int annotationIDroute1) {
+    private static void setAnnotationIDroute1(int annotationIDroute1) {
         SKToolsLogicManager.annotationIDroute1 = annotationIDroute1;
     }
 
-    public static int getAnnotationIDroute2() {
+    private static int getAnnotationIDroute2() {
         return annotationIDroute2;
     }
 
-    public static void setAnnotationIDroute2(int annotationIDroute2) {
+    private static void setAnnotationIDroute2(int annotationIDroute2) {
         SKToolsLogicManager.annotationIDroute2 = annotationIDroute2;
     }
 
-    public static int getAnnotationIDroute3() {
+    private static int getAnnotationIDroute3() {
         return annotationIDroute3;
     }
 
-    public static void setAnnotationIDroute3(int annotationIDroute3) {
+    private static void setAnnotationIDroute3(int annotationIDroute3) {
         SKToolsLogicManager.annotationIDroute3 = annotationIDroute3;
     }
+
 }

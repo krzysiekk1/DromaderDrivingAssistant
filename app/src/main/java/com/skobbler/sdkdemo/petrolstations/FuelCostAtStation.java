@@ -89,7 +89,7 @@ public class FuelCostAtStation implements SKSearchListener {
             }
         }
 
-        if (online == true) {
+        if (online) {
             // 1 - near border costs update
             SKSearchResult searchResult = SKReverseGeocoderManager.getInstance().reverseGeocodePosition(coordinate);
             if (searchResult != null && searchResult.getParentsList() != null) {
@@ -129,7 +129,7 @@ public class FuelCostAtStation implements SKSearchListener {
 
     @Override
     public void onReceivedSearchResults(final List<SKSearchResult> searchResults) {
-        if (searchResults1Got == false) {
+        if (!searchResults1Got) {
             updateCostIfNearBorder(searchResults);
         } else {
             updateCostNearestStation(searchResults);
@@ -141,7 +141,7 @@ public class FuelCostAtStation implements SKSearchListener {
         String searchedCountryCode = "";
 
         for (SKSearchResult result : searchResults) {
-            if (nearBorder == false) {
+            if (!nearBorder) {
                 SKSearchResult searchResult = SKReverseGeocoderManager.getInstance().reverseGeocodePosition(result.getLocation());
                 if (searchResult != null && searchResult.getParentsList() != null) {
                     for (SKSearchResultParent parent : searchResult.getParentsList()) {
@@ -153,7 +153,7 @@ public class FuelCostAtStation implements SKSearchListener {
                 }
             }
         }
-        if (nearBorder == true) {
+        if (nearBorder) {
             ResourcesDAO resourcesDAO = ResourcesDAO.getInstance(context);
             resourcesDAO.openDatabase();
             String[] array = new String[] {searchedCountryCode};
@@ -273,18 +273,6 @@ public class FuelCostAtStation implements SKSearchListener {
                 LPGLiterCost += ((percent/100)*avgLPGLiterCost);
             }
         }
-    }
-
-    public double getAvgPetrolLiterCost() {
-        return avgPetrolLiterCost;
-    }
-
-    public double getAvgDieselLiterCost() {
-        return avgDieselLiterCost;
-    }
-
-    public double getAvgLPGLiterCost() {
-        return avgLPGLiterCost;
     }
 
     public double getPetrolLiterCost() {

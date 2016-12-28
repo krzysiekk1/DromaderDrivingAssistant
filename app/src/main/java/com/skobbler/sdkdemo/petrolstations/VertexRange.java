@@ -3,14 +3,13 @@ package com.skobbler.sdkdemo.petrolstations;
 /**
  * Created by marcinsendera on 19.12.2016.
  */
+
 public class VertexRange {
 
     public int vertexNumber;
-
     public double value;
-    public double nextFuelLevel;
-    public int nextVertex;
-
+    private double nextFuelLevel;
+    private int nextVertex;
 
     public VertexRange(int number){
         this.vertexNumber = number;

@@ -11,11 +11,7 @@ import java.util.List;
 
 public class FuelStationList {
 
-
     public List<FuelStationStructure> list = new ArrayList<FuelStationStructure>();
-
-    private double roadDistanceFactor;
-
     private int listSize = 0;
 
     public void addToList(SKCoordinate coordinate){
@@ -38,7 +34,5 @@ public class FuelStationList {
         }
 
     }
-
-
 
 }

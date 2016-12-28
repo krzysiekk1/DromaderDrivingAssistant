@@ -16,9 +16,6 @@ public class FuelStationStructure {
 
     private SKCoordinate coordinates;
 
-    //distance from the road begin
-    private double distance;
-
     // prices for fuels in euro
     private double petrol = 10.0;
     private double diesel = 10.0;
@@ -47,14 +44,11 @@ public class FuelStationStructure {
 
     //return true if the petrol station is the same, else return false
     public boolean compareCoordinates(double longitude, double latitude){
-
         if(this.coordinates.getLongitude() == longitude && this.coordinates.getLatitude() == latitude){
             return true;
         }
-
         return false;
     }
-
 
     public SKCoordinate getCoordinates() {return this.coordinates;}
 

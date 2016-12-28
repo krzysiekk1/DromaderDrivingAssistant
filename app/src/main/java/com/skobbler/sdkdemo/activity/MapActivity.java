@@ -1531,6 +1531,9 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         getActionBar().setHomeButtonEnabled(true);
         initializeNavigationUI(false);
         mapView.deleteAnnotation(RED_PIN_ICON_ID);
+        mapView.deleteAnnotation(VIA_POINT_ICON_ID);
+        setViaPoint(null);
+        findViewById(R.id.clear_via_point_button).setVisibility(View.GONE);
     }
 
     /**
@@ -1574,6 +1577,10 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         getActionBar().setDisplayHomeAsUpEnabled(true);
         initializeNavigationUI(false);
         mapView.deleteAnnotation(RED_PIN_ICON_ID);
+        mapView.deleteAnnotation(VIA_POINT_ICON_ID);
+        setViaPoint(null);
+        findViewById(R.id.clear_via_point_button).setVisibility(View.GONE);
+
     }
 
     @Override

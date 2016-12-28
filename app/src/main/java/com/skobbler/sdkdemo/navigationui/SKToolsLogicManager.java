@@ -41,6 +41,7 @@ import com.skobbler.ngx.positioner.SKCurrentPositionProvider;
 import com.skobbler.ngx.positioner.SKPosition;
 import com.skobbler.ngx.positioner.SKPositionerManager;
 import com.skobbler.ngx.reversegeocode.SKReverseGeocoderManager;
+import com.skobbler.ngx.routing.SKExtendedRoutePosition;
 import com.skobbler.ngx.routing.SKRouteAdvice;
 import com.skobbler.ngx.routing.SKRouteInfo;
 import com.skobbler.ngx.routing.SKRouteJsonAnswer;
@@ -75,6 +76,10 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     private int fillStationNumber;
 
     private int fillStationResponse = 0;
+    private static final int ANNOTATION_ID_DEFAULT = 20;
+    private static int annotationIDroute1 = ANNOTATION_ID_DEFAULT;
+    private static int annotationIDroute2 = ANNOTATION_ID_DEFAULT;
+    private static int annotationIDroute3 = ANNOTATION_ID_DEFAULT;
 
 
     /**
@@ -1138,6 +1143,24 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     }
 
     private void displayRouteInfo(int i) {
+        List <SKCoordinate> coordinateList = getCoordinatesForWeather(skRouteInfoList.get(i).getRouteID());
+        int annotationIdStart = 0;
+        switch (i){
+            case 0:
+                annotationIdStart = ANNOTATION_ID_DEFAULT;
+                setAnnotationIDroute1(getAnnotationIDroute1() + coordinateList.size());
+                setAnnotationIDroute2(getAnnotationIDroute1());
+                break;
+            case 1:
+                annotationIdStart = getAnnotationIDroute1();
+                setAnnotationIDroute2(getAnnotationIDroute2() + coordinateList.size());
+                setAnnotationIDroute3(getAnnotationIDroute2());
+                break;
+            case 2:
+                annotationIdStart = getAnnotationIDroute2();
+                setAnnotationIDroute3(getAnnotationIDroute3() + coordinateList.size());
+                break;
+        }
         final String time = SKToolsUtils.formatTime(skRouteInfoList.get(i).getEstimatedTime());
         final String distance = SKToolsUtils.convertAndFormatDistance(skRouteInfoList.get(i)
                 .getDistance(), configuration.getDistanceUnitType(), currentActivity);
@@ -1148,7 +1171,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         LayoutInflater inflater = (LayoutInflater) currentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
         new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(),
-                mapView, inflater, view, currentActivity.getResources(), currentActivity.getPackageName());
+                mapView, inflater, view, currentActivity.getResources(), currentActivity.getPackageName(), coordinateList, annotationIdStart);
         setRouteCalculationsEnded(i, true);
     }
 
@@ -1161,6 +1184,10 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
             currentActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    for (int i = ANNOTATION_ID_DEFAULT; i < annotationIDroute3 || i < annotationIDroute2 || i < annotationIDroute1; i++){
+                        mapView.deleteAnnotation(i);
+                    }
+
                     if (SKToolsNavigationUIManager.getInstance().isPreNavigationMode()) {
                         SKToolsNavigationUIManager.getInstance().showStartNavigationPanel();
                     }
@@ -1253,5 +1280,46 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     @Override
     public void onNewMapScreenAvailable(int width, int height, String dirPath) {
 
+    }
+
+    private static List<SKCoordinate> getCoordinatesForWeather (int routeID) {
+        List<SKCoordinate> coordinates = new ArrayList<SKCoordinate>();
+        int i = 0;
+        List<SKExtendedRoutePosition> positions = SKRouteManager.getInstance().getExtendedRoutePointsForRouteByUniqueId(routeID);
+        for (SKExtendedRoutePosition pos : positions) {
+            if (i % 2500 == 0) {
+                coordinates.add(new SKCoordinate(pos.getCoordinate().getLongitude(), pos.getCoordinate().getLatitude()));
+            }
+            i++;
+        }
+        i--;
+        if (i % 2500 != 0) {
+            coordinates.add(new SKCoordinate(positions.get(i).getCoordinate().getLongitude(), positions.get(i).getCoordinate().getLatitude()));
+        }
+        return coordinates;
+    }
+
+    public static int getAnnotationIDroute1() {
+        return annotationIDroute1;
+    }
+
+    public static void setAnnotationIDroute1(int annotationIDroute1) {
+        SKToolsLogicManager.annotationIDroute1 = annotationIDroute1;
+    }
+
+    public static int getAnnotationIDroute2() {
+        return annotationIDroute2;
+    }
+
+    public static void setAnnotationIDroute2(int annotationIDroute2) {
+        SKToolsLogicManager.annotationIDroute2 = annotationIDroute2;
+    }
+
+    public static int getAnnotationIDroute3() {
+        return annotationIDroute3;
+    }
+
+    public static void setAnnotationIDroute3(int annotationIDroute3) {
+        SKToolsLogicManager.annotationIDroute3 = annotationIDroute3;
     }
 }

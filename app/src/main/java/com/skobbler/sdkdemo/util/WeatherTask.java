@@ -107,12 +107,13 @@ public class WeatherTask extends AsyncTask {
     @Override
     protected Object doInBackground(Object[] params) {
         this.routeId = (int) params[0];
-        this.coordinates = getCoordinatesForWeather(routeId);
+        this.coordinates = (List<SKCoordinate>) params[6];
         this.mapView = (SKMapSurfaceView) params[1];
         this.inflater = (LayoutInflater) params[2];
         this.view = (View) params[3];
         this.resources = (Resources) params[4];
         this.packageName = (String) params[5];
+        this.annotationId = (int) params[7];
         for (SKCoordinate coordinate : this.coordinates){
             connectAndDownload(String.valueOf(coordinate.getLatitude()), String.valueOf(coordinate.getLongitude()));
         }
@@ -133,9 +134,6 @@ public class WeatherTask extends AsyncTask {
         String lon = null;
         String icon = null;
         String temp = null;
-        for (int i = annotationIdPrev; i < annotationId;  i++){
-            mapView.deleteAnnotation(i);
-        }
         annotationIdPrev = annotationId;
         SKAnnotationView annotationView1 = new SKAnnotationView();
         customView = (RelativeLayout) (inflater.inflate(R.layout.layout_custom_view, null, false));
@@ -220,22 +218,7 @@ public class WeatherTask extends AsyncTask {
 
 
 
-    private static List<SKCoordinate> getCoordinatesForWeather (int routeID) {
-        List<SKCoordinate> coordinates = new ArrayList<SKCoordinate>();
-        int i = 0;
-        List<SKExtendedRoutePosition> positions = SKRouteManager.getInstance().getExtendedRoutePointsForRouteByUniqueId(routeID);
-        for (SKExtendedRoutePosition pos : positions) {
-            if (i % 2500 == 0) {
-                coordinates.add(new SKCoordinate(pos.getCoordinate().getLongitude(), pos.getCoordinate().getLatitude()));
-            }
-            i++;
-        }
-        i--;
-        if (i % 2500 != 0) {
-            coordinates.add(new SKCoordinate(positions.get(i).getCoordinate().getLongitude(), positions.get(i).getCoordinate().getLatitude()));
-        }
-        return coordinates;
-    }
+
 }
 
 

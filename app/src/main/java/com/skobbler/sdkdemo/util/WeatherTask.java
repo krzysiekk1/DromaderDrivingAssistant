@@ -1,6 +1,5 @@
 package com.skobbler.sdkdemo.util;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,7 +9,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -21,11 +19,8 @@ import com.skobbler.ngx.map.SKAnimationSettings;
 import com.skobbler.ngx.map.SKAnnotation;
 import com.skobbler.ngx.map.SKAnnotationView;
 import com.skobbler.ngx.map.SKMapSurfaceView;
-import com.skobbler.ngx.routing.SKExtendedRoutePosition;
 import com.skobbler.ngx.routing.SKRouteManager;
 import com.skobbler.sdkdemo.R;
-import com.skobbler.sdkdemo.costs.utils.Road;
-import com.skobbler.sdkdemo.database.ResourcesDAO;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,11 +33,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
 
 /**
  * Created by Jakub Solawa on 18.12.2016.
@@ -51,22 +43,19 @@ import java.util.List;
 public class WeatherTask extends AsyncTask {
 
     List<JSONObject> data = new ArrayList<JSONObject>();
-    List<Bitmap> icons = new ArrayList<Bitmap>();
     int routeId;
     static int annotationId = 20;
     static int annotationIdPrev = 20;
     private String packageName;
     private SKMapSurfaceView mapView;
     private RelativeLayout customView;
-    String iconString;
     View view;
     LayoutInflater inflater;
     List<SKCoordinate> coordinates;
     Resources resources = null;
 
-    public InputStream connectAndDownload(String lat, String lon) {
+    private InputStream connectAndDownload(String lat, String lon) {
         URL url = null;
-        JSONObject jsonObj = null;
         try {
             url = new URL("http://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&APPID=07c24c31c3d139a6e42c38d0cf05321f");
         } catch (MalformedURLException e) {
@@ -77,8 +66,7 @@ public class WeatherTask extends AsyncTask {
         try {
             connection = (HttpURLConnection) url.openConnection();
 
-            BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
             StringBuffer json = new StringBuffer(8192);
             String tmp = "";
@@ -103,16 +91,15 @@ public class WeatherTask extends AsyncTask {
         return null;
     }
 
-
     @Override
     protected Object doInBackground(Object[] params) {
         this.routeId = (int) params[0];
-        this.coordinates = (List<SKCoordinate>) params[6];
         this.mapView = (SKMapSurfaceView) params[1];
         this.inflater = (LayoutInflater) params[2];
         this.view = (View) params[3];
         this.resources = (Resources) params[4];
         this.packageName = (String) params[5];
+        this.coordinates = (List<SKCoordinate>) params[6];
         this.annotationId = (int) params[7];
         for (SKCoordinate coordinate : this.coordinates){
             connectAndDownload(String.valueOf(coordinate.getLatitude()), String.valueOf(coordinate.getLongitude()));
@@ -149,7 +136,6 @@ public class WeatherTask extends AsyncTask {
                     weatherInterval++;
                     timeSum -= 10800;
                 }
-                List<String> list = new ArrayList<String>();
                 try {
                     object = datum.getJSONObject("city");
                     JSONObject coordObject = object.getJSONObject("coord");
@@ -164,8 +150,6 @@ public class WeatherTask extends AsyncTask {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-
 
                 SKCoordinate coordinate = new SKCoordinate(Double.parseDouble(lat), Double.parseDouble(lon));
                 SKAnnotation annotation1 = new SKAnnotation(annotationId);
@@ -185,8 +169,6 @@ public class WeatherTask extends AsyncTask {
             }
         }
     }
-
-
 
     private Bitmap addTextToBitmap(Bitmap bm, String textToBitmap) {
         Bitmap.Config bitmapConfig = bm.getConfig();
@@ -213,12 +195,4 @@ public class WeatherTask extends AsyncTask {
         return bm;
     }
 
-
-
-
-
-
-
 }
-
-

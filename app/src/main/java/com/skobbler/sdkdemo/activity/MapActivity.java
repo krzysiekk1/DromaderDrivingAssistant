@@ -1580,7 +1580,6 @@ public class MapActivity extends Activity implements SKMapSurfaceListener, SKRou
         mapView.deleteAnnotation(VIA_POINT_ICON_ID);
         setViaPoint(null);
         findViewById(R.id.clear_via_point_button).setVisibility(View.GONE);
-
     }
 
     @Override

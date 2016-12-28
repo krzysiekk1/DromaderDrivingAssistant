@@ -1213,10 +1213,11 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     @Override
     public void onAllRoutesCompleted() {
         Log.d("onallroutes", "completed");
-        if (!rerouting){
+
         for (int j = 0; j < 3; j++) {
             routeCalculationsEnded[j] = false;
         }
+
         if (!skRouteInfoList.isEmpty()) {
             currentActivity.runOnUiThread(new Runnable() {
                 @Override
@@ -1224,49 +1225,51 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                     if (SKToolsNavigationUIManager.getInstance().isPreNavigationMode()) {
                         SKToolsNavigationUIManager.getInstance().showStartNavigationPanel();
                     }
-                    if (skRouteInfoList.size() > 0) {
-                        Thread route0 = new Thread() {
-                            @Override
-                            public void run() {
-                                Log.d("LOGIC_MANAGER ", "0");
-                                displayRouteInfo(0);
-                            }
-                        };
-                        route0.start();
-                    }
-                    if (skRouteInfoList.size() > 1) {
-                        Thread route1 = new Thread() {
-                            @Override
-                            public void run() {
-                                while(!routeCalculationsEnded[0]) {
-                                    try {
-                                        Log.d("LOGIC_MANAGER ", "1");
-                                        Thread.sleep(1000);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
+                    if (!rerouting) {
+                        if (skRouteInfoList.size() > 0) {
+                            Thread route0 = new Thread() {
+                                @Override
+                                public void run() {
+                                    Log.d("LOGIC_MANAGER ", "0");
+                                    displayRouteInfo(0);
                                 }
-                                displayRouteInfo(1);
-                            }
-                        };
-                        route1.start();
-                    }
-                    if (skRouteInfoList.size() > 2) {
-                        Thread route2 = new Thread() {
-                            @Override
-                            public void run() {
-                                while(!routeCalculationsEnded[1]) {
-                                    try {
-                                        Log.d("LOGIC_MANAGER ", "2");
-                                        Thread.sleep(1000);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
+                            };
+                            route0.start();
+                        }
+                        if (skRouteInfoList.size() > 1) {
+                            Thread route1 = new Thread() {
+                                @Override
+                                public void run() {
+                                    while (!routeCalculationsEnded[0]) {
+                                        try {
+                                            Log.d("LOGIC_MANAGER ", "1");
+                                            Thread.sleep(1000);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
                                     }
+                                    displayRouteInfo(1);
                                 }
-                                displayRouteInfo(2);
-                            }
-                        };
-                        route2.start();
+                            };
+                            route1.start();
+                        }
+                        if (skRouteInfoList.size() > 2) {
+                            Thread route2 = new Thread() {
+                                @Override
+                                public void run() {
+                                    while (!routeCalculationsEnded[1]) {
+                                        try {
+                                            Log.d("LOGIC_MANAGER ", "2");
+                                            Thread.sleep(1000);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    displayRouteInfo(2);
+                                }
+                            };
+                            route2.start();
+                        }
                     }
 
                     int routeId = skRouteInfoList.get(0).getRouteID();
@@ -1282,7 +1285,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         if (navigationListener != null) {
             navigationListener.onRouteCalculationCompleted();
         }
-        }
+        rerouting = false;
     }
 
     @Override

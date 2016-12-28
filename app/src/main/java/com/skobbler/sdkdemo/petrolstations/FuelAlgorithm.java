@@ -23,6 +23,9 @@ import com.skobbler.sdkdemo.util.PreferenceTypes;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -74,7 +77,9 @@ public class FuelAlgorithm implements SKSearchListener{
 
     private boolean searchEnded = false;
 
-    private double cost;
+//    private double cost;
+
+    private FuelAlgorithmResult fuelResult;
 
     public FuelAlgorithm(SKRouteInfo routeInfo, Context app) {
 
@@ -84,9 +89,12 @@ public class FuelAlgorithm implements SKSearchListener{
         double allDistance = routeInfo.getDistance() / 1000.0;
 
 
-        this.maxStopsNumber = (int) allDistance / 300;
-        if (this.maxStopsNumber == 0 || this.maxStopsNumber == 1) {
-            this.maxStopsNumber = 2;
+        this.maxStopsNumber = (int) (allDistance / 300.0);
+        if (this.maxStopsNumber == 0) {
+            this.maxStopsNumber = 1;
+        }
+        if(((allDistance / 300.0) - ((double) this.maxStopsNumber)) >= 0.5){
+            this.maxSearchNumber++;
         }
 
         int routeID = routeInfo.getRouteID();
@@ -99,14 +107,19 @@ public class FuelAlgorithm implements SKSearchListener{
         this.tempList = new ArrayList<SKCoordinate>();
         List<SKExtendedRoutePosition> positions = SKRouteManager.getInstance().getExtendedRoutePointsForRouteByUniqueId(routeID);
 
+        Log.d("myRouteID","this is fuelalgo for: "+routeID);
 
         for (SKExtendedRoutePosition pos : positions) {
             tempList.add(new SKCoordinate(pos.getCoordinate().getLongitude(), pos.getCoordinate().getLatitude()));
         }
 
+        Log.d("myRouteID","this is fuelalgo for: "+routeID+" positions size: "+positions.size()+" last coord: "+positions.get(positions.size() - 1).getCoordinate());
+
 
         straightDistance = SKToolsUtils.distanceBetween(positions.get(0).getCoordinate(), positions.get(positions.size() - 1).getCoordinate()) / 1000.0;
         startCoordinate = positions.get(0).getCoordinate();
+
+
 
         factor = straightDistance / allDistance;
         Log.d("factor", "factor: " + factor);
@@ -167,14 +180,14 @@ public class FuelAlgorithm implements SKSearchListener{
         this.searchEnded = ended;
     }
 
-    public double getMinimalCost() {
+    public FuelAlgorithmResult getMinimalCost() {
 
         // run first search
         startSearch(searchNumber);
 
         ExecutorService es = Executors.newSingleThreadExecutor();
-        Future<Double> result = es.submit(new Callable<Double>() {
-            public Double call() throws Exception {
+        Future<FuelAlgorithmResult> result = es.submit(new Callable<FuelAlgorithmResult>() {
+            public FuelAlgorithmResult call() throws Exception {
                 while (!searchEnded) {
                     try {
                         Log.d("FUEL_ALGORITHM ", String.valueOf(routeInfo.getRouteID()));
@@ -212,7 +225,10 @@ public class FuelAlgorithm implements SKSearchListener{
                     double petrol = fuelCostAtStation.getPetrolLiterCost();
                     double lpg = fuelCostAtStation.getLPGLiterCost();
 
-                    double distance = (SKToolsUtils.distanceBetween(startCoordinate, station.getCoordinates())/1000.0) * factor;
+                    //double distance = (SKToolsUtils.distanceBetween(startCoordinate, station.getCoordinates())/1000.0) * factor;
+                    double distance = ((SKToolsUtils.distanceBetween(startCoordinate.getLatitude(), startCoordinate.getLongitude(), station.getCoordinates().getLongitude(), station.getCoordinates().getLatitude()))/1000.0) * factor;
+                    Log.d("station distance", "startCoord: "+startCoordinate.toString()+" stationCoord: "+station.getCoordinates().toString());
+                    Log.d("longlati","startLong: "+ startCoordinate.getLongitude()+" startLati: "+startCoordinate.getLatitude()+" stationLong: "+station.getCoordinates().getLongitude()+" stationLati: "+station.getCoordinates().getLatitude());
                     Log.d("station distance", "distance "+distance);
                     station.setDieselCost(diesel);
                     station.setPetrolCost(petrol);
@@ -228,17 +244,29 @@ public class FuelAlgorithm implements SKSearchListener{
 
                 }
 
+                //sorting list
+
+                Collections.sort(list, new Comparator<GasStation>() {
+                    @Override
+                    public int compare(GasStation gs1, GasStation gs2) {
+                        return Double.compare(gs1.getPosition(), gs2.getPosition());
+                    }
+                });
+
+
                 //adding first and last position to list
-                list.add(new GasStation(straightDistance, Double.POSITIVE_INFINITY));
+                list.add(new GasStation(straightDistance * factor, Double.POSITIVE_INFINITY));
                 list.add(0, new GasStation(0.0, Double.POSITIVE_INFINITY));
 
                 for(GasStation gs: list){
                     Log.d("list","location: "+gs.getPosition()+" price: "+gs.getFuelCost());
                 }
 
+
+
                 //TODO ITS THE END OF PREVIOUS CHANGE LISTS
 
-                cost = 2.0;
+                //FuelAlgorithmResult result = new FuelAlgorithmResult(2.0, new ArrayList<FillStationStructure>());
 
                 String startVolume = sharedPreferences.getString(PreferenceTypes.K_FUEL_LEVEL, "8.0");
                 String tankVolume = sharedPreferences.getString(PreferenceTypes.K_TANK_CAPACITY, "50.0");
@@ -249,55 +277,26 @@ public class FuelAlgorithm implements SKSearchListener{
 
                 scaleDistance = ((tankV - startV)/average)*100.0;
 
-                List<GasStation> list1 = new ArrayList<GasStation>();
-                list1.add(new GasStation(0.0, 0.0));
-                list1.add(new GasStation(123.4, 4.3));
-                list1.add(new GasStation(134.7, 3.8));
-                list1.add(new GasStation(195.8, 4.15));
-                list1.add(new GasStation(223.4, 3.56));
-                list1.add(new GasStation(256.7, 4.35));
-                list1.add(new GasStation(387.2, 4.0));
-                list1.add(new GasStation(547.0, 5.6));
-                list1.add(new GasStation(623.0, 5.3));
-                list1.add(new GasStation(785.2, 7.3));
-                list1.add(new GasStation(843.1, 3.92));
-                list1.add(new GasStation(934.2, 4.16));
-                list1.add(new GasStation(986.4, 4.44));
-                list1.add(new GasStation(1000.7, 4.22));
-                list1.add(new GasStation(1002, 0.24));
-                list1.add(new GasStation(1076.3, 4.13));
-                list1.add(new GasStation(1156.2, 3.98));
-                list1.add(new GasStation(1342.3, 4.03));
-                list1.add(new GasStation(1789.2, 5.65));
-                list1.add(new GasStation(2222.2, 3.23));
-                list1.add(new GasStation(2489.5, 2.45));
-                list1.add(new GasStation(2589.5, 3.85));
-                list1.add(new GasStation(2769.5, 5.43));
-                list1.add(new GasStation(2876.2, 1.23));
-                list1.add(new GasStation(3000.0, 4.87));
-                list1.add(new GasStation(3210.2, 8.00));
-                list1.add(new GasStation(3500.0, 0.00));
-
-                Algorithm algo = new Algorithm(list1, average, tankV, startV, 12);
+                Algorithm algo = new Algorithm(list, average, tankV, startV, 12);
 
                 algo.getGVSets();
 
-                cost = algo.calculateMinimalCost();
+                fuelResult = algo.calculateMinimalCost();
 
-                return cost;
+                return fuelResult;
             }
         });
 
         try {
-            cost = result.get();
+            fuelResult = result.get();
         } catch (Exception e) {
             Log.d("FAILED", "FAILED");
         }
         es.shutdown();
 
         Log.d("RETURN ", String.valueOf(routeInfo.getRouteID()));
-        Log.d("COST ", String.valueOf(cost));
-        return cost;
+        Log.d("COST ", String.valueOf(fuelResult.getCost()));
+        return fuelResult;
     }
 
 }

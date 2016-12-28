@@ -80,12 +80,12 @@ public class FuelAlgorithm implements SKSearchListener{
 
         double allDistance = routeInfo.getDistance() / 1000.0;
 
-        this.maxStopsNumber = (int) (allDistance / 300.0);
-        if (this.maxStopsNumber == 0) {
+        this.maxStopsNumber = (int) (allDistance / 100.0);
+        if (this.maxStopsNumber == 0 || this.maxStopsNumber == 1) {
             this.maxStopsNumber = 2;
         }
 
-        if(((allDistance / 300.0) - ((double) this.maxStopsNumber)) >= 0.0){
+        if(((allDistance / 100.0) - ((double) this.maxStopsNumber)) >= 0.0){
             this.maxSearchNumber++;
         }
 
@@ -239,7 +239,7 @@ public class FuelAlgorithm implements SKSearchListener{
 
                 //adding first and last position to list
                 list.add(new GasStation(straightDistance * factor, Double.POSITIVE_INFINITY, tempList.get(tempList.size()-1)));
-                list.add(0, new GasStation(0.0, Double.POSITIVE_INFINITY, startCoordinate));
+                //list.add(0, new GasStation(0.0, Double.POSITIVE_INFINITY, startCoordinate));
 
                 for(GasStation gs: list){
                     Log.d("list","location: "+gs.getPosition()+" price: "+gs.getFuelCost());

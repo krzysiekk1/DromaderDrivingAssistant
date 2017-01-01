@@ -63,7 +63,7 @@ import com.skobbler.ngx.util.SKLogging;
 import com.skobbler.sdkdemo.petrolstations.FillStationStructure;
 import com.skobbler.sdkdemo.util.PreferenceTypes;
 import com.skobbler.sdkdemo.util.Utils;
-import com.skobbler.sdkdemo.util.WeatherTask;
+import com.skobbler.sdkdemo.weather.WeatherPrediction;
 
 import static com.skobbler.sdkdemo.activity.MapActivity.VIA_POINT_ICON_ID;
 
@@ -1201,7 +1201,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         LayoutInflater inflater = (LayoutInflater) currentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = currentActivity.findViewById(com.skobbler.sdkdemo.R.id.customView);
         if (Utils.isInternetAvailable(getCurrentActivity().getApplicationContext())) {
-            new WeatherTask().execute(skRouteInfoList.get(i).getRouteID(), mapView, inflater, view,
+            new WeatherPrediction().execute(skRouteInfoList.get(i).getRouteID(), mapView, inflater, view,
                     currentActivity.getResources(), currentActivity.getPackageName(), coordinateList, annotationIdStart);
         }
         setRouteCalculationsEnded(i, true);

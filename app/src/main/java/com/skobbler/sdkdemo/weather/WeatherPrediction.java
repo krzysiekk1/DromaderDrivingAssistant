@@ -1,4 +1,4 @@
-package com.skobbler.sdkdemo.util;
+package com.skobbler.sdkdemo.weather;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -40,7 +40,7 @@ import java.util.List;
  * Created by Jakub Solawa on 18.12.2016.
  */
 
-public class WeatherTask extends AsyncTask {
+public class WeatherPrediction extends AsyncTask {
 
     List<JSONObject> data = new ArrayList<JSONObject>();
     int routeId;

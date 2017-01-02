@@ -59,13 +59,11 @@ public class FuelAlgorithmResult {
                                         (vertices.get(i)).getCoordinate(), tanks.get(i), costs.get(i)));
         }
 
-
         if (this.cost == 0.0){
             this.endVolume = startVolume - ((distance*average)/100.0);
         } else {
             this.endVolume = 4.0;
         }
-
     }
 
     public List<FillStationStructure> getList(){

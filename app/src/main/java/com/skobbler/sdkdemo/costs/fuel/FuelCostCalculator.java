@@ -32,19 +32,6 @@ public class FuelCostCalculator {
             Log.d("fillstationstructure","coordinates: "+fss.getCoordinates().toString()+" fuel: "+fss.getFuelToFill()+" price: "+fss.getAppCost());
         }
 
-        /*
-        if(number == 0) {
-            fillStationStructureList.add(new FillStationStructure(new SKCoordinate(49.880664, 19.488134), 2.1, 3.2));
-            fillStationStructureList.add(new FillStationStructure(new SKCoordinate(49.880659, 19.488129), 3.4, 5.6));
-        } else if(number == 1){
-            fillStationStructureList.add(new FillStationStructure(new SKCoordinate(49.880664, 19.488134), 30.2, 4.3));
-            fillStationStructureList.add(new FillStationStructure(new SKCoordinate(49.880659, 19.488129), 0.1, 0.1));
-            fillStationStructureList.add(new FillStationStructure(new SKCoordinate(49.880664, 19.488134), 0.2, 0.2));
-        } else if(number == 2){
-
-        }
-        */
-
         SKToolsLogicManager skToolsLogicManager = SKToolsLogicManager.getInstance();
         skToolsLogicManager.setFillStations(fillStationStructureList, number);
         skToolsLogicManager.setEndVolume(endVolume, number);

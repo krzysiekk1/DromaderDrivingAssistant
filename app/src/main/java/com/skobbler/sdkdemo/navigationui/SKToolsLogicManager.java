@@ -943,7 +943,6 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
         }
     }
 
-
     public void setHotelCoordinates(SKCoordinate coordinates){
         this.hotelCoordinates = coordinates;
     }

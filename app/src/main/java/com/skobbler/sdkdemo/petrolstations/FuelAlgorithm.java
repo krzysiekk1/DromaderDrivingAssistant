@@ -253,8 +253,7 @@ public class FuelAlgorithm implements SKSearchListener{
                 double tankV = Double.parseDouble(tankVolume);
                 double average = Double.parseDouble(avg);
 
-                //set 4l minimum at the end of the travel and 5l minimum as a startvolume
-
+                //set 4 l minimum at the end of the travel and 5 l minimum as a startvolume
                 tankV -= 4.0;
                 startV = Math.max(startV, 5.0);
 
@@ -265,9 +264,8 @@ public class FuelAlgorithm implements SKSearchListener{
 
                 algo.getGVSets();
 
-                fuelResult = algo.calculateMinimalCost(allDistance, startV);
-
                 //set allDistance to fuelResult
+                fuelResult = algo.calculateMinimalCost(allDistance, startV);
 
                 return fuelResult;
             }

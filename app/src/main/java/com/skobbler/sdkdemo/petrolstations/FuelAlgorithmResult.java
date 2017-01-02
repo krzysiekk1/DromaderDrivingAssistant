@@ -55,14 +55,20 @@ public class FuelAlgorithmResult {
 
         this.fillStationStructureList = new ArrayList<FillStationStructure>();
         for(int i = 0; i < vertices.size() - 1; i++){
-            fillStationStructureList.add(new FillStationStructure(this.gasStationList.list.get
-                                        (vertices.get(i)).getCoordinate(), tanks.get(i), costs.get(i)));
+            if (i == vertices.size()-1) {
+                double price = costs.get(i)/tanks.get(i);
+                fillStationStructureList.add(new FillStationStructure(this.gasStationList.list.get
+                        (vertices.get(i)).getCoordinate(), tanks.get(i)+5.0, costs.get(i)+(price*5.0)));
+            } else {
+                fillStationStructureList.add(new FillStationStructure(this.gasStationList.list.get
+                        (vertices.get(i)).getCoordinate(), tanks.get(i), costs.get(i)));
+            }
         }
 
         if (this.cost == 0.0){
             this.endVolume = startVolume - ((distance*average)/100.0);
         } else {
-            this.endVolume = 4.0;
+            this.endVolume = 5.0;
         }
     }
 

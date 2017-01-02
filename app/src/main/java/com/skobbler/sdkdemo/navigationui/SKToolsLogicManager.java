@@ -850,7 +850,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     public void onDestinationReached() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity().getApplicationContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(PreferenceTypes.K_FUEL_LEVEL, String.valueOf(endVolume));
+        editor.putString(PreferenceTypes.K_FUEL_LEVEL, String.valueOf(endVolume+5.0));
         editor.commit();
 
         if (configuration.getNavigationType() == SKNavigationSettings.SKNavigationType.REAL

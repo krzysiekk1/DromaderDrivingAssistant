@@ -78,6 +78,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     private List<FillStationStructure> fillStations1 = null;
     private List<FillStationStructure> fillStations2 = null;
     private List<FillStationStructure> fillStations = null;
+    private List<Boolean> fillStationsUsed = null;
 
     private double endVolume;
     private double endVolume0;
@@ -88,6 +89,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     private int fillStationNumber1;
     private int fillStationNumber2;
     private int fillStationNumber;
+    private int currentStationNr;
 
     private int fillStationResponse = 0;
     private static final int ANNOTATION_ID_DEFAULT = 20;
@@ -365,6 +367,10 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
 
         if(!fuelStationPreferences){
             fillStationNumber = -2;
+        }
+
+        for (int i = 0; i < fillStations.size(); i++) {
+            fillStationsUsed.add(false);
         }
     }
 
@@ -1056,9 +1062,11 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
 
     @Override
     public void onUpdateNavigationState(SKNavigationState skNavigationState) {
+        currentStationNr = 0;
 
         if(fillStationNumber != -2) {
             if (fillStationResponse == 1) {
+                currentStationNr = fillStationNumber;
                 goViaFuelStation(fillStations.get(fillStationNumber));
             }
             if (fillStationResponse == 2) {
@@ -1072,9 +1080,10 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
             if (fillStationNumber != -1) {
                 if (fillStations != null && fillStationResponse == 0) {
                     if (fillStationNumber < fillStations.size()) {
-                        if (SKGeoUtils.calculateAirDistanceBetweenCoordinates
+                        if (!fillStationsUsed.get(currentStationNr) && SKGeoUtils.calculateAirDistanceBetweenCoordinates
                                 (fillStations.get(fillStationNumber).getCoordinates(),
                                         SKPositionerManager.getInstance().getCurrentGPSPosition(true).getCoordinate()) < 2000) {
+                            fillStationsUsed.set(currentStationNr, true);
                             fillStationMessage(fillStations.get(fillStationNumber));
                         }
                     }

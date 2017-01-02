@@ -79,6 +79,11 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
     private List<FillStationStructure> fillStations2 = null;
     private List<FillStationStructure> fillStations = null;
 
+    private double endVolume;
+    private double endVolume0;
+    private double endVolume1;
+    private double endVolume2;
+
     private int fillStationNumber0;
     private int fillStationNumber1;
     private int fillStationNumber2;
@@ -490,6 +495,7 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
 
         this.fillStations = fillStations0;
         this.fillStationNumber = fillStationNumber0;
+        this.endVolume = endVolume0;
         
         if (id == R.id.first_route || id == R.id.second_route || id == R.id.third_route) {
 
@@ -499,14 +505,20 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                 routeIndex = 0;
                 this.fillStations = fillStations0;
                 this.fillStationNumber = fillStationNumber0;
+                this.endVolume = endVolume0;
+                Log.d("endvolumechange",""+endVolume0);
             } else if (id == R.id.second_route) {
                 routeIndex = 1;
                 this.fillStations = fillStations1;
                 this.fillStationNumber = fillStationNumber1;
+                this.endVolume = endVolume1;
+                Log.d("endvolumechange",""+endVolume1);
             } else if (id == R.id.third_route) {
                 routeIndex = 2;
                 this.fillStations = fillStations2;
                 this.fillStationNumber = fillStationNumber2;
+                this.endVolume = endVolume2;
+                Log.d("endvolumechange",""+endVolume2);
             }
 
             SKToolsMapOperationsManager.getInstance().zoomToRoute(currentActivity);
@@ -836,6 +848,11 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
 
     @Override
     public void onDestinationReached() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity().getApplicationContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(PreferenceTypes.K_FUEL_LEVEL, String.valueOf(endVolume));
+        editor.commit();
+
         if (configuration.getNavigationType() == SKNavigationSettings.SKNavigationType.REAL
                                     && configuration.isContinueFreeDriveAfterNavigationEnd()) {
             currentActivity.runOnUiThread(new Runnable() {
@@ -914,6 +931,18 @@ public class SKToolsLogicManager implements SKMapSurfaceListener, SKNavigationLi
                 break;
         }
     }
+
+    public void setEndVolume(double endVolume, int number){
+        switch (number) {
+            case 0: this.endVolume0 = endVolume;
+                break;
+            case 1: this.endVolume1 = endVolume;
+                break;
+            case 2: this.endVolume2 = endVolume;
+                break;
+        }
+    }
+
 
     public void setHotelCoordinates(SKCoordinate coordinates){
         this.hotelCoordinates = coordinates;

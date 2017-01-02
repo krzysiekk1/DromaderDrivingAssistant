@@ -23,7 +23,9 @@ public class FuelAlgorithmResult {
 
     private double cost;
 
-    public FuelAlgorithmResult(double resultCost, List<Integer> vert, List<Double> fuels, GasStationList list, double avg){
+    private double endVolume;
+
+    public FuelAlgorithmResult(double resultCost, List<Integer> vert, List<Double> fuels, GasStationList list, double avg, double distance, double startVolume){
 
         this.cost = resultCost;
         this.vertices = vert;
@@ -56,6 +58,14 @@ public class FuelAlgorithmResult {
             fillStationStructureList.add(new FillStationStructure(this.gasStationList.list.get
                                         (vertices.get(i)).getCoordinate(), tanks.get(i), costs.get(i)));
         }
+
+
+        if (this.cost == 0.0){
+            this.endVolume = startVolume - ((distance*average)/100.0);
+        } else {
+            this.endVolume = 4.0;
+        }
+
     }
 
     public List<FillStationStructure> getList(){
@@ -64,6 +74,10 @@ public class FuelAlgorithmResult {
 
     public double getCost(){
         return this.cost;
+    }
+    
+    public double getEndVolume(){
+        return this.endVolume;
     }
 
 }

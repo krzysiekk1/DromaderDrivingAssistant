@@ -24,8 +24,13 @@ public class DynamicFunction {
 
     private double avg;
 
-    public DynamicFunction(double tankVolume, GasStationList list, int fillStops, double average) {
+    private double alldistance;
+    private double startVolume;
 
+    public DynamicFunction(double tankVolume, GasStationList list, int fillStops, double average, double alldistance, double startVolume) {
+
+        this.alldistance = alldistance;
+        this.startVolume = startVolume;
         this.tankVolume = tankVolume;
         this.list = list;
         this.fillStops = fillStops;
@@ -159,7 +164,7 @@ public class DynamicFunction {
             }
         }
 
-        FuelAlgorithmResult result = new FuelAlgorithmResult(bestResult, vertices, fuels, list, avg);
+        FuelAlgorithmResult result = new FuelAlgorithmResult(bestResult, vertices, fuels, list, avg, alldistance, startVolume);
         return result;
     }
 

@@ -63,6 +63,7 @@ public class FuelAlgorithm implements SKSearchListener{
 
     private double straightDistance;
     private double scaleDistance;
+    private double allDistance;
 
     private int searchNumber;
     private int maxSearchNumber;
@@ -78,7 +79,7 @@ public class FuelAlgorithm implements SKSearchListener{
         this.app = app;
         this.routeInfo = routeInfo;
 
-        double allDistance = routeInfo.getDistance() / 1000.0;
+        allDistance = routeInfo.getDistance() / 1000.0;
 
         this.maxStopsNumber = (int) (allDistance / 100.0);
         if (this.maxStopsNumber == 0 || this.maxStopsNumber == 1) {
@@ -252,6 +253,11 @@ public class FuelAlgorithm implements SKSearchListener{
                 double tankV = Double.parseDouble(tankVolume);
                 double average = Double.parseDouble(avg);
 
+                //set 4l minimum at the end of the travel and 5l minimum as a startvolume
+
+                tankV -= 4.0;
+                startV = Math.max(startV, 5.0);
+
                 scaleDistance = ((tankV - startV)/average)*100.0;
 
                 Log.d("maxstopsnumber", "stops: "+maxStopsNumber);
@@ -259,7 +265,9 @@ public class FuelAlgorithm implements SKSearchListener{
 
                 algo.getGVSets();
 
-                fuelResult = algo.calculateMinimalCost();
+                fuelResult = algo.calculateMinimalCost(allDistance, startV);
+
+                //set allDistance to fuelResult
 
                 return fuelResult;
             }

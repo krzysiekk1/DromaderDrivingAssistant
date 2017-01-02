@@ -81,8 +81,8 @@ public class Algorithm {
         }
     }
 
-    public FuelAlgorithmResult calculateMinimalCost(){
-        this.dynamic = new DynamicFunction(this.tankVolume, this.stationList, this.maxStops, avgConsumption);
+    public FuelAlgorithmResult calculateMinimalCost(double alldistance, double startVolume){
+        this.dynamic = new DynamicFunction(this.tankVolume, this.stationList, this.maxStops, avgConsumption, alldistance, startVolume);
         for(int j = 1; j <maxStops; j++){
             for(int i = 0; i < stationList.list.size(); i++){
                 dynamic.fillRow(i, j);

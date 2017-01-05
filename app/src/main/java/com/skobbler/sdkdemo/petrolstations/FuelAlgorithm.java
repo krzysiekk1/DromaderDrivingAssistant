@@ -43,7 +43,8 @@ public class FuelAlgorithm implements SKSearchListener{
     /*
     density of taking the coordinates across route 67 it's about coordinate every ~ 2km
      */
-    private static final int DENSITY = 67;
+    //private static final int DENSITY = 67;
+    private static final int DENSITY = 200;
     private static final int START_COORDINATE_NR = 0;
 
     private List<SKCoordinate> coordinates = new ArrayList<SKCoordinate>();
